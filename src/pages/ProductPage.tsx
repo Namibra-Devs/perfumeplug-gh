@@ -116,7 +116,7 @@ const ProductPage: React.FC = () => {
       <Header title={product.name} descripton={product.description}/>
 
       <div className="min-h-screen bg-gray-50">
-        <div className="mx-auto px-6 sm:px-6 lg:px-32 py-8">
+        <div className="mx-auto px-6 sm:px-6 lg:px-32 py-20">
           {/* Breadcrumb */}
           <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-8">
             <Link to="/" className="hover:text-blue-600">Home</Link>
