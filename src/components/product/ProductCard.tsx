@@ -30,7 +30,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
           <div className="flex">
             <div className="w-32 h-32 flex-shrink-0">
               <img
-                src={product.images}
+                src={product.images[0]}
                 alt={product.name}
                 className="w-full h-full object-cover rounded-l-xl"
               />
@@ -94,7 +94,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
           <motion.img
             whileHover={{ scale: 1.1 }}
             transition={{ duration: 0.3 }}
-            src={product.images}
+            src={product.images[0]}
             alt={product.name}
             className="w-full h-64 object-cover"
           />
