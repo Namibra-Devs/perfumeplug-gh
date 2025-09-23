@@ -6,33 +6,9 @@ import ProductCard from '../components/product/ProductCard';
 import { products } from '../constants/mockData';
 import { Navbar } from '../components/layout/Navbar';
 
-import menCategory from '../assets/categories/men.jpg';
-import womenCategory from '../assets/categories/women.jpg';
-import unisexCategory from '../assets/categories/unisex.jpg';
-
-const categories = [
-  { 
-    name: "Men's Perfumes", 
-    image: menCategory, 
-    link: "/shop?category=men" 
-  },
-  { 
-    name: "Women's Perfumes", 
-    image: womenCategory, 
-    link: "/shop?category=women" 
-  },
-  { 
-    name: "Unisex Collection", 
-    image: unisexCategory, 
-    link: "/shop?category=unisex" 
-  }
-];
-
 const HomePage: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const featuredProducts = products.filter(product => product.featured).slice(0, 8);
-  const bestSellers = products.slice(0, 6);
-  const newArrivals = products.slice(2, 8);
 
   // Hero Slider Data
   const heroSlides = [
@@ -221,7 +197,10 @@ const HomePage: React.FC = () => {
         >
           <h2 className="text-4xl font-bold text-center mb-12">Shop by Category</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {categories.map((category, index) => (
+            {[{ name: "Men's Perfumes", image: '../src/assets/categories/men.jpg', link: "/shop?category=men" },
+              { name: "Women's Perfumes", image: '../src/assets/categories/women.jpg', link: "/shop?category=women" },
+              { name: "Unisex Collection", image: '../src/assets/categories/unisex.jpg', link: "/shop?category=unisex" 
+              }].map((category, index) => (
               <motion.div
                 key={category.name}
                 initial={{ scale: 0.9, opacity: 0 }}
