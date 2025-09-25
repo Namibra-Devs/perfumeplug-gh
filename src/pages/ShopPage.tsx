@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { Filter, Grid, List } from 'lucide-react';
 import ProductCard from '../components/product/ProductCard';
 import { products } from '../constants/mockData';
-import { Product } from '../types/index';
 import Header from '../components/layout/Header';
 
 const ShopPage: React.FC = () => {
