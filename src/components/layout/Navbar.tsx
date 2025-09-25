@@ -102,17 +102,17 @@ export const Navbar: React.FC = () => {
                             <Link
                                 key={item.name}
                                 to={item.href}
-                                className="text-white hover:text-white/20 font-medium transition-colors relative group"
+                                className="text-white hover:text-white/20 font-medium transition-colors relative group duration-300"
                                 onClick={closeAll}
                             >
                                 {item.name}
-                                <span className="absolute -bottom-2 left-0 w-0 h-0.5 rounded-full bg-white/20 transition-all group-hover:w-full"></span>
+                                <span className="absolute -bottom-2 left-0 w-0 h-0.5 rounded-full bg-white/20 transition-all duration-300 group-hover:w-full"></span>
                             </Link>
                         ))}
                     </nav>
 
                     {/* Action Buttons */}
-                    <div className={`${isMenuOpen ? "text-gray-600" : 'text-white'} flex items-center gap-4`}>
+                    <div className={`${isMenuOpen ? "text-gray-600" : 'text-white'} flex items-center gap-2 md:gap-4`}>
                         {/* Mobile Search Button */}
                         <button
                             onClick={handleSearchToggle}
@@ -178,25 +178,26 @@ export const Navbar: React.FC = () => {
                                     <input
                                         ref={searchInputRef}
                                         type="text"
-                                        placeholder="What are you looking for? Search perfumes, brands, categories..."
-                                        className="w-full pl-12 pr-24 py-4 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="Search perfumes, brands, categories..."
+                                        className="w-full pl-12 pr-24 py-3 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         autoFocus
                                     />
-                                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex gap-2">
+                                    <div className="absolute right-1 top-1/2 transform -translate-y-1/2 flex gap-2">
                                         <button
                                             type="button"
                                             onClick={closeAll}
-                                            className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                                            className="px-3 py-2 bg-blue-100 rounded-xl text-gray-600 hover:text-gray-800 transition-colors"
                                         >
-                                            Cancel
+                                            X
                                         </button>
                                         <button
+                                            title="Search"
                                             type="submit"
-                                            className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                                            className="bg-blue-600 text-white px-3 py-2 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
                                         >
-                                            Search
+                                            <Search className='h-5 w-5'/>
                                         </button>
                                     </div>
                                 </form>

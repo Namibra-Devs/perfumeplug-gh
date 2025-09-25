@@ -355,7 +355,7 @@ const ContactPage: React.FC = () => {
           viewport={{ once: true }}
           className="mt-16"
         >
-          <div className="text-center mb-8">
+          <div className="md:text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-900">Frequently Asked Questions</h2>
             <p className="text-gray-600 mt-2">Quick answers to common questions</p>
           </div>
