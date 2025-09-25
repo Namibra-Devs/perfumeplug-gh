@@ -1,6 +1,7 @@
 import { Phone } from "lucide-react";
 import React from "react";
 import { Navbar } from "./Navbar";
+import { motion } from "framer-motion";
 
 type HeaderProps = {
   title: string;
@@ -28,9 +29,23 @@ const Header: React.FC<HeaderProps> = ({title="", descripton=""}) => {
       </div>   
       <Navbar/>
 
-      <div className="flex flex-col items-center gap-4 py-12">
-        <h1 className="text-4xl font-bold text-white mb-2">{title}</h1>
-        <p className="text-gray-100">{descripton}</p>
+      <div className="flex flex-col items-center text-center gap-4 py-12">
+        <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-4xl lg:text-5xl font-bold text-white"
+          >
+            {title}
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-xl text-blue-100 max-w-2xl mx-auto"
+          >
+            {descripton}
+          </motion.p>
       </div>
     </header>
   );

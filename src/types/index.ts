@@ -1,10 +1,19 @@
+
+export interface Review {
+  id: string;
+  name: string;
+  rating: number;
+  date: string;
+  comment: string;
+  verified: boolean;
+}
 export interface Product {
   id: string;
   name: string;
   brand: string;
   price: number;
   originalPrice?: number;
-  images: string;
+  images: string[];
   description: string;
   category: string;
   gender: 'men' | 'women' | 'unisex';
