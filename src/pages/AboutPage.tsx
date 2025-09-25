@@ -74,7 +74,7 @@ const AboutPage: React.FC = () => {
                 transition={{ duration: 0.8 }}
                 viewport={{ once: true }}
               >
-                <h2 className="text-4xl font-bold text-gray-900 mb-6">Our Story</h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Our Story</h2>
                 <div className="space-y-4 text-lg text-gray-600">
                   <p>
                     PerfumePlug Ghana was born from a simple yet powerful vision: to make luxury fragrances 
@@ -102,7 +102,7 @@ const AboutPage: React.FC = () => {
                 className="relative h-[500px] w-auto"
               >
                 <img
-                  src="https://images.unsplash.com/photo-1601924582970-9238bcb495d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                  src="/2.jpg"
                   alt="Perfume Collection"
                   className="rounded-2xl shadow-2xl h-full w-full object-cover"
                 />
@@ -123,10 +123,10 @@ const AboutPage: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
-              className="text-center mb-12"
+              className="md:text-center mb-12"
             >
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Mission & Vision</h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Mission & Vision</h2>
+              <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
                 We're committed to transforming the fragrance shopping experience in Ghana
               </p>
             </motion.div>
@@ -179,10 +179,10 @@ const AboutPage: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
-              className="text-center mb-12"
+              className="md:text-center mb-12"
             >
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">Why Choose PerfumePlug GH?</h2>
-              <p className="text-xl text-gray-600">Discover what sets us apart in the world of fragrances</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why Choose PerfumePlug GH?</h2>
+              <p className="text-lg md:text-xl text-gray-600">Discover what sets us apart in the world of fragrances</p>
             </motion.div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
@@ -232,7 +232,7 @@ const AboutPage: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
-              className="text-center mb-12"
+              className="md:text-center mb-12"
             >
               <h2 className="text-4xl font-bold text-gray-900 mb-4">Meet Our Team</h2>
               <p className="text-xl text-gray-600">The passionate people behind PerfumePlug Ghana</p>

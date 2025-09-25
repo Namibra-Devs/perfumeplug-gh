@@ -212,7 +212,7 @@ const ProductPage: React.FC = () => {
             <div className="space-y-6">
               <div>
                 <span className="text-blue-600 font-semibold">{product.brand}</span>
-                <h1 className="text-4xl font-bold text-gray-900 mt-2">{product.name}</h1>
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2">{product.name}</h1>
                 
                 {/* Rating */}
                 <div className="flex items-center space-x-2 mt-3">
@@ -234,7 +234,7 @@ const ProductPage: React.FC = () => {
 
               {/* Price */}
               <div className="flex items-center space-x-4">
-                <span className="text-3xl font-bold text-gray-900">₵{selectedPrice.toFixed(2)}</span>
+                <span className="text-xl font-bold text-gray-900">₵{selectedPrice.toFixed(2)}</span>
                 {product.originalPrice && selectedPrice < product.originalPrice && (
                   <span className="text-xl text-gray-500 line-through">₵{product.originalPrice.toFixed(2)}</span>
                 )}
@@ -248,12 +248,12 @@ const ProductPage: React.FC = () => {
               {/* Size Options */}
               <div>
                 <h3 className="font-semibold text-gray-900 mb-3">Select Size:</h3>
-                <div className="flex space-x-3">
+                <div className="flex gap-3">
                   {sizeOptions.map((size) => (
                     <button
                       key={size.value}
                       onClick={() => setSelectedSize(size.value)}
-                      className={`px-6 py-3 border-2 rounded-lg transition-all ${
+                      className={`px-4 md:px-6 py-3 border-2 rounded-lg transition-all ${
                         selectedSize === size.value
                           ? 'border-blue-600 bg-blue-50 text-blue-600'
                           : 'border-gray-300 text-gray-600 hover:border-gray-400'
@@ -271,14 +271,14 @@ const ProductPage: React.FC = () => {
               {/* Quantity */}
               <div>
                 <h3 className="font-semibold text-gray-900 mb-3">Quantity:</h3>
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     className="w-10 h-10 border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50"
                   >
                     -
                   </button>
-                  <span className="w-12 text-center font-semibold">{quantity}</span>
+                  <span className="w-8 text-center font-semibold">{quantity}</span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
                     className="w-10 h-10 border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50"
@@ -292,14 +292,14 @@ const ProductPage: React.FC = () => {
               <div className="flex space-x-4 pt-4">
                 <button
                   onClick={handleAddToCart}
-                  className="flex-1 bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center"
+                  className="flex-1 bg-blue-600 text-white px-2 py-3 text-sm rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center"
                 >
                   <ShoppingCart className="h-5 w-5 mr-2" />
                   Add to Cart
                 </button>
                 <button
                   onClick={handleBuyNow}
-                  className="flex-1 bg-gray-900 text-white py-4 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+                  className="flex-1 bg-gray-900 text-white px-2 py-3 text-sm rounded-lg font-semibold hover:bg-gray-800 transition-colors"
                 >
                   Buy Now
                 </button>
@@ -330,11 +330,11 @@ const ProductPage: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-sm">
             {/* Tabs */}
             <div className="border-b">
-              <nav className="flex space-x-8 px-6">
+              <nav className="flex flex-wrap gap-x-3 md:gap-x-8 px-6">
                 {['Description', 'Fragrance Notes', 'Reviews', 'Shipping'].map((tab) => (
                   <button
                     key={tab}
-                    className="py-4 px-2 border-b-2 border-transparent hover:text-blue-600 transition-colors font-medium"
+                    className="py-2 md:py-4 px-2 border-b-2 border-transparent hover:text-blue-600 transition-colors font-medium"
                   >
                     {tab}
                   </button>
