@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, CreditCard, Truck, User, Lock } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import Header from '../components/layout/Header';
 
 type CheckoutStep = 'customer' | 'delivery' | 'payment';
@@ -98,7 +98,7 @@ const CheckoutPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto px-6 sm:px-6 lg:px-32 py-20">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className=" md:text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Checkout</h1>
           <p className="text-gray-600 mt-2">Complete your purchase in a few simple steps</p>
         </div>
@@ -107,34 +107,37 @@ const CheckoutPage: React.FC = () => {
         <div className="mb-8">
           <div className="flex items-center justify-center">
             {steps.map((step, index) => (
-              <div key={step.id} className="flex items-center">
-                {/* Step Circle */}
-                <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
-                  currentStep === step.id 
-                    ? 'border-blue-600 bg-blue-600 text-white' 
-                    : steps.findIndex(s => s.id === currentStep) > index 
-                    ? 'border-green-600 bg-green-600 text-white'
-                    : 'border-gray-300 text-gray-500'
-                }`}>
-                  {steps.findIndex(s => s.id === currentStep) > index ? (
-                    <Check className="h-5 w-5" />
-                  ) : (
-                    <step.icon className="h-5 w-5" />
-                  )}
+              <div key={step.id} className="flex items-center ">
+                {/* Step Container */}
+                <div className="flex flex-col items-center">
+                  {/* Step Circle */}
+                  <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
+                    currentStep === step.id 
+                      ? 'border-blue-600 bg-blue-600 text-white' 
+                      : steps.findIndex(s => s.id === currentStep) > index 
+                      ? 'border-green-600 bg-green-600 text-white'
+                      : 'border-gray-300 text-gray-500'
+                  }`}>
+                    {steps.findIndex(s => s.id === currentStep) > index ? (
+                      <Check className="h-5 w-5" />
+                    ) : (
+                      <step.icon className="h-5 w-5" />
+                    )}
+                  </div>
+                  
+                  {/* Step Name */}
+                  <span className={`mt-2 text-xs md:text-sm font-medium text-center ${
+                    currentStep === step.id || steps.findIndex(s => s.id === currentStep) > index
+                      ? 'text-gray-900'
+                      : 'text-gray-500'
+                  }`}>
+                    {step.name}
+                  </span>
                 </div>
-
-                {/* Step Name */}
-                <span className={`ml-2 text-sm font-medium ${
-                  currentStep === step.id || steps.findIndex(s => s.id === currentStep) > index
-                    ? 'text-gray-900'
-                    : 'text-gray-500'
-                }`}>
-                  {step.name}
-                </span>
 
                 {/* Connector Line */}
                 {index < steps.length - 1 && (
-                  <div className={`w-20 h-0.5 mx-4 ${
+                  <div className={`w-10 md:w-20 h-0.5 mx-2 md:mx-4 -mt-6 ${
                     steps.findIndex(s => s.id === currentStep) > index 
                       ? 'bg-green-600' 
                       : 'bg-gray-300'

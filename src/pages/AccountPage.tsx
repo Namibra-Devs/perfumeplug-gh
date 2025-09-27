@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Package, Heart, MapPin, CreditCard, LogOut, Edit, Plus, Trash2} from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth'
 import Header from '../components/layout/Header';
 
 interface Order {
@@ -155,8 +155,8 @@ const AccountPage: React.FC = () => {
         <div className="px-6 sm:px-6 lg:px-32 py-20">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">My Account</h1>
-            <p className="text-gray-600">Welcome back, {user.firstName}!</p>
+            <h1 className="text-2xl font-bold text-gray-900">My Account</h1>
+            <p className="text-sm text-gray-600">Welcome back, {user.firstName}!</p>
           </div>
 
           <div className="grid lg:grid-cols-4 gap-8">
@@ -188,7 +188,7 @@ const AccountPage: React.FC = () => {
                     <button
                       key={item.id}
                       onClick={() => setActiveTab(item.id)}
-                      className={`w-full text-left px-3 py-3 rounded-lg transition-colors flex items-center space-x-3 ${
+                      className={`w-full text-left text-sm px-3 py-3 rounded-lg transition-colors flex items-center space-x-3 ${
                         activeTab === item.id
                           ? 'bg-blue-50 text-blue-600 font-medium'
                           : 'text-gray-600 hover:bg-gray-50'
@@ -201,7 +201,7 @@ const AccountPage: React.FC = () => {
                   
                   <button
                     onClick={logout}
-                    className="w-full text-left px-3 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors flex items-center space-x-3 mt-4"
+                    className="w-full text-left text-sm px-3 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors flex items-center space-x-3 mt-4"
                   >
                     <LogOut className="h-4 w-4" />
                     <span>Sign Out</span>
@@ -247,7 +247,7 @@ const AccountPage: React.FC = () => {
                               type="text"
                               value={profileData.firstName}
                               onChange={(e) => setProfileData(prev => ({ ...prev, firstName: e.target.value }))}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              className="w-full px-3 py-1.5 border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                               required
                             />
                           </div>
@@ -260,7 +260,7 @@ const AccountPage: React.FC = () => {
                               type="text"
                               value={profileData.lastName}
                               onChange={(e) => setProfileData(prev => ({ ...prev, lastName: e.target.value }))}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              className="w-full px-3 py-1.5 border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                               required
                             />
                           </div>
@@ -274,7 +274,7 @@ const AccountPage: React.FC = () => {
                             type="email"
                             value={profileData.email}
                             onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className="w-full px-3 py-1.5 border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             required
                           />
                         </div>
@@ -286,21 +286,21 @@ const AccountPage: React.FC = () => {
                             type="tel"
                             value={profileData.phone}
                             onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className="w-full px-3 py-1.5 border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             placeholder="+233 XX XXX XXXX"
                           />
                         </div>
                         <div className="flex space-x-3 pt-4">
                           <button
                             type="submit"
-                            className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                            className="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors"
                           >
                             Save Changes
                           </button>
                           <button
                             type="button"
                             onClick={() => setIsEditing(false)}
-                            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+                            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-50 transition-colors"
                           >
                             Cancel
                           </button>
@@ -378,7 +378,7 @@ const AccountPage: React.FC = () => {
                               <div key={index} className="flex items-center space-x-3">
                                 <img src={item.image} alt={item.name} className="w-12 h-12 object-cover rounded" />
                                 <div className="flex-1">
-                                  <div className="font-medium">{item.name}</div>
+                                  <div className="font-medium text-sm leading-tight">{item.name}</div>
                                   <div className="text-sm text-gray-600">Qty: {item.quantity}</div>
                                 </div>
                                 <div className="text-sm font-semibold">₵{item.price.toFixed(2)}</div>
@@ -392,11 +392,11 @@ const AccountPage: React.FC = () => {
                                 Tracking: <span className="font-mono">{order.trackingNumber}</span>
                               </div>
                             )}
-                            <div className="flex space-x-3">
-                              <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                            <div className="flex flex-col md:flex-row items-center gap-1 md:gap-3">
+                              <button className="text-blue-600 hover:text-blue-700 text-xs md:text-sm font-medium text-left md:text-center">
                                 View Details
                               </button>
-                              <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                              <button className="text-blue-600 hover:text-blue-700 text-xs md:text-sm font-medium text-left md:text-center">
                                 Reorder
                               </button>
                             </div>
@@ -423,22 +423,24 @@ const AccountPage: React.FC = () => {
                     
                     <div className="grid md:grid-cols-2 gap-6 p-6">
                       {wishlistItems.map((item) => (
-                        <div key={item.id} className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg">
-                          <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded" />
-                          <div className="flex-1">
-                            <div className="font-semibold">{item.name}</div>
-                            <div className="text-sm text-gray-600">{item.brand}</div>
-                            <div className="font-semibold text-blue-600">₵{item.price.toFixed(2)}</div>
-                            <div className={`text-xs ${item.inStock ? 'text-green-600' : 'text-red-600'}`}>
-                              {item.inStock ? 'In Stock' : 'Out of Stock'}
+                        <div key={item.id} className="flex flex-col md:flex-row items-start gap-4 p-2 border border-gray-200 rounded-lg">
+                          <div className='flex items-start justify-between gap-2'>
+                            <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded" />
+                            <div className="flex-1">
+                              <div className="text-xs md:text-sm font-semibold">{item.name}</div>
+                              <div className="text-xs md:text-sm text-gray-600">{item.brand}</div>
+                              <div className="text-xs md:text-sm font-semibold text-blue-600">₵{item.price.toFixed(2)}</div>
+                              <div className={`text-xs ${item.inStock ? 'text-green-600' : 'text-red-600'}`}>
+                                {item.inStock ? 'In Stock' : 'Out of Stock'}
+                              </div>
                             </div>
                           </div>
-                          <div className="flex space-x-2">
-                            <button title="Add to cart" className="p-2 text-gray-400 hover:text-red-600 transition-colors">
+                          <div className="flex items-center gap-2 w-full md:w-auto">
+                            <button title="Delete item" className="border rounded px-3 py-2 text-gray-400 hover:text-red-600 transition-colors">
                               <Trash2 className="h-4 w-4" />
                             </button>
-                            <button className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors">
-                              Add to Cart
+                            <button title='Add to cart' className="bg-blue-600 border border-blue-600 text-white px-3 py-2 rounded text-sm md:text-xs hover:bg-blue-700 transition-colors">
+                              <Plus className="h-4 w-4"/>
                             </button>
                           </div>
                         </div>
@@ -456,12 +458,12 @@ const AccountPage: React.FC = () => {
                     exit={{ opacity: 0, x: -20 }}
                     className="bg-white rounded-2xl shadow-sm"
                   >
-                    <div className="p-6 border-b flex justify-between items-center">
+                    <div className="p-6 border-b flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                       <div>
                         <h2 className="text-xl font-semibold">Saved Addresses</h2>
                         <p className="text-gray-600 mt-1">Manage your delivery addresses</p>
                       </div>
-                      <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                      <button className="bg-blue-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
                         <Plus className="h-4 w-4 mr-2" />
                         Add New Address
                       </button>
@@ -507,12 +509,12 @@ const AccountPage: React.FC = () => {
                     exit={{ opacity: 0, x: -20 }}
                     className="bg-white rounded-2xl shadow-sm"
                   >
-                    <div className="p-6 border-b flex justify-between items-center">
+                    <div className="p-6 border-b flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                       <div>
                         <h2 className="text-xl font-semibold">Payment Methods</h2>
                         <p className="text-gray-600 mt-1">Manage your saved payment methods</p>
                       </div>
-                      <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                      <button className="bg-blue-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
                         <Plus className="h-4 w-4 mr-2" />
                         Add New Method
                       </button>
@@ -520,7 +522,7 @@ const AccountPage: React.FC = () => {
                     
                     <div className="p-6 space-y-4">
                       {paymentMethods.map((method) => (
-                        <div key={method.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                        <div key={method.id} className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-2 border border-gray-200 rounded-lg">
                           <div className="flex items-center space-x-4">
                             <div className="w-12 h-8 bg-gray-100 rounded flex items-center justify-center">
                               {method.type === 'card' ? (
@@ -529,12 +531,14 @@ const AccountPage: React.FC = () => {
                                 <span className="text-xs font-semibold">{method.network}</span>
                               )}
                             </div>
-                            <div>
-                              <div className="font-semibold capitalize">
-                                {method.type === 'card' ? 'Credit Card' : `${method.network} Mobile Money`}
-                              </div>
-                              <div className="text-sm text-gray-600">
-                                {method.type === 'card' ? `•••• ${method.last4}` : `•••• ${method.last4}`}
+                            <div className='flex items-start justify-between gap-3'>
+                              <div>
+                                <div className="text-sm font-semibold capitalize">
+                                  {method.type === 'card' ? 'Credit Card' : `${method.network} Mobile Money`}
+                                </div>
+                                <div className="text-sm text-gray-600">
+                                  {method.type === 'card' ? `•••• ${method.last4}` : `•••• ${method.last4}`}
+                                </div>
                               </div>
                               {method.isDefault && (
                                 <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded">Default</span>
