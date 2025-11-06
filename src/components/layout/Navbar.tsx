@@ -88,7 +88,7 @@ export const Navbar: React.FC = () => {
     };
 
     return (
-        <header className={`${isMenuOpen ? "bg-white" : 'bg-transparent'} sticky top-0 z-50`}>
+        <header className={`${isMenuOpen ? "bg-white" : 'bg-gradient-to-r from-black to-yellow-700 bg-cover bg-no-repeat top-0'} sticky top-0 z-50`}>
             <div className="mx-auto px-6 sm:px-6 lg:px-32 relative z-50">
                 <div className="flex justify-between items-center h-20">
                     {/* Logo */}
@@ -102,7 +102,7 @@ export const Navbar: React.FC = () => {
                             <Link
                                 key={item.name}
                                 to={item.href}
-                                className="text-white hover:text-white/20 font-medium transition-colors relative group duration-300"
+                                className="text-yellow-500/70 hover:text-white/20 font-normal text-sm transition-colors relative group duration-300"
                                 onClick={closeAll}
                             >
                                 {item.name}
@@ -112,7 +112,7 @@ export const Navbar: React.FC = () => {
                     </nav>
 
                     {/* Action Buttons */}
-                    <div className={`${isMenuOpen ? "text-gray-600" : 'text-white'} flex items-center gap-2 md:gap-4`}>
+                    <div className={`${isMenuOpen ? "text-gray-600" : 'text-yellow-400'} flex items-center gap-2 md:gap-4`}>
                         {/* Mobile Search Button */}
                         <button
                             onClick={handleSearchToggle}
@@ -126,17 +126,17 @@ export const Navbar: React.FC = () => {
                         <button
                             onClick={handleSearchToggle}
                             title='Search'
-                            className="hidden lg:flex p-2 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            className="hidden lg:flex p-2 hover:text-white bg-yellow-700/80 hover:bg-yellow-700/60 rounded-lg transition-colors"
                         >
-                            <Search className="h-5 w-5" />
+                            <Search className="h-4 w-4" />
                         </button>
 
                         <Link
                             to="/cart"
-                            className="relative p-2 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            className="relative p-2 hover:text-white bg-yellow-700/80 hover:bg-yellow-700/60 rounded-lg transition-colors"
                             onClick={closeAll}
                         >
-                            <ShoppingCart className="h-5 w-5" />
+                            <ShoppingCart className="h-4 w-4" />
                             {getTotalItems() > 0 && (
                                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                                     {getTotalItems()}
@@ -145,10 +145,10 @@ export const Navbar: React.FC = () => {
                         </Link>
                         <Link
                             to="/account"
-                            className="p-2 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            className="p-2 hover:text-white bg-yellow-700/80 hover:bg-yellow-700/60 rounded-lg transition-colors"
                             onClick={closeAll}
                         >
-                            <User className="h-5 w-5" />
+                            <User className="h-4 w-4" />
                         </Link>
 
                         {/* Mobile menu button */}

@@ -28,12 +28,12 @@ const Header: React.FC<HeaderProps> = ({title="", descripton=""}) => {
       </div>   
       <Navbar/>
 
-      <div className="flex flex-col md:items-center md:text-center gap-4 py-12 px-6">
+      <div className="flex flex-col md:items-center md:text-center gap-4 py-12 px-6 max-w-4xl mx-auto">
         <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-4xl lg:text-5xl font-bold text-white"
+            className="text-3xl lg:text-4xl font-bold text-white"
           >
             {title}
           </motion.h1>
@@ -41,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({title="", descripton=""}) => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-lg md:text-xl md:text-center text-blue-100"
+            className="text-sm md:text-lg md:text-center text-blue-100"
           >
             {descripton}
           </motion.p>
