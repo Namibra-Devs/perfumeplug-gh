@@ -101,19 +101,19 @@ const ShopPage: React.FC = () => {
   return (
     <>
     <Header title='Shop Perfumes' descripton='Discover our curated collection of premium fragrances'/>
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar - Filters */}
           <div className="lg:w-80">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="bg-white rounded-lg shadow-sm p-6 sticky top-24"
+              className="bg-black/20 backdrop-blur-lg rounded-lg border border-yellow-600/20 shadow-2xl p-6 sticky top-24"
             >
               {/* Filters Header */}
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+                <h2 className="text-lg font-semibold text-white">Filters</h2>
                 <button
                   onClick={clearFilters}
                   className="text-sm text-blue-600 hover:text-blue-700"
@@ -124,21 +124,21 @@ const ShopPage: React.FC = () => {
 
               {/* Categories */}
               <div className="mb-6">
-                <h3 className="font-medium text-gray-900 mb-3">Categories</h3>
+                <h3 className="font-medium text-yellow-500 mb-3">Categories</h3>
                 <div className="space-y-2">
                   {categories.map((category) => (
                     <button
                       key={category.id}
                       onClick={() => setSelectedCategory(category.id)}
-                      className={`block w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                      className={`block w-full text-left text-sm px-3 py-2 rounded-lg transition-colors ${
                         selectedCategory === category.id
-                          ? 'bg-blue-50 text-blue-600 font-medium'
-                          : 'text-gray-600 hover:bg-gray-50'
+                          ? 'bg-yellow-800/30 text-yellow-500 font-medium'
+                          : 'text-gray-300 hover:bg-yellow-700/30'
                       }`}
                     >
                       <div className="flex justify-between items-center">
                         <span>{category.name}</span>
-                        <span className="text-sm text-gray-400">({category.count})</span>
+                        <span className="text-sm text-gray-100">({category.count})</span>
                       </div>
                     </button>
                   ))}
@@ -147,7 +147,7 @@ const ShopPage: React.FC = () => {
 
               {/* Price Range */}
               <div className="mb-6">
-                <h3 className="font-medium text-gray-900 mb-3">Price Range</h3>
+                <h3 className="font-medium text-yellow-500 mb-3">Price Range</h3>
                 <div className="space-y-4">
                   <div>
                     <input
@@ -157,9 +157,9 @@ const ShopPage: React.FC = () => {
                       max="1000"
                       value={priceRange[1]}
                       onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                      className="w-full h-1 bg-yellow-900 rounded-lg appearance-none cursor-pointer"
                     />
-                    <div className="flex justify-between text-sm text-gray-600">
+                    <div className="flex justify-between text-sm text-gray-200">
                       <span>₵0</span>
                       <span>₵{priceRange[1]}</span>
                     </div>
@@ -169,7 +169,7 @@ const ShopPage: React.FC = () => {
 
               {/* Brands */}
               <div className="mb-6">
-                <h3 className="font-medium text-gray-900 mb-3">Brands</h3>
+                <h3 className="font-medium text-yellow-500 mb-3">Brands</h3>
                 <div className="space-y-2 max-h-40 overflow-y-auto">
                   {brands.map((brand) => (
                     <label key={brand} className="flex items-center space-x-3 cursor-pointer">
@@ -179,7 +179,7 @@ const ShopPage: React.FC = () => {
                         onChange={() => handleBrandToggle(brand)}
                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
-                      <span className="text-sm text-gray-600">{brand}</span>
+                      <span className="text-sm text-gray-200">{brand}</span>
                     </label>
                   ))}
                 </div>
@@ -187,7 +187,7 @@ const ShopPage: React.FC = () => {
 
               {/* Gender */}
               <div className="mb-6">
-                <h3 className="font-medium text-gray-900 mb-3">Gender</h3>
+                <h3 className="font-medium text-yellow-500 mb-3">Gender</h3>
                 <div className="space-y-2">
                   {['men', 'women', 'unisex'].map((gender) => (
                     <label key={gender} className="flex items-center space-x-3 cursor-pointer">
@@ -197,7 +197,7 @@ const ShopPage: React.FC = () => {
                         onChange={() => handleGenderToggle(gender)}
                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
-                      <span className="text-sm text-gray-600 capitalize">{gender}</span>
+                      <span className="text-sm text-gray-200 capitalize">{gender}</span>
                     </label>
                   ))}
                 </div>
@@ -208,11 +208,11 @@ const ShopPage: React.FC = () => {
           {/* Main Content */}
           <div className="flex-1">
             {/* Toolbar */}
-            <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+            <div className="bg-black/20 rounded-lg border border-yellow-600/20 shadow-2xl p-4 mb-6">
               <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div className="flex items-center space-x-4">
-                  <span className="text-sm text-gray-600">
-                    {filteredProducts.length} products found
+                  <span className="text-sm text-gray-200">
+                    <span className='bg-yellow-600/20 text-yellow-400 px-4 py-1.5 rounded-lg border border-yellow-600/20'>{filteredProducts.length}</span> products found
                   </span>
                   
                   {/* Mobile Filters Toggle */}
@@ -227,18 +227,18 @@ const ShopPage: React.FC = () => {
 
                 <div className="flex items-center space-x-4">
                   {/* View Mode Toggle */}
-                  <div className="flex border border-gray-300 rounded-lg">
+                  <div className="flex border border-yellow-600/20 rounded-lg overflow-hidden">
                     <button
                       title='Grid'
                       onClick={() => setViewMode('grid')}
-                      className={`p-2 ${viewMode === 'grid' ? 'bg-gray-100 text-gray-900' : 'text-gray-600'}`}
+                      className={`p-2 ${viewMode === 'grid' ? 'bg-yellow-600/20 text-white' : 'text-white'}`}
                     >
                       <Grid className="h-4 w-4" />
                     </button>
                     <button
                       title='List'
                       onClick={() => setViewMode('list')}
-                      className={`p-2 ${viewMode === 'list' ? 'bg-gray-100 text-gray-900' : 'text-gray-600'}`}
+                      className={`p-2 ${viewMode === 'list' ? 'bg-yellow-600/20 text-white' : 'text-white'}`}
                     >
                       <List className="h-4 w-4" />
                     </button>
@@ -246,7 +246,7 @@ const ShopPage: React.FC = () => {
 
                   {/* Sort By */}
                   <div className="flex items-center space-x-2">
-                    <span className="text-sm text-gray-600">Sort by:</span>
+                    <span className="text-sm text-gray-200">Sort by:</span>
                     <select
                       title='Sort By'
                       value={sortBy}

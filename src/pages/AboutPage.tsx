@@ -2,7 +2,7 @@ import Header from '../components/layout/Header';
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Truck, Star, Users, Award, Heart } from 'lucide-react';
+import { Shield, Truck, Star, Users, Award, Heart, ShoppingBag } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const AboutPage: React.FC = () => {
@@ -63,9 +63,9 @@ const AboutPage: React.FC = () => {
   return (
      <>
       <Header title='About PerfumePlug Ghana' descripton='Your trusted partner for authentic luxury fragrances at affordable prices. Discover the story behind Ghanas leading perfume destination..'/>
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95">
         {/* Our Story Section */}
-        <section className="py-32">
+        <section className="py-16 md:py-32">
           <div className="px-6 sm:px-6 lg:px-32">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <motion.div
@@ -74,8 +74,8 @@ const AboutPage: React.FC = () => {
                 transition={{ duration: 0.8 }}
                 viewport={{ once: true }}
               >
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Our Story</h2>
-                <div className="space-y-4 text-lg text-gray-600">
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-200 mb-6">Our Story</h2>
+                <div className="space-y-4 text-sm md:text-lg text-gray-300">
                   <p>
                     PerfumePlug Ghana was born from a simple yet powerful vision: to make luxury fragrances 
                     accessible to everyone in Ghana without compromising on authenticity or quality. Founded in 2020, 
@@ -116,7 +116,7 @@ const AboutPage: React.FC = () => {
         </section>
 
         {/* Mission Section */}
-        <section className="bg-gray-50 py-32">
+        <section className="bg-gradient-to-r from-black/80 to-yellow-700/70 py-16 md:py-32">
           <div className="px-6 sm:px-6 lg:px-32">
             <motion.div
               initial={{ opacity: 0, y: 50 }}
@@ -125,8 +125,8 @@ const AboutPage: React.FC = () => {
               viewport={{ once: true }}
               className="md:text-center mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Mission & Vision</h2>
-              <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-200 mb-4">Our Mission & Vision</h2>
+              <p className="text-sm lg:text-lg text-gray-300 max-w-3xl mx-auto">
                 We're committed to transforming the fragrance shopping experience in Ghana
               </p>
             </motion.div>
@@ -137,13 +137,13 @@ const AboutPage: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
                 viewport={{ once: true }}
-                className="bg-white p-8 rounded-2xl shadow-sm"
+                className="bg-black/20 backdrop-blur-lg border border-yellow-600/20 shadow-2x p-8 rounded-2xl shadow-sm"
               >
-                <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-4">
+                <div className="w-16 h-16 bg-black/20 backdrop-blur-l border border-yellow-600/20 rounded-2xl flex items-center justify-center mb-4">
                   <Heart className="h-8 w-8 text-blue-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
-                <p className="text-gray-600 leading-relaxed">
+                <h3 className="text-2xl font-bold text-gray-200 mb-4">Our Mission</h3>
+                <p className="text-gray-300 leading-relaxed">
                   To provide authentic, high-quality perfumes at affordable prices, making luxury 
                   fragrances accessible to every Ghanaian. We're dedicated to ensuring that everyone 
                   can experience the confidence and joy that comes from wearing their perfect scent.
@@ -155,13 +155,13 @@ const AboutPage: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
                 viewport={{ once: true }}
-                className="bg-white p-8 rounded-2xl shadow-sm"
+                className="bg-black/20 backdrop-blur-lg border border-yellow-600/20 shadow-2x p-8 rounded-2xl shadow-sm"
               >
-                <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-4">
+                <div className="w-16 h-16 bg-black/20 backdrop-blur-l border border-yellow-600/20 rounded-2xl flex items-center justify-center mb-4">
                   <Award className="h-8 w-8 text-purple-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Vision</h3>
-                <p className="text-gray-600 leading-relaxed">
+                <h3 className="text-2xl font-bold text-gray-200 mb-4">Our Vision</h3>
+                <p className="text-gray-300 leading-relaxed">
                   To become Ghana's most trusted fragrance destination, known for exceptional quality, 
                   unparalleled customer service, and a curated collection that celebrates both 
                   international luxury and African elegance in scent craftsmanship.
@@ -172,7 +172,7 @@ const AboutPage: React.FC = () => {
         </section>
 
         {/* Why Choose Us Section */}
-        <section className="py-32">
+        <section className="py-16 md:py-32">
           <div className="px-6 sm:px-6 lg:px-32">
             <motion.div
               initial={{ opacity: 0, y: 50 }}
@@ -181,8 +181,8 @@ const AboutPage: React.FC = () => {
               viewport={{ once: true }}
               className="md:text-center mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why Choose PerfumePlug GH?</h2>
-              <p className="text-lg md:text-xl text-gray-600">Discover what sets us apart in the world of fragrances</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-200 mb-4">Why Choose PerfumePlug GH?</h2>
+              <p className="text-sm lg:text-lg text-gray-300">Discover what sets us apart in the world of fragrances</p>
             </motion.div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
@@ -195,11 +195,11 @@ const AboutPage: React.FC = () => {
                   viewport={{ once: true }}
                   className="text-center"
                 >
-                  <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <value.icon className="h-8 w-8 text-blue-600" />
+                  <div className="w-16 h-16 bg-black/20 backdrop-blur-lg border border-yellow-600/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <value.icon className="h-8 w-8 text-yellow-500" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{value.title}</h3>
-                  <p className="text-gray-600">{value.description}</p>
+                  <h3 className="text-xl font-semibold text-gray-200 mb-2">{value.title}</h3>
+                  <p className="text-gray-300">{value.description}</p>
                 </motion.div>
               ))}
             </div>
@@ -210,12 +210,12 @@ const AboutPage: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white text-center"
+              className="bg-black/20 backdrop-blur-lg border border-yellow-600/20 rounded-2xl p-8 text-white text-center"
             >
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                 {stats.map((stat, index) => (
                   <div key={index}>
-                    <div className="text-3xl md:text-4xl font-bold mb-2">{stat.number}</div>
+                    <div className="text-3xl md:text-4xl font-bold text-yellow-500 shadow-2xl mb-2">{stat.number}</div>
                     <div className="text-blue-100">{stat.label}</div>
                   </div>
                 ))}
@@ -225,7 +225,7 @@ const AboutPage: React.FC = () => {
         </section>
 
         {/* Team Section */}
-        <section className="bg-gray-50 py-32">
+        <section className="bg-gradient-to-r from-black/90 to-yellow-700/90 py-16 md:py-32">
           <div className="px-6 sm:px-6 lg:px-32">
             <motion.div
               initial={{ opacity: 0, y: 50 }}
@@ -234,8 +234,8 @@ const AboutPage: React.FC = () => {
               viewport={{ once: true }}
               className="md:text-center mb-12"
             >
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">Meet Our Team</h2>
-              <p className="text-xl text-gray-600">The passionate people behind PerfumePlug Ghana</p>
+              <h2 className="text-2xl lg:text-3xl font-bold text-gray-200 mb-4">Meet Our Team</h2>
+              <p className="text-sm lg:text-lg text-gray-300">The passionate people behind PerfumePlug Ghana</p>
             </motion.div>
 
             <div className="grid md:grid-cols-3 gap-8">
@@ -251,11 +251,11 @@ const AboutPage: React.FC = () => {
                   <img
                     src={member.image}
                     alt={member.name}
-                    className="w-32 h-32 rounded-full object-cover mx-auto mb-4 shadow-lg"
+                    className="w-32 h-32 rounded-full object-cover mx-auto mb-4 border-2 border-yellow-400/20"
                   />
-                  <h3 className="text-xl font-semibold text-gray-900 mb-1">{member.name}</h3>
-                  <p className="text-blue-600 font-medium mb-3">{member.role}</p>
-                  <p className="text-gray-600">{member.description}</p>
+                  <h3 className="text-xl font-semibold text-gray-200 mb-1">{member.name}</h3>
+                  <p className="text-yellow-600 font-medium mb-3">{member.role}</p>
+                  <p className="text-gray-300 text-sm">{member.description}</p>
                 </motion.div>
               ))}
             </div>
@@ -263,24 +263,25 @@ const AboutPage: React.FC = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="py-32">
+        <section className="py-16 md:py-32">
           <div className="px-6 sm:px-6 lg:px-32 text-center">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-12 text-white"
+              className="bg-black/20 backdrop-blur-lg border border-yellow-600/20 rounded-2xl p-12 text-white"
             >
               <h2 className="text-3xl font-bold mb-4">Ready to Find Your Signature Scent?</h2>
-              <p className="text-xl text-blue-100 mb-8">
+              <p className="text-lg text-blue-100 mb-8">
                 Join thousands of satisfied customers who trust us for their fragrance needs
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to="/shop" className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
+                <Link to="/shop" className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3 min-w-[160px]">
+                  <ShoppingBag size={20}/>
                   Shop Collection
                 </Link>
-                <Link to="/contact" className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+                <Link to="/contact" className="border-2 border-yellow-600/20 rounded-2xl text-yellow-500 px-8 py-3 font-semibold hover:bg-yellow-800/40 hover:text-white transition-colors">
                   Contact Us
                 </Link>
               </div>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Package, Heart, MapPin, CreditCard, LogOut, Edit, Plus, Trash2} from 'lucide-react';
 import { useAuth } from '../hooks/useAuth'
+import { useCart } from '../context/CartContext';
 import Header from '../components/layout/Header';
 
 interface Order {
@@ -40,6 +41,7 @@ const AccountPage: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<'profile' | 'orders' | 'wishlist' | 'addresses' | 'payments'>('profile');
   const [isEditing, setIsEditing] = useState(false);
+  const {wishlist} = useCart();
 
   // Mock data
   const orders: Order[] = [
@@ -112,24 +114,24 @@ const AccountPage: React.FC = () => {
     }
   ];
 
-  const wishlistItems = [
-    {
-      id: '1',
-      name: 'La Vie Est Belle Eau de Parfum',
-      brand: 'Lancôme',
-      price: 430.00,
-      image: '/1.jpg',
-      inStock: true
-    },
-    {
-      id: '2',
-      name: 'Acqua di Gio Pour Homme',
-      brand: 'Giorgio Armani',
-      price: 350.00,
-      image: '/1.jpg',
-      inStock: true
-    }
-  ];
+  // const wishlistItems = [
+  //   {
+  //     id: '1',
+  //     name: 'La Vie Est Belle Eau de Parfum',
+  //     brand: 'Lancôme',
+  //     price: 430.00,
+  //     image: '/1.jpg',
+  //     inStock: true
+  //   },
+  //   {
+  //     id: '2',
+  //     name: 'Acqua di Gio Pour Homme',
+  //     brand: 'Giorgio Armani',
+  //     price: 350.00,
+  //     image: '/1.jpg',
+  //     inStock: true
+  //   }
+  // ];
 
   const [profileData, setProfileData] = useState({
     firstName: user?.firstName || '',
@@ -422,10 +424,10 @@ const AccountPage: React.FC = () => {
                     </div>
                     
                     <div className="grid md:grid-cols-2 gap-6 p-6">
-                      {wishlistItems.map((item) => (
+                      {wishlist.map((item) => (
                         <div key={item.id} className="flex flex-col md:flex-row items-start gap-4 p-2 border border-gray-200 rounded-lg">
                           <div className='flex items-start justify-between gap-2'>
-                            <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded" />
+                            <img src={item.images[0]} alt={item.name} className="w-16 h-16 object-cover rounded" />
                             <div className="flex-1">
                               <div className="text-xs md:text-sm font-semibold">{item.name}</div>
                               <div className="text-xs md:text-sm text-gray-600">{item.brand}</div>

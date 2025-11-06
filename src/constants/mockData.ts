@@ -9,7 +9,7 @@ const productImages = [
 export const products: Product[] = [
   {
     id: '1',
-    name: 'Bleu de Chanel Eau de Parfum',
+    name: 'Youthful Body Splash',
     brand: 'Chanel',
     price: 450.00,
     originalPrice: 520.00,
@@ -177,7 +177,7 @@ export const products: Product[] = [
   },
   {
     id: '9',
-    name: 'La Vie Est Belle Eau de Parfum',
+    name: 'La Vie Est Belle Eau',
     brand: 'Lancôme',
     price: 430.00,
     originalPrice: 490.00,
@@ -198,7 +198,7 @@ export const products: Product[] = [
   },
   {
     id: '10',
-    name: 'Boss Bottled Eau de Toilette',
+    name: 'Boss Bottled Eau de',
     brand: 'Hugo Boss',
     price: 280.00,
     originalPrice: 330.00,
@@ -219,7 +219,7 @@ export const products: Product[] = [
   },
   {
     id: '11',
-    name: 'Chance Eau Tendre Eau de Toilette',
+    name: 'Chance Eau Tendre Eau de',
     brand: 'Chanel',
     price: 470.00,
     originalPrice: 530.00,

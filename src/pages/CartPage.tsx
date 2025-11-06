@@ -10,18 +10,18 @@ const CartPage: React.FC = () => {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95 flex items-center justify-center">
         <div className="max-w-md mx-auto text-center">
-          <div className="bg-white rounded-2xl shadow-sm p-8">
-            <ShoppingBag className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Your cart is empty</h1>
-            <p className="text-gray-600 mb-6">Looks like you haven't added any items to your cart yet.</p>
+          <div className="bg-black/20 backdrop-blur-lg border border-yellow-500/20 rounded-2xl shadow-sm p-8">
+            <ShoppingBag className="h-16 w-16 text-yellow-400 mx-auto mb-4" />
+            <h1 className="text-2xl font-bold text-gray-300 mb-2">Your cart is empty</h1>
+            <p className="text-gray-300 mb-6">Looks like you haven't added any items to your cart yet.</p>
             <Link
               to="/shop"
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors inline-flex items-center"
+              className="text-sm group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 justify-center gap-2 inline-flex items-center"
             >
               Start Shopping
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
@@ -32,12 +32,12 @@ const CartPage: React.FC = () => {
   return (
     <>
     <Header title='Cart Page' descripton="Check listed cart item"/>
-    <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto  px-6 sm:px-6 lg:px-32 py-20">
+    <div className="min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95">
+      <div className="mx-auto px-6 sm:px-6 lg:px-32 py-20">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Shopping Cart</h1>
-          <p className="text-gray-600 mt-2">{items.length} item(s) in your cart</p>
+          <h1 className="text-3xl font-bold text-gray-200">Shopping Cart</h1>
+          <p className="text-gray-300 mt-2">{items.length} item(s) in your cart</p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -46,13 +46,14 @@ const CartPage: React.FC = () => {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl shadow-sm"
+              className="bg-black/20 backdrop-blur-lg border border-yellow-600/20 rounded-2xl shadow-sm"
             >
               {/* Cart Header */}
-              <div className="border-b border-gray-200 p-6">
+              <div className="border-b border-yellow-600/20 px-6 py-3">
                 <div className="flex justify-between items-center">
-                  <h2 className="text-lg font-semibold">Cart Items</h2>
+                  <h2 className="text-lg font-semibold text-yellow-400">Cart Items</h2>
                   <button
+                   title='Clear cart'
                     onClick={clearCart}
                     className="text-red-600 hover:text-red-700 text-sm font-medium"
                   >
@@ -62,7 +63,7 @@ const CartPage: React.FC = () => {
               </div>
 
               {/* Cart Items List */}
-              <div className="divide-y divide-gray-200">
+              <div className="divide-y divide-yellow-600/20">
                 {items.map((item, index) => (
                   <motion.div
                     key={`${item.product.id}-${index}`}
@@ -85,30 +86,30 @@ const CartPage: React.FC = () => {
                       <div className="flex-1 min-w-0">
                         <Link
                           to={`/product/${item.product.id}`}
-                          className="text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+                          className="text-sm font-semibold text-gray-300 hover:text-blue-600 transition-colors"
                         >
                           {item.product.name}
                         </Link>
-                        <p className="text-sm text-gray-600 mt-1">{item.product.brand}</p>
-                        <p className="text-sm text-gray-600">{item.product.size}</p>
+                        <p className="text-xs text-gray-300 mt-1">{item.product.brand}</p>
+                        <p className="text-xs text-gray-300">{item.product.size}</p>
                         
                         {/* Quantity Controls */}
-                        <div className="flex items-center space-x-3 mt-3">
-                          <span className="text-sm text-gray-600">Quantity:</span>
+                        <div className="flex items-center space-x-3 mt-1">
+                          <span className="text-sm text-gray-300">Quantity:</span>
                           <div className="flex items-center space-x-2">
                             <button
                               title="Reduce"
                               onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
                               disabled={item.quantity <= 1}
-                              className="w-8 h-8 border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="w-8 h-8 bg-black/20 backdrop-blur-lg border border-yellow-600/20 text-yellow-400 rounded-lg flex items-center justify-center hover:bg-yellow-700/20 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               <Minus className="h-3 w-3" />
                             </button>
-                            <span className="w-8 text-center font-semibold">{item.quantity}</span>
+                            <span className="w-8 text-center font-semibold text-yellow-400">{item.quantity}</span>
                             <button
                               title="Add"
                               onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                              className="w-8 h-8 border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50"
+                              className="w-8 h-8 bg-black/20 backdrop-blur-lg border border-yellow-600/20 text-yellow-400 rounded-lg flex items-center justify-center hover:bg-yellow-700/20"
                             >
                               <Plus className="h-3 w-3" />
                             </button>
@@ -118,12 +119,12 @@ const CartPage: React.FC = () => {
 
                       {/* Price and Remove */}
                       <div className="flex flex-col items-end space-y-2">
-                        <span className="text-lg font-semibold text-gray-900">
+                        <span className="text-lg font-semibold text-gray-300">
                           ₵{(item.product.price * item.quantity).toFixed(2)}
                         </span>
                         <button
                           onClick={() => removeFromCart(item.product.id)}
-                          className="text-red-600 hover:text-red-700 p-1 rounded transition-colors"
+                          className="p-2 bg-black/20 backdrop-blur-lg border border-yellow-400/20 text-red-600 hover:text-red-700 p-1 rounded transition-colors"
                           title="Remove item"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -142,10 +143,10 @@ const CartPage: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-white rounded-2xl shadow-sm sticky top-24"
+              className="bg-black/20 backdrop-blur-lg border border-yellow-500/20 rounded-2xl shadow-sm sticky top-24"
             >
-              <div className="p-6">
-                <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
+              <div className="p-6 text-white">
+                <h2 className="text-lg font-semibold mb-4 text-yellow-400">Order Summary</h2>
                 
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
@@ -171,22 +172,22 @@ const CartPage: React.FC = () => {
                 <div className="mt-6 space-y-3">
                   <Link
                     to="/checkout"
-                    className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center"
+                    className="w-full text-sm group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3 "
                   >
                     Proceed to Checkout
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                   <Link
                     to="/shop"
-                    className="w-full border border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors text-center block"
+                    className="w-full border-2 border-yellow-600/20 rounded-lg text-sm text-center text-yellow-500 px-8 py-3 font-semibold hover:bg-yellow-800/40 hover:text-white transition-colors block"
                   >
                     Continue Shopping
                   </Link>
                 </div>
 
                 {/* Security Badges */}
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <div className="flex items-center justify-center space-x-4 text-gray-500">
+                <div className="mt-6 pt-6 border-t border-yellow-600/20">
+                  <div className="flex items-center justify-center space-x-4 text-gray-300">
                     <div className="text-center">
                       <div className="text-2xl">🔒</div>
                       <div className="text-xs mt-1">Secure Checkout</div>

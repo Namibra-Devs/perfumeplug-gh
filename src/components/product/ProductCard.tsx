@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Star, Heart, ShoppingCart } from 'lucide-react';
+import { Star, Heart, ShoppingCart, HeartOff } from 'lucide-react';
 import { Product } from '../../types';
 import { useCart } from '../../context/CartContext';
 
@@ -11,7 +11,7 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' }) => {
-  const { addToCart } = useCart();
+  const { addToCart, addToWishlist, removeFromWishlist, isInWishlist  } = useCart();
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -68,7 +68,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
                   </div>
                   <button
                     onClick={handleAddToCart}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center"
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors flex items-center"
                   >
                     <ShoppingCart className="h-4 w-4 mr-2" />
                     Add to Cart
@@ -85,24 +85,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
   // Grid View (original implementation)
   return (
     <motion.div
-      whileHover={{ y: -5 }}
       transition={{ duration: 0.3 }}
-      className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100"
+      className="min-h-[420px] group rounded-xl shadow-sm hover:shadow-xl transition-all duration-300"
     >
-      <Link to={`/product/${product.id}`} className="block">
+      <div className="block">
         <div className="relative overflow-hidden rounded-t-xl">
           <motion.img
             whileHover={{ scale: 1.1 }}
             transition={{ duration: 0.3 }}
             src={product.images[0]}
             alt={product.name}
-            className="w-full h-64 object-cover"
+            className="w-full h-56 object-cover"
           />
           {product.originalPrice && (
             <motion.span 
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold"
+              className="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold"
             >
               Save ₵{(product.originalPrice - product.price).toFixed(2)}
             </motion.span>
@@ -110,15 +109,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
           <motion.button 
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
+            onClick={() => isInWishlist(product.id)
+                  ? removeFromWishlist(product.id)
+                  : addToWishlist(product)}
             className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-white transition-colors"
           >
-            <Heart className="h-4 w-4 text-gray-600 hover:text-red-500" />
+             {isInWishlist(product.id) ? <Heart size={20} className='text-red-500 '/> : <HeartOff className='text-gray-400' />}
           </motion.button>
         </div>
         
-        <div className="p-6">
+        <Link to={`/product/${product.id}`}>
+        <div className="p-4 bg-white rounded-b-xl">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">
+            <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">
               {product.brand}
             </span>
             <div className="flex items-center space-x-1">
@@ -127,31 +130,32 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
             </div>
           </div>
           
-          <h3 className="font-semibold text-gray-900 mb-3 line-clamp-2 text-lg leading-tight">
+          <Link to={`/product/${product.id}`} className="font-semibold text-gray-900 mb-3 line-clamp-2 text-sm leading-tight">
             {product.name}
-          </h3>
+          </Link>
           
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
-              <span className="text-xl font-bold text-gray-900">₵{product.price.toFixed(2)}</span>
+              <span className="text-sm font-bold text-gray-900">₵{product.price.toFixed(2)}</span>
               {product.originalPrice && (
                 <span className="text-sm text-gray-500 line-through">₵{product.originalPrice.toFixed(2)}</span>
               )}
             </div>
-            <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">{product.size}</span>
+            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">{product.size}</span>
           </div>
           
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={handleAddToCart}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center"
+            className="w-full bg-gradient-to-r from-black to-yellow-700 text-white py-3 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center"
           >
             <ShoppingCart className="h-4 w-4 mr-2" />
             Add to Cart
           </motion.button>
         </div>
-      </Link>
+        </Link>
+      </div>
     </motion.div>
   );
 };
