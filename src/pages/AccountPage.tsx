@@ -153,18 +153,18 @@ const AccountPage: React.FC = () => {
   return (
     <>
       <Header title='My Account' descripton='Account details'/>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95">
         <div className="px-6 sm:px-6 lg:px-32 py-20">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-gray-900">My Account</h1>
-            <p className="text-sm text-gray-600">Welcome back, {user.firstName}!</p>
+            <h1 className="text-2xl font-bold text-purple-600">My Account</h1>
+            <p className="text-sm text-gray-300">Welcome back, {user.firstName}!</p>
           </div>
 
-          <div className="grid lg:grid-cols-4 gap-8">
+          <div className="grid lg:grid-cols-3 gap-8">
             {/* Sidebar */}
-            <div className="lg:col-span-1">
-              <div className="bg-white rounded-2xl shadow-sm p-6 sticky top-24">
+            <div className="">
+              <div className="bg-black/20 backdrop-blur-lg border border-yellow-500/20 rounded-2xl shadow-sm p-6 sticky top-24">
                 {/* User Info */}
                 <div className="flex items-center gap-2 mb-6">
                   <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
@@ -173,8 +173,8 @@ const AccountPage: React.FC = () => {
                     </span>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900">{user.firstName} {user.lastName}</p>
-                    <p className="text-sm text-gray-600">{user.email}</p>
+                    <p className="font-semibold text-purple-600">{user.firstName} {user.lastName}</p>
+                    <p className="text-sm text-gray-300">{user.email}</p>
                   </div>
                 </div>
                 
@@ -192,8 +192,8 @@ const AccountPage: React.FC = () => {
                       onClick={() => setActiveTab(item.id)}
                       className={`w-full text-left text-sm px-3 py-3 rounded-lg transition-colors flex items-center space-x-3 ${
                         activeTab === item.id
-                          ? 'bg-blue-50 text-blue-600 font-medium'
-                          : 'text-gray-600 hover:bg-gray-50'
+                          ? 'bg-yellow-600/20 text-purple-600 font-medium'
+                          : 'text-gray-50 hover:bg-yellow-600/10'
                       }`}
                     >
                       <item.icon className="h-4 w-4" />
@@ -213,7 +213,7 @@ const AccountPage: React.FC = () => {
             </div>
 
             {/* Main Content */}
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-2">
               <AnimatePresence mode="wait">
                 {/* Profile Information */}
                 {activeTab === 'profile' && (
@@ -222,14 +222,14 @@ const AccountPage: React.FC = () => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
-                    className="bg-white rounded-2xl shadow-sm p-6"
+                    className="bg-black/20 backdrop-blur-lg border border-yellow-500/20 rounded-2xl shadow-sm p-6"
                   >
                     <div className="flex justify-between items-center mb-6">
-                      <h2 className="text-xl font-semibold">Profile Information</h2>
+                      <h2 className="text-xl font-semibold text-purple-600">Profile Information</h2>
                       {!isEditing && (
                         <button
                           onClick={() => setIsEditing(true)}
-                          className="flex items-center space-x-2 text-blue-600 hover:text-blue-700"
+                          className="flex items-center space-x-2 text-sm text-blue-600 hover:text-blue-700"
                         >
                           <Edit className="h-4 w-4" />
                           <span>Edit Profile</span>
@@ -241,7 +241,7 @@ const AccountPage: React.FC = () => {
                       <form onSubmit={handleProfileUpdate} className="space-y-4">
                         <div className="grid md:grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
                               First Name *
                             </label>
                             <input
@@ -249,12 +249,12 @@ const AccountPage: React.FC = () => {
                               type="text"
                               value={profileData.firstName}
                               onChange={(e) => setProfileData(prev => ({ ...prev, firstName: e.target.value }))}
-                              className="w-full px-3 py-1.5 border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                               required
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
                               Last Name *
                             </label>
                             <input
@@ -262,35 +262,38 @@ const AccountPage: React.FC = () => {
                               type="text"
                               value={profileData.lastName}
                               onChange={(e) => setProfileData(prev => ({ ...prev, lastName: e.target.value }))}
-                              className="w-full px-3 py-1.5 border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                               required
                             />
                           </div>
                         </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Email Address *
-                          </label>
-                          <input
-                          title='Email'
-                            type="email"
-                            value={profileData.email}
-                            onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
-                            className="w-full px-3 py-1.5 border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Phone Number
-                          </label>
-                          <input
-                            type="tel"
-                            value={profileData.phone}
-                            onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
-                            className="w-full px-3 py-1.5 border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder="+233 XX XXX XXXX"
-                          />
+
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                              Email Address *
+                            </label>
+                            <input
+                            title='Email'
+                              type="email"
+                              value={profileData.email}
+                              onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
+                              className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                              Phone Number
+                            </label>
+                            <input
+                              type="tel"
+                              value={profileData.phone}
+                              onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
+                              className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                              placeholder="+233 XX XXX XXXX"
+                            />
+                          </div>
                         </div>
                         <div className="flex space-x-3 pt-4">
                           <button
@@ -302,7 +305,7 @@ const AccountPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => setIsEditing(false)}
-                            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-50 transition-colors"
+                            className="px-6 py-2 border-2 border-yellow-600/20 text-sm text-center text-yellow-500 hover:bg-yellow-800/40 hover:text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors"
                           >
                             Cancel
                           </button>
@@ -311,29 +314,29 @@ const AccountPage: React.FC = () => {
                     ) : (
                       <div className="grid md:grid-cols-2 gap-6">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            First Name
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            First Name:
                           </label>
-                          <p className="text-gray-900">{profileData.firstName}</p>
+                          <p className="text-gray-300">{profileData.firstName}</p>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Last Name
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Last Name:
                           </label>
-                          <p className="text-gray-900">{profileData.lastName}</p>
+                          <p className="text-gray-300">{profileData.lastName}</p>
                         </div>
                         <div className="md:col-span-2">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Email Address
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Email Address:
                           </label>
-                          <p className="text-gray-900">{profileData.email}</p>
+                          <p className="text-gray-300">{profileData.email}</p>
                         </div>
                         {profileData.phone && (
                           <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Phone Number
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                              Phone Number:
                             </label>
-                            <p className="text-gray-900">{profileData.phone}</p>
+                            <p className="text-gray-300">{profileData.phone}</p>
                           </div>
                         )}
                       </div>
@@ -348,27 +351,27 @@ const AccountPage: React.FC = () => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
-                    className="bg-white rounded-2xl shadow-sm"
+                    className="bg-black/20 backdrop-blur-lg border border-yellow-500/20 rounded-2xl shadow-sm"
                   >
-                    <div className="p-6 border-b">
-                      <h2 className="text-xl font-semibold">Order History</h2>
-                      <p className="text-gray-600 mt-1">View and track your orders</p>
+                    <div className="p-6 border-b border-yellow-600/20">
+                      <h2 className="text-xl font-semibold text-purple-600">Order History</h2>
+                      <p className="text-gray-300 mt-1">View and track your orders</p>
                     </div>
                     
-                    <div className="divide-y divide-gray-200">
+                    <div className="divide-y divide-yellow-600/20">
                       {orders.map((order) => (
                         <div key={order.id} className="p-6">
                           <div className="flex justify-between items-start mb-4">
                             <div>
-                              <div className="font-semibold">Order #{order.id}</div>
-                              <div className="text-sm text-gray-600">Placed on {new Date(order.date).toLocaleDateString()}</div>
+                              <div className="font-semibold text-purple-600">Order #{order.id}</div>
+                              <div className="text-sm text-gray-300">Placed on {new Date(order.date).toLocaleDateString()}</div>
                             </div>
                             <div className="text-right">
-                              <div className="font-semibold">₵{order.total.toFixed(2)}</div>
+                              <div className="font-semibold text-white">₵{order.total.toFixed(2)}</div>
                               <div className={`text-sm capitalize ${
-                                order.status === 'delivered' ? 'text-green-600' :
-                                order.status === 'shipped' ? 'text-blue-600' :
-                                order.status === 'confirmed' ? 'text-orange-600' : 'text-gray-600'
+                                order.status === 'delivered' ? 'text-green-400 rounded-full px-2 py-1 text-xs bg-green-700/20 border border-green-600/40' :
+                                order.status === 'shipped' ? 'text-blue-400 rounded-full px-2 py-1 text-xs bg-blue-700/20 border border-blue-600/40' :
+                                order.status === 'confirmed' ? 'text-orange-400 rounded-full px-2 py-1 text-xs bg-orange-700/20 border border-orange-600/40' : 'text-gray-600'
                               }`}>
                                 {order.status}
                               </div>
@@ -380,17 +383,17 @@ const AccountPage: React.FC = () => {
                               <div key={index} className="flex items-center space-x-3">
                                 <img src={item.image} alt={item.name} className="w-12 h-12 object-cover rounded" />
                                 <div className="flex-1">
-                                  <div className="font-medium text-sm leading-tight">{item.name}</div>
-                                  <div className="text-sm text-gray-600">Qty: {item.quantity}</div>
+                                  <div className="font-medium text-sm leading-tight text-white">{item.name}</div>
+                                  <div className="text-sm text-gray-300">Qty: {item.quantity}</div>
                                 </div>
-                                <div className="text-sm font-semibold">₵{item.price.toFixed(2)}</div>
+                                <div className="text-sm font-semibold text-white">₵{item.price.toFixed(2)}</div>
                               </div>
                             ))}
                           </div>
                           
                           <div className="flex justify-between items-center mt-4">
                             {order.trackingNumber && (
-                              <div className="text-sm text-gray-600">
+                              <div className="text-sm text-yellow-400">
                                 Tracking: <span className="font-mono">{order.trackingNumber}</span>
                               </div>
                             )}
@@ -416,32 +419,32 @@ const AccountPage: React.FC = () => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
-                    className="bg-white rounded-2xl shadow-sm"
+                    className="bg-black/20 backdrop-blur-lg border border-yellow-500/20 rounded-2xl shadow-sm"
                   >
-                    <div className="p-6 border-b">
-                      <h2 className="text-xl font-semibold">Wishlist</h2>
-                      <p className="text-gray-600 mt-1">Your saved items</p>
+                    <div className="p-6 border-b border-yellow-600/20">
+                      <h2 className="text-xl font-semibold text-purple-600">Wishlist</h2>
+                      <p className="text-gray-300 mt-1">Your saved items</p>
                     </div>
                     
                     <div className="grid md:grid-cols-2 gap-6 p-6">
                       {wishlist.map((item) => (
-                        <div key={item.id} className="flex flex-col md:flex-row items-start gap-4 p-2 border border-gray-200 rounded-lg">
+                        <div key={item.id} className="flex flex-col md:flex-row items-start gap-4 p-2 bg-black/20 rounded-lg">
                           <div className='flex items-start justify-between gap-2'>
                             <img src={item.images[0]} alt={item.name} className="w-16 h-16 object-cover rounded" />
                             <div className="flex-1">
-                              <div className="text-xs md:text-sm font-semibold">{item.name}</div>
-                              <div className="text-xs md:text-sm text-gray-600">{item.brand}</div>
+                              <div className="text-xs md:text-sm font-semibold text-white">{item.name}</div>
+                              <div className="text-xs md:text-sm text-gray-300">{item.brand}</div>
                               <div className="text-xs md:text-sm font-semibold text-blue-600">₵{item.price.toFixed(2)}</div>
-                              <div className={`text-xs ${item.inStock ? 'text-green-600' : 'text-red-600'}`}>
+                              <div className={`text-xs w-fit ${item.inStock ? 'text-green-400 rounded-full px-2 py-1 text-xs bg-green-700/20 border border-green-600/40' : 'text-red-400 rounded-full px-2 py-1 text-xs bg-red-700/20 border border-red-600/40'}`}>
                                 {item.inStock ? 'In Stock' : 'Out of Stock'}
                               </div>
                             </div>
                           </div>
                           <div className="flex items-center gap-2 w-full md:w-auto">
-                            <button title="Delete item" className="border rounded px-3 py-2 text-gray-400 hover:text-red-600 transition-colors">
+                            <button title="Delete item" className="w-10 h-10 bg-black/20 backdrop-blur-lg border border-yellow-600/20 text-red-600 rounded-lg flex items-center justify-center  hover:bg-yellow-700/20 hover:text-red-500 transition-colors">
                               <Trash2 className="h-4 w-4" />
                             </button>
-                            <button title='Add to cart' className="bg-blue-600 border border-blue-600 text-white px-3 py-2 rounded text-sm md:text-xs hover:bg-blue-700 transition-colors">
+                            <button title='Add to cart' className="w-10 h-10 bg-black/20 backdrop-blur-lg border border-yellow-600/20 rounded-lg flex items-center justify-center text-white text-sm md:text-xs hover:bg-yellow-700/20 transition-colors">
                               <Plus className="h-4 w-4"/>
                             </button>
                           </div>
@@ -458,7 +461,7 @@ const AccountPage: React.FC = () => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
-                    className="bg-white rounded-2xl shadow-sm"
+                    className="bg-black/20 backdrop-blur-lg border border-yellow-500/20 rounded-2xl shadow-sm"
                   >
                     <div className="p-6 border-b flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                       <div>
@@ -509,7 +512,7 @@ const AccountPage: React.FC = () => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
-                    className="bg-white rounded-2xl shadow-sm"
+                    className="bg-black/20 backdrop-blur-lg border border-yellow-500/20 rounded-2xl shadow-sm"
                   >
                     <div className="p-6 border-b flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                       <div>
@@ -590,14 +593,15 @@ const LoginRegisterSection: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="max-w-md w-full p-6">
-        <div className="bg-white rounded-2xl shadow-sm px-4 py-6">
+    <div className="relative min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95 flex items-center justify-center">
+      <div className="max-w-md w-full p-6 relative z-50">
+        <div className="bg-black/10 backdrop-blur-lg border border-yellow-500/20 rounded-2xl shadow-xl px-4 py-6">
           <div className="text-center mb-6">
-            <h1 className="text-xl font-bold text-gray-900">
+            <div className='flex items-center justify-center pb-4 '><img src="/favicon.png" alt="PP" className='w-28 ' /></div>
+            <h1 className="text-xl font-bold text-purple-600">
               {isLogin ? 'Sign In to Your Account' : 'Create New Account'}
             </h1>
-            <p className="text-gray-600 mt-2 text-sm">
+            <p className="text-gray-300 mt-2 text-sm">
               {isLogin ? 'Enter your credentials to access your account' : 'Join us to start shopping'}
             </p>
           </div>
@@ -606,7 +610,7 @@ const LoginRegisterSection: React.FC = () => {
             {!isLogin && (
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-yellow-400 mb-1">
                     First Name *
                   </label>
                   <input
@@ -615,11 +619,11 @@ const LoginRegisterSection: React.FC = () => {
                     required={!isLogin}
                     value={formData.firstName}
                     onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                    className="w-full px-3 py-1.5 border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-yellow-400 mb-1">
                     Last Name *
                   </label>
                   <input
@@ -628,14 +632,14 @@ const LoginRegisterSection: React.FC = () => {
                     required={!isLogin}
                     value={formData.lastName}
                     onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                    className="w-full px-3 py-1.5 border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                   />
                 </div>
               </div>
             )}
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-yellow-400 mb-1">
                 Email Address *
               </label>
               <input
@@ -644,12 +648,12 @@ const LoginRegisterSection: React.FC = () => {
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-3 py-1.5 border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-yellow-400 mb-1">
                 Password *
               </label>
               <input
@@ -658,20 +662,20 @@ const LoginRegisterSection: React.FC = () => {
                 required
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full px-3 py-1.5 border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
               />
             </div>
             
             {!isLogin && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-yellow-400 mb-1">
                   Phone Number (Optional)
                 </label>
                 <input
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-3 py-1.5 border border-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                   placeholder="+233 XX XXX XXXX"
                 />
               </div>
@@ -679,7 +683,7 @@ const LoginRegisterSection: React.FC = () => {
             
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white text-sm py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+              className=" w-full group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 text-sm rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3"
             >
               {isLogin ? 'Sign In' : 'Create Account'}
             </button>
@@ -695,6 +699,8 @@ const LoginRegisterSection: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <div className='inset-0 absolute flex items-center justify-center'><img src="/favicon.png" alt="PP" className='w-28' /></div>
     </div>
   );
 };

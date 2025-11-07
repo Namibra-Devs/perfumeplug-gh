@@ -1,9 +1,11 @@
 import React, { useState, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Filter, Grid, List } from 'lucide-react';
 import ProductCard from '../components/product/ProductCard';
 import { products } from '../constants/mockData';
 import Header from '../components/layout/Header';
+import CustomSelect from '../components/ui/CustomSelect';
 
 const ShopPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -13,6 +15,12 @@ const ShopPage: React.FC = () => {
   const [selectedGenders, setSelectedGenders] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
+  const location = useLocation();
+
+  // Get URL query parameters and react to them
+  const queryParams = new URLSearchParams(location.search);
+  const categoryParam = queryParams.get('category');
+  const searchQuery = queryParams.get('q');
 
   // Categories data
   const categories = [
@@ -25,6 +33,12 @@ const ShopPage: React.FC = () => {
     { id: 'gift-sets', name: 'Gift Sets', count: products.filter(p => p.category === 'gift-sets').length },
   ];
 
+  const sortList = [
+    { value: "newest", label: "Newest" },
+    { value: "best-selling", label: "Best Selling" },
+    { value: "price-low-high", label: "Price: Low to High" },
+    { value: "price-high-low", label: "Price: High to Low" },
+  ]
   // Brands data
   const brands = Array.from(new Set(products.map(p => p.brand))).sort();
 
@@ -54,6 +68,16 @@ const ShopPage: React.FC = () => {
       filtered = filtered.filter(p => selectedGenders.includes(p.gender));
     }
 
+    // Search query filtering
+    if (searchQuery) {
+      filtered = filtered.filter(
+        (p) =>
+          p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.gender.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
     // Sort products
     switch (sortBy) {
       case 'newest':
@@ -73,7 +97,18 @@ const ShopPage: React.FC = () => {
     }
 
     return filtered;
-  }, [selectedCategory, sortBy, priceRange, selectedBrands, selectedGenders]);
+  }, [selectedCategory, selectedBrands, selectedGenders, searchQuery, sortBy, priceRange]);
+
+  //React to search/category from URL
+  // Automatically update category when ?category= is present
+  React.useEffect(() => {
+    if (categoryParam) {
+      setSelectedCategory(categoryParam.toLowerCase());
+    }
+  }, [categoryParam]);
+
+  // Optional: log or debug
+  // React.useEffect(() => console.log({ categoryParam, searchQuery }), [categoryParam, searchQuery]);
 
   const handleBrandToggle = (brand: string) => {
     setSelectedBrands(prev =>
@@ -212,13 +247,22 @@ const ShopPage: React.FC = () => {
               <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div className="flex items-center space-x-4">
                   <span className="text-sm text-gray-200">
-                    <span className='bg-yellow-600/20 text-yellow-400 px-4 py-1.5 rounded-lg border border-yellow-600/20'>{filteredProducts.length}</span> products found
+                    <span className="bg-yellow-600/20 text-yellow-400 px-4 py-1.5 rounded-lg border border-yellow-600/20">
+                      {filteredProducts.length}
+                    </span>{" "}
+                    products found{" "}
+                    {searchQuery && (
+                      <>
+                        for: <span className="text-yellow-300">{searchQuery}</span>
+                      </>
+                    )}
                   </span>
+
                   
                   {/* Mobile Filters Toggle */}
                   <button
                     onClick={() => setShowFilters(!showFilters)}
-                    className="lg:hidden flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    className="lg:hidden flex items-center space-x-2 px-3 py-2 border border-yellow-600/20 text-yellow-400 rounded-lg text-sm"
                   >
                     <Filter className="h-4 w-4" />
                     <span>Filters</span>
@@ -246,18 +290,13 @@ const ShopPage: React.FC = () => {
 
                   {/* Sort By */}
                   <div className="flex items-center space-x-2">
-                    <span className="text-sm text-gray-200">Sort by:</span>
-                    <select
-                      title='Sort By'
+                    <CustomSelect
+                      label=""
                       value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="newest">Newest</option>
-                      <option value="best-selling">Best Selling</option>
-                      <option value="price-low-high">Price: Low to High</option>
-                      <option value="price-high-low">Price: High to Low</option>
-                    </select>
+                      onChange={setSortBy}
+                      options={sortList}
+                      className='px-3 py-2 min-w-48'
+                    />
                   </div>
                 </div>
               </div>
@@ -268,12 +307,12 @@ const ShopPage: React.FC = () => {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="lg:hidden mt-4 p-4 border-t"
+                  className="lg:hidden mt-4 p-4 border-t border-yellow-600/20"
                 >
                   {/* Mobile filters content would go here */}
                   <div className="space-y-4">
                     <div>
-                      <h3 className="font-medium text-gray-900 mb-2">Price Range</h3>
+                      <h3 className="font-medium text-gray-300 text-sm mb-2">Price Range</h3>
                       <input
                         title='Price Range'
                         type="range"
@@ -281,7 +320,7 @@ const ShopPage: React.FC = () => {
                         max="1000"
                         value={priceRange[1]}
                         onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                        className="w-full"
+                        className="w-full bg-yellow-600/20"
                       />
                     </div>
                     {/* Add other mobile filters as needed */}
@@ -315,13 +354,13 @@ const ShopPage: React.FC = () => {
             ) : (
               <div className="text-center py-12">
                 <div className="text-gray-400 mb-4">
-                  <Filter className="h-16 w-16 mx-auto" />
+                  <Filter className="h-16 w-16 mx-auto text-yellow-400" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
-                <p className="text-gray-600 mb-4">Try adjusting your filters to see more results.</p>
+                <h3 className="text-lg font-medium text-gray-200 mb-2">No products found for <span className='text-red-500'>{searchQuery}</span></h3>
+                <p className="text-gray-300 text-sm mb-4">Try adjusting your filters to see more results.</p>
                 <button
                   onClick={clearFilters}
-                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="bg-blue-600 text-white text-sm px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   Clear All Filters
                 </button>

@@ -11,7 +11,7 @@ const CartPage: React.FC = () => {
   if (items.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95 flex items-center justify-center">
-        <div className="max-w-md mx-auto text-center">
+        <div className="max-w-md mx-auto text-center p-4">
           <div className="bg-black/20 backdrop-blur-lg border border-yellow-500/20 rounded-2xl shadow-sm p-8">
             <ShoppingBag className="h-16 w-16 text-yellow-400 mx-auto mb-4" />
             <h1 className="text-2xl font-bold text-gray-300 mb-2">Your cart is empty</h1>

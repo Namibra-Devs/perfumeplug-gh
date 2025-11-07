@@ -25,7 +25,8 @@ const Header: React.FC<HeaderProps> = ({title="", descripton=""}) => {
             <span className="text-xs">Mon-Fri: 8:00 AM - 8:00 PM</span>
           </div>
         </div>
-      </div>   
+      </div>
+         
       <Navbar/>
 
       <div className="flex flex-col md:items-center md:text-center gap-4 py-12 px-6 max-w-4xl mx-auto">

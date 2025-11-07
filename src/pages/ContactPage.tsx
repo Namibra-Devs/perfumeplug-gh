@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, Clock, MessageCircle, Send, CheckCircle } from 'lucide-react';
 import Header from '../components/layout/Header';
+import CustomSelect from '../components/ui/CustomSelect';
 
 const ContactPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,38 @@ const ContactPage: React.FC = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const faqsQuestions = [
+    {
+      question: "What are your shipping options?",
+      answer: "We offer free standard shipping (3-5 days) nationwide and express shipping (1-2 days) for ₵20."
+    },
+    {
+      question: "How can I verify product authenticity?",
+      answer: "All our products come with manufacturer seals and verification codes. We guarantee 100% authenticity."
+    },
+    {
+      question: "Do you offer international shipping?",
+      answer: "Currently, we only ship within Ghana. We're working on expanding to other West African countries."
+    },
+    {
+      question: "What is your return policy?",
+      answer: "We accept returns within 14 days for unopened products. Opened items can be exchanged for store credit."
+    }
+  ]
+
+  const subjectSelect = [
+    { value:"product-inquiry", label: "Product Inquiry" },
+    { value:"order-support", label: "Order Support" },
+    { value: "shipping-info", label: "Shipping Information" },
+    { value: "wholesale", label: "Wholesale Inquiry" },
+  ]
+
+  // <option value="product-inquiry">Product Inquiry</option>
+  // <option value="order-support">Order Support</option>
+  // <option value="shipping-info">Shipping Information</option>
+  // <option value="wholesale">Wholesale Inquiry</option>
+  // <option value="other">Other</option>
 
   const contactMethods = [
     {
@@ -78,10 +111,14 @@ const ContactPage: React.FC = () => {
     }));
   };
 
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
   return (
     <>
     <Header title='Get In Touch' descripton='We are here to help you find your perfect fragrance. Reach out to us through any channel below.'/>
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95">
 
       <div className="px-6 sm:px-6 lg:px-32 py-32">
         <div className="grid lg:grid-cols-3 gap-12">
@@ -93,8 +130,8 @@ const ContactPage: React.FC = () => {
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">Contact Information</h2>
-              <p className="text-gray-600 mb-8">
+              <h2 className="text-3xl font-bold text-purple-600 mb-6">Contact Information</h2>
+              <p className="text-gray-300 mb-8">
                 Have questions about our products or need assistance with your order? 
                 We're always happy to help you find your perfect scent.
               </p>
@@ -114,18 +151,18 @@ const ContactPage: React.FC = () => {
                       <method.icon className="h-6 w-6" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900">{method.title}</h3>
+                      <h3 className="font-semibold text-yellow-400">{method.title}</h3>
                       {method.link ? (
                         <a 
                           href={method.link} 
-                          className="text-gray-700 hover:text-blue-600 transition-colors block"
+                          className="text-gray-50 hover:text-gray-300 transition-colors block"
                         >
                           {method.details}
                         </a>
                       ) : (
-                        <p className="text-gray-700">{method.details}</p>
+                        <p className="text-gray-300">{method.details}</p>
                       )}
-                      <p className="text-sm text-gray-600">{method.subtitle}</p>
+                      <p className="text-sm text-gray-300">{method.subtitle}</p>
                     </div>
                   </motion.div>
                 ))}
@@ -148,7 +185,7 @@ const ContactPage: React.FC = () => {
                   <MessageCircle className="h-5 w-5" />
                   <span>Chat on WhatsApp</span>
                 </a>
-                <p className="text-sm text-gray-600 text-center mt-2">
+                <p className="text-sm text-gray-300 text-center mt-2">
                   Typically replies within minutes
                 </p>
               </motion.div>
@@ -166,9 +203,9 @@ const ContactPage: React.FC = () => {
                 viewport={{ once: true }}
                 className="lg:col-span-2"
               >
-                <div className="bg-white rounded-2xl shadow-sm p-6">
+                <div className="bg-black/20 backdrop-blur-lg border border-yellow-500/20 rounded-2xl shadow-sm p-6">
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold text-gray-900">Send us a Message</h2>
+                    <h2 className="text-2xl font-bold text-purple-600">Send us a Message</h2>
                     {isSubmitted && (
                       <div className="flex items-center space-x-2 text-green-600">
                         <CheckCircle className="h-5 w-5" />
@@ -180,7 +217,7 @@ const ContactPage: React.FC = () => {
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                        <label htmlFor="name" className="block text-sm font-medium text-yellow-500 mb-2">
                           Full Name *
                         </label>
                         <input
@@ -190,12 +227,12 @@ const ContactPage: React.FC = () => {
                           required
                           value={formData.name}
                           onChange={handleChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                           placeholder="Your full name"
                         />
                       </div>
                       <div>
-                        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                        <label htmlFor="phone" className="block text-sm font-medium text-yellow-500 mb-2">
                           Phone Number
                         </label>
                         <input
@@ -204,51 +241,45 @@ const ContactPage: React.FC = () => {
                           name="phone"
                           value={formData.phone}
                           onChange={handleChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                           placeholder="+233 XX XXX XXXX"
                         />
                       </div>
                     </div>
 
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                        Email Address *
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        required
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="your@email.com"
-                      />
+                    <div className='grid md:grid-cols-2 gap-4'>
+                      <div>
+                        <label htmlFor="email" className="block text-sm font-medium text-yellow-500 mb-2">
+                          Email Address *
+                        </label>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          required
+                          value={formData.email}
+                          onChange={handleChange}
+                          className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                          placeholder="your@email.com"
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="subject" className="block text-sm font-medium text-yellow-500 mb-2">
+                          Subject *
+                        </label>
+                        <CustomSelect
+                          label=""
+                          value={formData.subject}
+                          onChange={(value) => handleSelectChange("subject", value)}
+                          options={subjectSelect}
+                          className='w-full px-3 py-2.5'
+                        />
+                      </div>
                     </div>
 
                     <div>
-                      <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
-                        Subject *
-                      </label>
-                      <select
-                        id="subject"
-                        name="subject"
-                        required
-                        value={formData.subject}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      >
-                        <option value="">Select a subject</option>
-                        <option value="product-inquiry">Product Inquiry</option>
-                        <option value="order-support">Order Support</option>
-                        <option value="shipping-info">Shipping Information</option>
-                        <option value="wholesale">Wholesale Inquiry</option>
-                        <option value="other">Other</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label htmlFor="message" className="block text-sm font-medium text-yellow-500 mb-2">
                         Message *
                       </label>
                       <textarea
@@ -258,7 +289,7 @@ const ContactPage: React.FC = () => {
                         rows={5}
                         value={formData.message}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                        className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent resize-none"
                         placeholder="Tell us how we can help you..."
                       />
                     </div>
@@ -297,10 +328,10 @@ const ContactPage: React.FC = () => {
                 viewport={{ once: true }}
                 className="lg:col-span-2"
               >
-                <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+                <div className="bg-black/20 backdrop-blur-lg border border-yellow-500/20 rounded-2xl shadow-sm overflow-hidden">
                   <div className="p-6 border-b">
-                    <h3 className="text-xl font-semibold text-gray-900">Our Location</h3>
-                    <p className="text-gray-600">Visit our store in East Legon, Accra</p>
+                    <h3 className="text-xl font-semibold text-yellow-400">Our Location</h3>
+                    <p className="text-gray-300">Visit our store in East Legon, Accra</p>
                   </div>
                   
                   {/* Google Maps Embed */}
@@ -320,24 +351,24 @@ const ContactPage: React.FC = () => {
                   </div>
                   
                   <div className="p-6">
-                    <div className="flex items-center space-x-3 text-gray-600">
+                    <div className="flex items-center space-x-3 text-gray-300">
                       <MapPin className="h-5 w-5 text-blue-600" />
                       <div>
-                        <p className="font-medium">PerfumePlug Ghana Store</p>
+                        <p className="font-medium text-yellow-400">PerfumePlug Ghana Store</p>
                         <p className="text-sm">East Legon, Accra, Greater Accra Region, Ghana</p>
                       </div>
                     </div>
                     
                     <div className="grid grid-cols-2 gap-4 mt-4">
                       <div>
-                        <p className="text-sm font-medium text-gray-900">Store Hours</p>
-                        <p className="text-sm text-gray-600">Mon-Fri: 8:00 AM - 8:00 PM</p>
-                        <p className="text-sm text-gray-600">Sat-Sun: 9:00 AM - 6:00 PM</p>
+                        <p className="text-sm font-medium text-yellow-400">Store Hours</p>
+                        <p className="text-sm text-gray-300">Mon-Fri: 8:00 AM - 8:00 PM</p>
+                        <p className="text-sm text-gray-300">Sat-Sun: 9:00 AM - 6:00 PM</p>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">Parking</p>
-                        <p className="text-sm text-gray-600">Free parking available</p>
-                        <p className="text-sm text-gray-600">Wheelchair accessible</p>
+                        <p className="text-sm font-medium text-yellow-400">Parking</p>
+                        <p className="text-sm text-gray-300">Free parking available</p>
+                        <p className="text-sm text-gray-300">Wheelchair accessible</p>
                       </div>
                     </div>
                   </div>
@@ -356,32 +387,15 @@ const ContactPage: React.FC = () => {
           className="mt-16"
         >
           <div className="md:text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900">Frequently Asked Questions</h2>
-            <p className="text-gray-600 mt-2">Quick answers to common questions</p>
+            <h2 className="text-3xl font-bold text-purple-600">Frequently Asked Questions</h2>
+            <p className="text-gray-300 mt-2">Quick answers to common questions</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {[
-              {
-                question: "What are your shipping options?",
-                answer: "We offer free standard shipping (3-5 days) nationwide and express shipping (1-2 days) for ₵20."
-              },
-              {
-                question: "How can I verify product authenticity?",
-                answer: "All our products come with manufacturer seals and verification codes. We guarantee 100% authenticity."
-              },
-              {
-                question: "Do you offer international shipping?",
-                answer: "Currently, we only ship within Ghana. We're working on expanding to other West African countries."
-              },
-              {
-                question: "What is your return policy?",
-                answer: "We accept returns within 14 days for unopened products. Opened items can be exchanged for store credit."
-              }
-            ].map((faq, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg shadow-sm">
-                <h3 className="font-semibold text-gray-900 mb-2">{faq.question}</h3>
-                <p className="text-gray-600 text-sm">{faq.answer}</p>
+            {faqsQuestions.map((faq, index) => (
+              <div key={index} className="bg-black/30 backdrop-blur-xl p-6 rounded-lg shadow-sm">
+                <h3 className="font-semibold text-purple-600 mb-2">{faq.question}</h3>
+                <p className="text-gray-200 text-sm">{faq.answer}</p>
               </div>
             ))}
           </div>

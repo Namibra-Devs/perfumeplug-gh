@@ -42,12 +42,20 @@ const HomePage: React.FC = () => {
     { name: "Women's Perfumes", image: '/categories/women.jpg', link: "/shop?category=women", color: "yellow-500" },
     { name: "Unisex Collection", image: '/categories/unisex.jpg', link: "/shop?category=unisex", color: "red-400" }
   ]
+
+  const countDown = [
+    { value: '02', label: 'Days' },
+    { value: '12', label: 'Hours' },
+    { value: '45', label: 'Minutes' },
+    { value: '30', label: 'Seconds' }
+  ]
+
   return (
     <div className="">
       <Navbar/>
 
       {/* 2. Quick Links to Categories */}
-      <section className="bg-gradient-to-r from-black to-yellow-700 mx-auto pt-10 pb-20 px-6 sm:px-6 lg:px-32 relative overflow-hidden">
+      <section className="bg-gradient-to-r from-black to-yellow-700 mx-auto pt-10 pb-20 px-4 sm:px-6 lg:px-32 relative overflow-hidden">
         <div className="glow"></div>
         <div className="mist"></div>
         <div className="mist2"></div>
@@ -115,7 +123,7 @@ const HomePage: React.FC = () => {
 
       {/* 3. Featured Products Carousel */}
       <section className="bg-gradient-to-r from-black/95 to-yellow-700/95 py-16">
-        <div className="mx-auto px-6 sm:px-6 lg:px-32">
+        <div className="mx-auto px-4 sm:px-6 lg:px-32">
           <motion.div
             initial={{ y: 50, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
@@ -153,7 +161,7 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* 4. Modern Limited-time Offers Section */}
-      <section className="bg-gradient-to-r from-black/90 to-yellow-700/95 px-6 sm:px-6 lg:px-32 py-16">
+      <section className="bg-gradient-to-r from-black/90 to-yellow-700/95 px-4 sm:px-6 lg:px-32 py-16">
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
@@ -164,7 +172,7 @@ const HomePage: React.FC = () => {
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-10">
             <div className="absolute inset-0" style={{
-              backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)`,
+              backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.2) 1px, transparent 0)`,
               backgroundSize: '40px 40px'
             }}></div>
           </div>
@@ -175,7 +183,7 @@ const HomePage: React.FC = () => {
 
           <div className="grid lg:grid-cols-2 gap-0 relative z-10">
             {/* Left Content Column */}
-            <div className="p-12 lg:p-16 flex flex-col justify-center">
+            <div className="p-6 lg:p-16 flex flex-col justify-center">
               {/* Modern Badge */}
               <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
@@ -201,18 +209,13 @@ const HomePage: React.FC = () => {
               </h3>
 
               {/* Description */}
-              <p className="text-lg text-slate-300 mb-8 leading-relaxed max-w-lg">
+              <p className=" md:text-lg text-slate-300 mb-8 leading-relaxed md:max-w-lg">
                 Don't miss out on our biggest sale of the season. Limited stock available at incredible prices!
               </p>
 
               {/* Enhanced Countdown Timer */}
-              <div className="flex items-center gap-4 mb-8">
-                {[
-                  { value: '02', label: 'Days' },
-                  { value: '12', label: 'Hours' },
-                  { value: '45', label: 'Minutes' },
-                  { value: '30', label: 'Seconds' }
-                ].map((item, index) => (
+              <div className="grid grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+                {countDown.map((item, index) => (
                   <motion.div
                     key={item.label}
                     initial={{ scale: 0, opacity: 0 }}
@@ -268,14 +271,14 @@ const HomePage: React.FC = () => {
                 className="absolute top-8 right-8 z-30"
               >
                 <div className="relative">
-                  <div className="w-24 h-24 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex flex-col items-center justify-center shadow-2xl rotate-12 transform hover:rotate-0 transition-transform duration-500">
+                  <div className="w-16 md:w-24 h-16 md:h-24 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex flex-col items-center justify-center shadow-2xl rotate-12 transform hover:rotate-0 transition-transform duration-500">
                     <div className="text-slate-900 font-bold text-center leading-tight">
-                      <div className="text-2xl">50%</div>
+                      <div className="text-xl md:text-2xl">50%</div>
                       <div className="text-xs uppercase">OFF</div>
                     </div>
                   </div>
                   {/* Sparkle Effect */}
-                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-lg">
+                  <div className="absolute top-0 md:-top-2 -right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-lg">
                     <div className="w-2 h-2 bg-amber-400 rounded-full animate-ping"></div>
                   </div>
                 </div>
@@ -294,7 +297,7 @@ const HomePage: React.FC = () => {
 
       {/* 5. Customer Testimonials/Reviews */}
       <section className="bg-gradient-to-r from-black/90 to-yellow-700/90 py-16">
-        <div className="px-6 sm:px-6 lg:px-32">
+        <div className="px-4 sm:px-6 lg:px-32">
           <motion.div
             initial={{ y: 50, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
