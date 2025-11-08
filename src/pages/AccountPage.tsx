@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Package, Heart, MapPin, CreditCard, LogOut, Edit, Plus, Trash2} from 'lucide-react';
 import { useAuth } from '../hooks/useAuth'
 import { useCart } from '../context/CartContext';
 import Header from '../components/layout/Header';
+import { useLocation } from 'react-router-dom';
 
 interface Order {
   id: string;
@@ -37,11 +38,25 @@ interface PaymentMethod {
   isDefault: boolean;
 }
 
+type TabType = 'profile' | 'orders' | 'wishlist' | 'addresses' | 'payments';
+
 const AccountPage: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<'profile' | 'orders' | 'wishlist' | 'addresses' | 'payments'>('profile');
   const [isEditing, setIsEditing] = useState(false);
   const {wishlist} = useCart();
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get('activeTab');
+
+    // Only set tab if it's one of the valid ones
+    const validTabs: TabType[] = ['profile', 'orders', 'wishlist', 'addresses', 'payments'];
+    if (tabParam && validTabs.includes(tabParam as TabType)) {
+      setActiveTab(tabParam as TabType);
+    }
+  }, [location.search]);
 
   // Mock data
   const orders: Order[] = [

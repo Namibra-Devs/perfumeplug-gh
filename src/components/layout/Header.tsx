@@ -41,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({title="", descripton=""}) => {
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ duration: 0.8}}
             className="text-sm md:text-lg md:text-center text-blue-100"
           >
             {descripton}

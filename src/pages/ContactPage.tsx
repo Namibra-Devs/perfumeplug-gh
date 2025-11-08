@@ -41,12 +41,6 @@ const ContactPage: React.FC = () => {
     { value: "wholesale", label: "Wholesale Inquiry" },
   ]
 
-  // <option value="product-inquiry">Product Inquiry</option>
-  // <option value="order-support">Order Support</option>
-  // <option value="shipping-info">Shipping Information</option>
-  // <option value="wholesale">Wholesale Inquiry</option>
-  // <option value="other">Other</option>
-
   const contactMethods = [
     {
       icon: Phone,
