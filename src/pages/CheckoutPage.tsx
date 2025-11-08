@@ -5,6 +5,7 @@ import { Check, CreditCard, Truck, User, Lock } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../hooks/useAuth';
 import Header from '../components/layout/Header';
+import CustomSelect from '../components/ui/CustomSelect';
 
 type CheckoutStep = 'customer' | 'delivery' | 'payment';
 
@@ -38,6 +39,19 @@ const CheckoutPage: React.FC = () => {
     network: 'mtn' as 'mtn' | 'vodafone' | 'airteltigo',
   });
 
+  const regionSelect = [
+    { value:"", label: "Select Region" },
+    { value:"greater-accra", label: "Greater Accra" },
+    { value:"ashanti", label: "Ashanti" },
+    { value: "western", label: "Western" },
+    { value: "centeral", label: "Central" },
+    { value: "northern", label: "Northern" },
+    { value: "volta", label: "Volta" },
+    { value: "eastern", label: "Eastern" },
+    { value: "savannah", label: "Savannah" },
+    { value: "upper-east", label: "Upper East" },
+  ]
+
   const steps = [
     { id: 'customer', name: 'Customer Details', icon: User },
     { id: 'delivery', name: 'Delivery', icon: Truck },
@@ -57,6 +71,10 @@ const CheckoutPage: React.FC = () => {
   const handleDeliverySubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setCurrentStep('payment');
+  };
+
+  const handleSelectChange = (name: string, value: string) => {
+    setDeliveryDetails(prev => ({ ...prev, [name]: value }));
   };
 
   const handlePaymentSubmit = async (e: React.FormEvent) => {
@@ -81,10 +99,10 @@ const CheckoutPage: React.FC = () => {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Your cart is empty</h1>
-          <Link to="/shop" className="text-blue-600 hover:text-blue-700">
+          <h1 className="text-2xl font-bold text-white mb-4">Your cart is empty</h1>
+          <Link to="/shop" className="bg-blue-600/20 p-2 border border-blue-400 rounded-lg text-blue-400 hover:text-blue-700">
             Return to shop
           </Link>
         </div>
@@ -95,12 +113,12 @@ const CheckoutPage: React.FC = () => {
   return (
     <>
     <Header title="Checkout Page" descripton='Checkout and provide your payment details'/>
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95">
       <div className="mx-auto px-6 sm:px-6 lg:px-32 py-20">
         {/* Header */}
         <div className=" md:text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Checkout</h1>
-          <p className="text-gray-600 mt-2">Complete your purchase in a few simple steps</p>
+          <h1 className="text-3xl font-bold text-purple-600">Checkout</h1>
+          <p className="text-gray-300 mt-2">Complete your purchase in a few simple steps</p>
         </div>
 
         {/* Progress Steps */}
@@ -113,10 +131,10 @@ const CheckoutPage: React.FC = () => {
                   {/* Step Circle */}
                   <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
                     currentStep === step.id 
-                      ? 'border-blue-600 bg-blue-600 text-white' 
+                      ? 'border-purple-600 bg-purple-600 text-white' 
                       : steps.findIndex(s => s.id === currentStep) > index 
                       ? 'border-green-600 bg-green-600 text-white'
-                      : 'border-gray-300 text-gray-500'
+                      : 'border-gray-400 text-gray-400'
                   }`}>
                     {steps.findIndex(s => s.id === currentStep) > index ? (
                       <Check className="h-5 w-5" />
@@ -126,13 +144,23 @@ const CheckoutPage: React.FC = () => {
                   </div>
                   
                   {/* Step Name */}
-                  <span className={`mt-2 text-xs md:text-sm font-medium text-center ${
-                    currentStep === step.id || steps.findIndex(s => s.id === currentStep) > index
-                      ? 'text-gray-900'
-                      : 'text-gray-500'
-                  }`}>
-                    {step.name}
-                  </span>
+                <span
+                  className={`mt-2 text-xs md:text-sm font-medium text-center
+                    ${
+                      // Completed steps (before the current one)
+                      steps.findIndex(s => s.id === currentStep) > index
+                        ? 'text-green-500'
+                        : // Current step
+                        currentStep === step.id
+                        ? 'text-purple-600'
+                        : // Upcoming steps
+                        'text-gray-400'
+                    }
+                  `}
+                >
+                  {step.name}
+                </span>
+
                 </div>
 
                 {/* Connector Line */}
@@ -140,7 +168,7 @@ const CheckoutPage: React.FC = () => {
                   <div className={`w-10 md:w-20 h-0.5 mx-2 md:mx-4 -mt-6 ${
                     steps.findIndex(s => s.id === currentStep) > index 
                       ? 'bg-green-600' 
-                      : 'bg-gray-300'
+                      : 'bg-gray-400'
                   }`} />
                 )}
               </div>
@@ -160,12 +188,12 @@ const CheckoutPage: React.FC = () => {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                 >
-                  <form onSubmit={handleCustomerSubmit} className="bg-white rounded-2xl shadow-sm p-6">
-                    <h2 className="text-xl font-semibold mb-6">Customer Information</h2>
+                  <form onSubmit={handleCustomerSubmit} className="bg-black/20 backdrop-blur-lg border border-yellow-500/20 rounded-2xl shadow-lg p-6">
+                    <h2 className="text-xl font-semibold mb-6 text-purple-600">Customer Information</h2>
                     
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-yellow-600 mb-2">
                           First Name *
                         </label>
                         <input
@@ -174,11 +202,11 @@ const CheckoutPage: React.FC = () => {
                           required
                           value={customerDetails.firstName}
                           onChange={(e) => setCustomerDetails(prev => ({ ...prev, firstName: e.target.value }))}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-yellow-600 mb-2">
                           Last Name *
                         </label>
                         <input
@@ -187,11 +215,11 @@ const CheckoutPage: React.FC = () => {
                           required
                           value={customerDetails.lastName}
                           onChange={(e) => setCustomerDetails(prev => ({ ...prev, lastName: e.target.value }))}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                         />
                       </div>
-                      <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <div className="">
+                        <label className="block text-sm font-medium text-yellow-600 mb-2">
                           Email Address *
                         </label>
                         <input
@@ -200,11 +228,11 @@ const CheckoutPage: React.FC = () => {
                           required
                           value={customerDetails.email}
                           onChange={(e) => setCustomerDetails(prev => ({ ...prev, email: e.target.value }))}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                         />
                       </div>
-                      <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <div className="">
+                        <label className="block text-sm font-medium text-yellow-600 mb-2">
                           Phone Number *
                         </label>
                         <input
@@ -212,7 +240,7 @@ const CheckoutPage: React.FC = () => {
                           required
                           value={customerDetails.phone}
                           onChange={(e) => setCustomerDetails(prev => ({ ...prev, phone: e.target.value }))}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                           placeholder="+233 XX XXX XXXX"
                         />
                       </div>
@@ -221,7 +249,7 @@ const CheckoutPage: React.FC = () => {
                     <div className="flex justify-end mt-6">
                       <button
                         type="submit"
-                        className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                        className="bg-blue-600 text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors"
                       >
                         Continue to Delivery
                       </button>
@@ -238,12 +266,12 @@ const CheckoutPage: React.FC = () => {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                 >
-                  <form onSubmit={handleDeliverySubmit} className="bg-white rounded-2xl shadow-sm p-6">
-                    <h2 className="text-xl font-semibold mb-6">Delivery Information</h2>
+                  <form onSubmit={handleDeliverySubmit} className="bg-black/20 backdrop-blur-lg border border-yellow-500/20 rounded-2xl shadow-xl p-6">
+                    <h2 className="text-xl font-semibold mb-6 text-purple-600">Delivery Information</h2>
                     
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-yellow-600 mb-2">
                           Street Address *
                         </label>
                         <input
@@ -252,11 +280,12 @@ const CheckoutPage: React.FC = () => {
                           required
                           value={deliveryDetails.address}
                           onChange={(e) => setDeliveryDetails(prev => ({ ...prev, address: e.target.value }))}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                         />
                       </div>
+
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-yellow-600 mb-2">
                           City *
                         </label>
                         <input
@@ -265,30 +294,25 @@ const CheckoutPage: React.FC = () => {
                           required
                           value={deliveryDetails.city}
                           onChange={(e) => setDeliveryDetails(prev => ({ ...prev, city: e.target.value }))}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                         />
                       </div>
+
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-yellow-600 mb-2">
                           Region *
                         </label>
-                        <select
-                          title='Region'
-                          required
+                        <CustomSelect
+                          label=""
                           value={deliveryDetails.region}
-                          onChange={(e) => setDeliveryDetails(prev => ({ ...prev, region: e.target.value }))}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        >
-                          <option value="">Select Region</option>
-                          <option value="greater-accra">Greater Accra</option>
-                          <option value="ashanti">Ashanti</option>
-                          <option value="western">Western</option>
-                          <option value="eastern">Eastern</option>
-                          <option value="central">Central</option>
-                        </select>
+                          onChange={(value) => handleSelectChange("region", value)}
+                          options={regionSelect}
+                          className='w-full px-3 py-2.5'
+                        />
                       </div>
+
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-yellow-600 mb-2">
                           Postal Code
                         </label>
                         <input
@@ -296,56 +320,84 @@ const CheckoutPage: React.FC = () => {
                           type="text"
                           value={deliveryDetails.postalCode}
                           onChange={(e) => setDeliveryDetails(prev => ({ ...prev, postalCode: e.target.value }))}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                         />
                       </div>
                     </div>
 
                     <div className="mt-6">
-                      <h3 className="font-medium text-gray-900 mb-4">Delivery Method</h3>
+                      <h3 className="font-medium text-purple-600 mb-4">Delivery Method</h3>
                       <div className="space-y-3">
-                        <label className="flex items-center space-x-3 p-4 border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500">
+                        {/* Standard Delivery */}
+                        <label
+                          className={`flex items-center space-x-3 p-4 rounded-lg cursor-pointer transition border 
+                            ${
+                              deliveryDetails.deliveryMethod === 'standard'
+                                ? 'border-2 border-blue-600 bg-blue-600/10'
+                                : 'border-yellow-600/20 hover:border-blue-500'
+                            }`}
+                        >
                           <input
                             type="radio"
                             name="delivery"
                             value="standard"
                             checked={deliveryDetails.deliveryMethod === 'standard'}
-                            onChange={(e) => setDeliveryDetails(prev => ({ ...prev, deliveryMethod: e.target.value as 'standard' | 'express' }))}
+                            onChange={(e) =>
+                              setDeliveryDetails((prev) => ({
+                                ...prev,
+                                deliveryMethod: e.target.value as 'standard' | 'express',
+                              }))
+                            }
                             className="text-blue-600 focus:ring-blue-500"
                           />
                           <div>
-                            <div className="font-medium">Standard Delivery</div>
-                            <div className="text-sm text-gray-600">3-5 business days • Free</div>
+                            <div className="font-medium text-white">Standard Delivery</div>
+                            <div className="text-sm text-gray-300">3–5 business days • Free</div>
                           </div>
                         </label>
-                        <label className="flex items-center space-x-3 p-4 border border-gray-300 rounded-lg cursor-pointer hover:border-blue-500">
+
+                        {/* Express Delivery */}
+                        <label
+                          className={`flex items-center space-x-3 p-4 rounded-lg cursor-pointer transition border 
+                            ${
+                              deliveryDetails.deliveryMethod === 'express'
+                                ? 'border-2 border-blue-600 bg-blue-600/10'
+                                : 'border-yellow-600/20 hover:border-blue-500'
+                            }`}
+                        >
                           <input
                             type="radio"
                             name="delivery"
                             value="express"
                             checked={deliveryDetails.deliveryMethod === 'express'}
-                            onChange={(e) => setDeliveryDetails(prev => ({ ...prev, deliveryMethod: e.target.value as 'standard' | 'express' }))}
+                            onChange={(e) =>
+                              setDeliveryDetails((prev) => ({
+                                ...prev,
+                                deliveryMethod: e.target.value as 'standard' | 'express',
+                              }))
+                            }
                             className="text-blue-600 focus:ring-blue-500"
                           />
                           <div>
-                            <div className="font-medium">Express Delivery</div>
-                            <div className="text-sm text-gray-600">1-2 business days • ₵20.00</div>
+                            <div className="font-medium text-white">Express Delivery</div>
+                            <div className="text-sm text-gray-300">1–2 business days • ₵20.00</div>
                           </div>
                         </label>
                       </div>
                     </div>
 
+
                     <div className="flex justify-between mt-6">
                       <button
                         type="button"
                         onClick={() => setCurrentStep('customer')}
-                        className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+                        className="px-6 py-3 border border-yellow-600/20 text-gray-300 rounded-lg font-semibold hover:bg-yellow-400/10 text-sm hover:bg-gray-50 transition-colors"
                       >
                         Back
                       </button>
                       <button
                         type="submit"
-                        className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                        className="bg-blue-600 text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors"
                       >
                         Continue to Payment
                       </button>
@@ -362,8 +414,8 @@ const CheckoutPage: React.FC = () => {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                 >
-                  <form onSubmit={handlePaymentSubmit} className="bg-white rounded-2xl shadow-sm p-6">
-                    <h2 className="text-xl font-semibold mb-6">Payment Method</h2>
+                  <form onSubmit={handlePaymentSubmit} className="bg-black/20 backdrop-blur-lg border border-yellow-500/20 rounded-2xl shadow-xl p-6">
+                    <h2 className="text-xl font-semibold mb-6 text-purple-600">Payment Method</h2>
                     
                     <div className="space-y-4">
                       {/* Mobile Money */}
@@ -377,8 +429,8 @@ const CheckoutPage: React.FC = () => {
                           className="text-blue-600 focus:ring-blue-500"
                         />
                         <div className="flex-1">
-                          <div className="font-medium">Mobile Money</div>
-                          <div className="text-sm text-gray-600">Pay with MTN, Vodafone, or AirtelTigo</div>
+                          <div className="font-medium text-white">Mobile Money</div>
+                          <div className="text-sm text-gray-300">Pay with MTN, Vodafone, or AirtelTigo</div>
                           
                           {paymentDetails.method === 'mobile-money' && (
                             <div className="mt-3 space-y-3">
@@ -414,8 +466,8 @@ const CheckoutPage: React.FC = () => {
                           className="text-blue-600 focus:ring-blue-500 mt-1"
                         />
                         <div className="flex-1">
-                          <div className="font-medium">Credit/Debit Card</div>
-                          <div className="text-sm text-gray-600">Pay securely with your card</div>
+                          <div className="font-medium text-white">Credit/Debit Card</div>
+                          <div className="text-sm text-gray-300">Pay securely with your card</div>
                           
                           {paymentDetails.method === 'card' && (
                             <div className="mt-3 space-y-3">
@@ -534,8 +586,8 @@ const CheckoutPage: React.FC = () => {
                           className="text-blue-600 focus:ring-blue-500"
                         />
                         <div>
-                          <div className="font-medium">Cash on Delivery</div>
-                          <div className="text-sm text-gray-600">Pay when you receive your order</div>
+                          <div className="font-medium text-white">Cash on Delivery</div>
+                          <div className="text-sm text-gray-300">Pay when you receive your order</div>
                         </div>
                       </label>
                     </div>
@@ -549,14 +601,14 @@ const CheckoutPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setCurrentStep('delivery')}
-                        className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+                        className="px-6 py-3 border border-yellow-600/20 text-gray-300 rounded-lg font-semibold hover:bg-yellow-400/10 text-sm transition-colors"
                       >
                         Back
                       </button>
                       <button
                         type="submit"
                         disabled={isProcessing}
-                        className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                        className="bg-blue-600 text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                       >
                         {isProcessing ? (
                           <>
@@ -579,10 +631,10 @@ const CheckoutPage: React.FC = () => {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl shadow-sm sticky top-24"
+              className="bg-black/20 backdrop-blur-lg border border-yellow-500/20 rounded-2xl shadow-lg sticky top-24"
             >
               <div className="p-6">
-                <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
+                <h2 className="text-lg font-semibold mb-4 text-purple-600">Order Summary</h2>
                 
                 {/* Items List */}
                 <div className="space-y-3 mb-4 max-h-60 overflow-y-auto">
@@ -594,10 +646,10 @@ const CheckoutPage: React.FC = () => {
                         className="w-12 h-12 object-cover rounded"
                       />
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium truncate">{item.product.name}</div>
-                        <div className="text-xs text-gray-600">Qty: {item.quantity}</div>
+                        <div className="text-sm font-medium truncate text-white">{item.product.name}</div>
+                        <div className="text-xs text-gray-300">Qty: {item.quantity}</div>
                       </div>
-                      <div className="text-sm font-semibold">
+                      <div className="text-sm font-semibold text-yellow-400">
                         ₵{(item.product.price * item.quantity).toFixed(2)}
                       </div>
                     </div>
@@ -607,20 +659,20 @@ const CheckoutPage: React.FC = () => {
                 {/* Price Breakdown */}
                 <div className="space-y-2 border-t pt-4">
                   <div className="flex justify-between text-sm">
-                    <span>Subtotal</span>
-                    <span>₵{subtotal.toFixed(2)}</span>
+                    <span className='text-white'>Subtotal</span>
+                    <span className='text-yellow-400'>₵{subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span>Tax (5%)</span>
-                    <span>₵{tax.toFixed(2)}</span>
+                    <span className='text-white'>Tax (5%)</span>
+                    <span className='text-yellow-400'>₵{tax.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span>Shipping</span>
-                    <span>{shipping === 0 ? 'Free' : `₵${shipping.toFixed(2)}`}</span>
+                    <span className='text-white'>Shipping</span>
+                    <span className='text-yellow-400'>{shipping === 0 ? 'Free' : `₵${shipping.toFixed(2)}`}</span>
                   </div>
                   <div className="flex justify-between font-semibold border-t pt-2">
-                    <span>Total</span>
-                    <span>₵{total.toFixed(2)}</span>
+                    <span className='text-white'>Total</span>
+                    <span className='text-yellow-400'>₵{total.toFixed(2)}</span>
                   </div>
                 </div>
               </div>

@@ -35,7 +35,7 @@ const CartPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95">
       <div className="mx-auto px-6 sm:px-6 lg:px-32 py-20">
         {/* Header */}
-        <div className="mb-8">
+        <div className="flex flex-col md:flex-row items-start justify-between gap-3 mb-8">
           <h1 className="text-3xl font-bold text-gray-200">Shopping Cart</h1>
           <p className="text-gray-300 mt-2">{items.length} item(s) in your cart</p>
         </div>
