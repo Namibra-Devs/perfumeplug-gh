@@ -61,7 +61,9 @@ export const AlertCartItems = ({onClose}: AlertCartItemsProps) => {
                                 to={`/product/${item.product.id}`}
                                 className="text-sm font-semibold text-gray-300 hover:text-blue-600 transition-colors"
                                 >
-                                {item.product.name}
+                                {item.product.name.length > 10
+                                ? `${item.product.name.substring(0, 10)}...`
+                                : item.product.name}
                                 </Link>
                                 <div className="flex items-start gap-2">
                                     <p className="text-xs text-gray-300">{item.product.brand}</p>
