@@ -290,7 +290,7 @@ const ProductPage: React.FC = () => {
               </div>
 
               {/* Quantity */}
-              <div>
+              <div className='flex items-center gap-3'>
                 <h3 className="font-semibold text-gray-300 mb-3">Quantity:</h3>
                 <div className="flex items-center space-x-2">
                   <button
@@ -310,13 +310,13 @@ const ProductPage: React.FC = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex space-x-4 pt-4">
+              <div className="flex gap-3 pt-4">
                 <button
                   onClick={handleAddToCart}
                   className="flex-1 text-sm group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center"
                 >
                   <ShoppingCart className="h-5 w-5 mr-2" />
-                  Add to Cart
+                  +
                 </button>
                 <button
                   onClick={handleBuyNow}
@@ -334,7 +334,7 @@ const ProductPage: React.FC = () => {
               </div>
 
               {/* Features */}
-              <div className="grid grid-cols-3 gap-4 pt-6 border-t">
+              <div className="grid grid-cols-3 gap-4 pt-6">
                 <div className="text-center">
                   <Truck className="h-6 w-6 text-blue-600 mx-auto mb-2" />
                   <div className="text-sm text-gray-50">Free Shipping</div>
@@ -355,11 +355,11 @@ const ProductPage: React.FC = () => {
           <div className="bg-black/20 backdrop-blur-lg border border-yellow-500/20 rounded-2xl shadow-sm">
             {/* Tabs */}
             <div className="border-b border-yellow-600/20 text-white">
-              <nav className="flex flex-wrap gap-x-3 md:gap-x-8 px-6">
+              <nav className="flex flex-wrap gap-x-3 md:gap-x-8 px-3 md:px-6">
                 {['Description', 'Fragrance Notes', 'Reviews', 'Shipping'].map((tab) => (
                   <button
                     key={tab}
-                    className="py-2 md:py-4 px-2 border-b-2 border-transparent hover:text-blue-600 transition-colors font-medium"
+                    className="py-2 md:py-4 px-2 text-sm md:text-lg border-b-2 border-transparent hover:text-blue-600 transition-colors font-medium"
                   >
                     {tab}
                   </button>
@@ -372,7 +372,7 @@ const ProductPage: React.FC = () => {
               {/* Description */}
               <div className="prose max-w-none">
                 <h3 className="text-lg font-semibold mb-4">Product Description</h3>
-                <p className="text-gray-300 leading-relaxed">{product.description}</p>
+                <p className="text-gray-300 leading-relaxed text-sm">{product.description}</p>
               </div>
 
               {/* Fragrance Notes */}

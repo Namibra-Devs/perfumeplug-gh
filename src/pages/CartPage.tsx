@@ -124,7 +124,7 @@ const CartPage: React.FC = () => {
                         </span>
                         <button
                           onClick={() => removeFromCart(item.product.id)}
-                          className="p-2 bg-black/20 backdrop-blur-lg border border-yellow-400/20 text-red-600 hover:text-red-700 p-1 rounded transition-colors"
+                          className="p-2 bg-black/20 backdrop-blur-lg border border-yellow-400/20 text-red-600 hover:text-red-700 rounded transition-colors"
                           title="Remove item"
                         >
                           <Trash2 className="h-4 w-4" />
