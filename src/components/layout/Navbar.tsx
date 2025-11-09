@@ -86,7 +86,6 @@ export const Navbar: React.FC = () => {
         }
     };
 
-
     return (
         <header className={`${isMenuOpen ? "bg-gradient-to-r from-black/100 to-yellow-700/95" : 'bg-gradient-to-r from-black to-yellow-700 bg-cover bg-no-repeat top-0'} sticky top-0 z-50`}>
             <div className="mx-auto px-6 sm:px-6 lg:px-32 relative z-50">
@@ -134,7 +133,7 @@ export const Navbar: React.FC = () => {
                                 <Search className="h-4 w-4" /> // shows search icon when closed
                             )}
                         </button>
-
+                        
                         <Link
                             to="/cart"
                             className="relative p-2 hover:text-white bg-yellow-700/80 hover:bg-yellow-700/60 rounded-lg transition-colors"
@@ -246,7 +245,7 @@ export const Navbar: React.FC = () => {
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}
                             transition={{ duration: 0.3 }}
-                            className="lg:hidden border border-t border-b-4 border-yellow-400 block absolute top-full left-0 right-0  bg-gradient-to-r from-black/100 to-yellow-700/95"
+                            className="lg:hidden border-b-4 border-yellow-400 block absolute top-full left-0 right-0  bg-gradient-to-r from-black/100 to-yellow-700/95"
                         >
                             <div className="py-4">
                                 <div className="flex flex-col space-y-4">
@@ -254,7 +253,7 @@ export const Navbar: React.FC = () => {
                                         <Link
                                             key={item.name}
                                             to={item.href}
-                                            className="text-gray-300 hover:text-yellow-800 font-medium py-2 px-4 hover:bg-blue-50 rounded-lg transition-colors"
+                                            className="text-gray-300 text-sm hover:text-yellow-800 font-medium py-2 px-4 hover:bg-blue-50 rounded-lg transition-colors"
                                             onClick={closeAll}
                                         >
                                             {item.name}
