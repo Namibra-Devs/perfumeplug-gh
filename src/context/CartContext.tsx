@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
-import { CartItem, Product } from '../types';
+import { CartItem, DeliveryMethod, Order, PaymentMethod, Product } from '../types';
 
 interface CartState {
   items: CartItem[];
   wishlist: Product[];
+  orders: Order[];
 }
 
 type CartAction =
@@ -16,12 +17,16 @@ type CartAction =
   | { type: 'REMOVE_FROM_WISHLIST'; productId: string }
   | { type: 'CLEAR_WISHLIST' }
 
+  | { type: 'PLACE_ORDER'; order: Order }
+  | { type: 'CLEAR_ORDERS' }
+
   | { type: 'LOAD_STATE'; state: CartState };
   
 
 interface CartContextType {
   items: CartItem[];
   wishlist: Product[];
+  orders: Order[];
   addToCart: (product: Product) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
@@ -33,6 +38,9 @@ interface CartContextType {
   removeFromWishlist: (productId: string) => void;
   clearWishlist: () => void;
   isInWishlist: (productId: string) => boolean;
+
+  placeOrder: (deliveryMethod: DeliveryMethod, paymentMethod: PaymentMethod, userId: string) => void;
+  clearOrders?: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -99,6 +107,19 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     case 'CLEAR_WISHLIST':
       return { ...state, wishlist: [] };
 
+    case 'PLACE_ORDER':
+      return {
+        ...state,
+        orders: [...state.orders, action.order],
+        items: [] // clear cart after order placement
+      };
+
+    case 'CLEAR_ORDERS':
+      return {
+        ...state,
+        orders: []
+      };
+
     case 'LOAD_STATE':
       return action.state;
     
@@ -108,7 +129,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 };
 
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [state, dispatch] = useReducer(cartReducer, { items: [], wishlist: [] });
+  const [state, dispatch] = useReducer(cartReducer, {items: [], wishlist: [], orders: []});
 
   // Load cart & wishlist from localStorage on first render
   useEffect(() => {
@@ -159,10 +180,38 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const clearWishlist = () => dispatch({ type: 'CLEAR_WISHLIST' });
   const isInWishlist = (productId: string) => state.wishlist.some(p => p.id === productId);
 
+  const placeOrder = (
+    deliveryMethod: DeliveryMethod,
+    paymentMethod: PaymentMethod,
+    userId: string
+  ) => {
+    if (state.items.length === 0) return;
+
+    const newOrder: Order = {
+      id: Date.now().toString(),
+      userId,
+      createdAt: new Date().toISOString(),
+      items: state.items,
+      total: state.items.reduce(
+        (sum, item) => sum + item.product.price * item.quantity,
+        0
+      ),
+      status: 'pending',
+      deliveryMethod,
+      paymentMethod,
+    };
+
+    dispatch({ type: 'PLACE_ORDER', order: newOrder });
+  };
+
+  
+  const clearOrders = () => dispatch({ type: 'CLEAR_ORDERS' });
+
   return (
     <CartContext.Provider value={{
       items: state.items,
       wishlist: state.wishlist,
+      orders: state.orders,
       addToCart,
       removeFromCart,
       updateQuantity,
@@ -173,6 +222,8 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       removeFromWishlist,
       clearWishlist,
       isInWishlist,
+      placeOrder,
+      clearOrders
     }}>
       {children}
     </CartContext.Provider>

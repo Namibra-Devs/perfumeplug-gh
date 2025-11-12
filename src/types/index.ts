@@ -48,5 +48,27 @@ export interface Order {
   items: CartItem[];
   total: number;
   status: 'pending' | 'confirmed' | 'shipped' | 'delivered';
+  deliveryMethod: 'standard' | 'express';
+  paymentMethod: 'card' | 'mobile-money' | 'cash-on-delivery';
   createdAt: string;
+  trackingNumber?: string;
+}
+
+export type PaymentMethod = 'mobile-money' | 'card' | 'cash-on-delivery';
+export type DeliveryMethod = 'standard' | 'express';
+
+
+export type DeliveryDetails =  {
+  address: string,
+  city: string,
+  region: string,
+  postalCode: string,
+  deliveryMethod: DeliveryMethod,
+}
+
+
+export type PaymentDetails  = {
+  method: PaymentMethod | 'cash-on-delivery',
+  phoneNumber: string,
+  network: 'mtn' | 'vodafone' | 'airteltigo',
 }

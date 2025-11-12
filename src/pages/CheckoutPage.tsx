@@ -6,11 +6,12 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../hooks/useAuth';
 import Header from '../components/layout/Header';
 import CustomSelect from '../components/ui/CustomSelect';
+import { DeliveryDetails, PaymentDetails} from '../types/index';
 
 type CheckoutStep = 'customer' | 'delivery' | 'payment';
 
 const CheckoutPage: React.FC = () => {
-  const { items, getTotalPrice, clearCart } = useCart();
+  const { items, getTotalPrice, clearCart, placeOrder } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   
@@ -25,19 +26,20 @@ const CheckoutPage: React.FC = () => {
     phone: user?.phone || '',
   });
 
-  const [deliveryDetails, setDeliveryDetails] = useState({
+  const [deliveryDetails, setDeliveryDetails] = useState<DeliveryDetails>({
     address: '',
     city: '',
     region: '',
     postalCode: '',
-    deliveryMethod: 'standard' as 'standard' | 'express',
+    deliveryMethod: 'standard',
   });
 
-  const [paymentDetails, setPaymentDetails] = useState({
-    method: 'mobile-money' as 'mobile-money' | 'card' | 'cod',
+  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({
+    method: 'mobile-money',
     phoneNumber: '',
-    network: 'mtn' as 'mtn' | 'vodafone' | 'airteltigo',
+    network: 'mtn',
   });
+
 
   const regionSelect = [
     { value:"", label: "Select Region" },
@@ -77,25 +79,60 @@ const CheckoutPage: React.FC = () => {
     setDeliveryDetails(prev => ({ ...prev, [name]: value }));
   };
 
+  // // Handles delivery form inputs
+  // const handleDeliveryChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+  //   setDeliveryDetails(prev => ({ ...prev, [name]: value }));
+  // };
+
+  // // Handles payment form inputs
+  // const handlePaymentChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+  //   setPaymentDetails(prev => ({ ...prev, [name]: value }));
+  // };
+
+
   const handlePaymentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!user) {
+      alert('Please log in before placing an order.');
+      return;
+    }
+
     setIsProcessing(true);
 
-    // Simulate payment processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      // Simulate payment API (replace later with real API)
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // Clear cart and redirect to confirmation
-    clearCart();
-    navigate('/order-confirmation', { 
-      state: { 
-        orderId: `PP${Date.now()}`,
-        total,
-        customerDetails,
-        paymentDetails,
-        deliveryDetails,
-      } 
-    });
+      // Place the order in context
+      placeOrder(
+        deliveryDetails.deliveryMethod,
+        paymentDetails.method === 'cash-on-delivery' ? 'cash-on-delivery' : paymentDetails.method,
+        user?.id ?? ''
+      );
+      // Clear the cart
+      clearCart();
+
+      // Navigate to order confirmation with summary data
+      navigate('/order-confirmation', {
+        state: {
+          orderId: `PP${Date.now()}`,
+          total,
+          customerDetails,
+          paymentDetails,
+          deliveryDetails,
+        },
+      });
+    } catch (error) {
+      console.error('Payment failed:', error);
+      alert('Something went wrong during payment. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
   };
+
 
   if (items.length === 0) {
     return (
@@ -581,8 +618,8 @@ const CheckoutPage: React.FC = () => {
                           type="radio"
                           name="payment"
                           value="cod"
-                          checked={paymentDetails.method === 'cod'}
-                          onChange={(e) => setPaymentDetails(prev => ({ ...prev, method: e.target.value as 'cod' }))}
+                          checked={paymentDetails.method === 'cash-on-delivery'}
+                          onChange={(e) => setPaymentDetails(prev => ({ ...prev, method: e.target.value as 'cash-on-delivery' }))}
                           className="text-blue-600 focus:ring-blue-500"
                         />
                         <div>
