@@ -4,21 +4,8 @@ import { User, Package, Heart, MapPin, CreditCard, LogOut, Edit, Plus, Trash2} f
 import { useAuth } from '../hooks/useAuth'
 import { useCart } from '../context/CartContext';
 import Header from '../components/layout/Header';
-import { useLocation } from 'react-router-dom';
-
-interface Order {
-  id: string;
-  date: string;
-  status: 'pending' | 'confirmed' | 'shipped' | 'delivered';
-  items: Array<{
-    name: string;
-    quantity: number;
-    price: number;
-    image: string;
-  }>;
-  total: number;
-  trackingNumber?: string;
-}
+import { Link, useLocation } from 'react-router-dom';
+import { Product } from '../types/index';
 
 interface Address {
   id: string;
@@ -44,7 +31,7 @@ const AccountPage: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<'profile' | 'orders' | 'wishlist' | 'addresses' | 'payments'>('profile');
   const [isEditing, setIsEditing] = useState(false);
-  const {wishlist} = useCart();
+  const {wishlist, removeFromWishlist, addToCart, orders} = useCart();
   const location = useLocation();
 
   useEffect(() => {
@@ -59,38 +46,38 @@ const AccountPage: React.FC = () => {
   }, [location.search]);
 
   // Mock data
-  const orders: Order[] = [
-    {
-      id: 'PP123456',
-      date: '2024-01-15',
-      status: 'delivered',
-      items: [
-        { name: 'Bleu de Chanel Eau de Parfum', quantity: 1, price: 450.00, image: '/1.jpg' },
-        { name: 'Miss Dior Blooming Bouquet', quantity: 1, price: 380.00, image: '/1.jpg' }
-      ],
-      total: 830.00,
-      trackingNumber: 'GH123456789'
-    },
-    {
-      id: 'PP123457',
-      date: '2024-01-10',
-      status: 'shipped',
-      items: [
-        { name: 'Sauvage Eau de Toilette', quantity: 1, price: 420.00, image: '/1.jpg' }
-      ],
-      total: 420.00,
-      trackingNumber: 'GH987654321'
-    },
-    {
-      id: 'PP123458',
-      date: '2024-01-05',
-      status: 'confirmed',
-      items: [
-        { name: 'Black Opium Eau de Parfum', quantity: 2, price: 390.00, image: '/1.jpg' }
-      ],
-      total: 780.00
-    }
-  ];
+  // const orders: Order[] = [
+  //   {
+  //     id: 'PP123456',
+  //     date: '2024-01-15',
+  //     status: 'delivered',
+  //     items: [
+  //       { name: 'Bleu de Chanel Eau de Parfum', quantity: 1, price: 450.00, image: '/1.jpg' },
+  //       { name: 'Miss Dior Blooming Bouquet', quantity: 1, price: 380.00, image: '/1.jpg' }
+  //     ],
+  //     total: 830.00,
+  //     trackingNumber: 'GH123456789'
+  //   },
+  //   {
+  //     id: 'PP123457',
+  //     date: '2024-01-10',
+  //     status: 'shipped',
+  //     items: [
+  //       { name: 'Sauvage Eau de Toilette', quantity: 1, price: 420.00, image: '/1.jpg' }
+  //     ],
+  //     total: 420.00,
+  //     trackingNumber: 'GH987654321'
+  //   },
+  //   {
+  //     id: 'PP123458',
+  //     date: '2024-01-05',
+  //     status: 'confirmed',
+  //     items: [
+  //       { name: 'Black Opium Eau de Parfum', quantity: 2, price: 390.00, image: '/1.jpg' }
+  //     ],
+  //     total: 780.00
+  //   }
+  // ];
 
   const addresses: Address[] = [
     {
@@ -129,25 +116,6 @@ const AccountPage: React.FC = () => {
     }
   ];
 
-  // const wishlistItems = [
-  //   {
-  //     id: '1',
-  //     name: 'La Vie Est Belle Eau de Parfum',
-  //     brand: 'Lancôme',
-  //     price: 430.00,
-  //     image: '/1.jpg',
-  //     inStock: true
-  //   },
-  //   {
-  //     id: '2',
-  //     name: 'Acqua di Gio Pour Homme',
-  //     brand: 'Giorgio Armani',
-  //     price: 350.00,
-  //     image: '/1.jpg',
-  //     inStock: true
-  //   }
-  // ];
-
   const [profileData, setProfileData] = useState({
     firstName: user?.firstName || '',
     lastName: user?.lastName || '',
@@ -159,6 +127,10 @@ const AccountPage: React.FC = () => {
     e.preventDefault();
     setIsEditing(false);
     // In real app, this would update via API
+  };
+
+  const handleAddToCart = (product: Product) => {
+    addToCart(product);
   };
 
   if (!isAuthenticated || !user) {
@@ -379,14 +351,14 @@ const AccountPage: React.FC = () => {
                           <div className="flex justify-between items-start mb-4">
                             <div>
                               <div className="font-semibold text-purple-600">Order #{order.id}</div>
-                              <div className="text-sm text-gray-300">Placed on {new Date(order.date).toLocaleDateString()}</div>
+                              <div className="text-sm text-gray-300">Placed on {new Date(order.createdAt).toLocaleDateString()}</div>
                             </div>
                             <div className="text-right">
                               <div className="font-semibold text-white">₵{order.total.toFixed(2)}</div>
-                              <div className={`text-sm capitalize ${
-                                order.status === 'delivered' ? 'text-green-400 rounded-full px-2 py-1 text-xs bg-green-700/20 border border-green-600/40' :
-                                order.status === 'shipped' ? 'text-blue-400 rounded-full px-2 py-1 text-xs bg-blue-700/20 border border-blue-600/40' :
-                                order.status === 'confirmed' ? 'text-orange-400 rounded-full px-2 py-1 text-xs bg-orange-700/20 border border-orange-600/40' : 'text-gray-600'
+                              <div className={`text-sm capitalize px-2 py-1 ${
+                                order.status === 'delivered' ? 'text-green-400 rounded-full text-xs bg-green-700/20 border border-green-600/40' :
+                                order.status === 'shipped' ? 'text-blue-400 rounded-full text-xs bg-blue-700/20 border border-blue-600/40' :
+                                order.status === 'confirmed' ? 'text-orange-400 rounded-full text-xs bg-orange-700/20 border border-orange-600/40' : 'rounded-full text-xs bg-yellow-500/20 border border-yellow-500/40 text-yellow-500'
                               }`}>
                                 {order.status}
                               </div>
@@ -396,12 +368,14 @@ const AccountPage: React.FC = () => {
                           <div className="space-y-3">
                             {order.items.map((item, index) => (
                               <div key={index} className="flex items-center space-x-3">
-                                <img src={item.image} alt={item.name} className="w-12 h-12 object-cover rounded" />
+                                <div>
+                                  <Link to={`/product${item.product.id}`}><img src={item.product.images[0]} alt={item.product.name} className="w-12 h-12 object-cover rounded" /></Link>
+                                </div>
                                 <div className="flex-1">
-                                  <div className="font-medium text-sm leading-tight text-white">{item.name}</div>
+                                  <Link to={`/product${item.product.id}`} className="font-medium text-sm leading-tight text-white">{item.product.name}</Link>
                                   <div className="text-sm text-gray-300">Qty: {item.quantity}</div>
                                 </div>
-                                <div className="text-sm font-semibold text-white">₵{item.price.toFixed(2)}</div>
+                                <div className="text-sm font-semibold text-white">₵{item.product.price.toFixed(2)}</div>
                               </div>
                             ))}
                           </div>
@@ -441,25 +415,28 @@ const AccountPage: React.FC = () => {
                       <p className="text-gray-300 mt-1">Your saved items</p>
                     </div>
                     
-                    <div className="grid md:grid-cols-2 gap-6 p-6">
+                    <div className="grid lg:grid-cols-1 gap-4 p-6">
                       {wishlist.map((item) => (
-                        <div key={item.id} className="flex flex-col md:flex-row items-start gap-4 p-2 bg-black/20 rounded-lg">
+                        <div key={item.id} className="flex flex-col md:flex-row items-start justify-between gap-4 p-2 bg-black/20 rounded-lg">
                           <div className='flex items-start justify-between gap-2'>
                             <img src={item.images[0]} alt={item.name} className="w-16 h-16 object-cover rounded" />
                             <div className="flex-1">
                               <div className="text-xs md:text-sm font-semibold text-white">{item.name}</div>
-                              <div className="text-xs md:text-sm text-gray-300">{item.brand}</div>
-                              <div className="text-xs md:text-sm font-semibold text-blue-600">₵{item.price.toFixed(2)}</div>
+                              <div className='flex flex-col md:flex-row itemsc-enter gap-2'>
+                                <span className="text-xs md:text-sm text-gray-300">{item.brand}</span>
+                                <span className="text-xs md:text-sm font-semibold text-blue-600">₵{item.price.toFixed(2)}</span>
+                              </div>
+                              
                               <div className={`text-xs w-fit ${item.inStock ? 'text-green-400 rounded-full px-2 py-1 text-xs bg-green-700/20 border border-green-600/40' : 'text-red-400 rounded-full px-2 py-1 text-xs bg-red-700/20 border border-red-600/40'}`}>
                                 {item.inStock ? 'In Stock' : 'Out of Stock'}
                               </div>
                             </div>
                           </div>
                           <div className="flex items-center gap-2 w-full md:w-auto">
-                            <button title="Delete item" className="w-10 h-10 bg-black/20 backdrop-blur-lg border border-yellow-600/20 text-red-600 rounded-lg flex items-center justify-center  hover:bg-yellow-700/20 hover:text-red-500 transition-colors">
+                            <button onClick={() => removeFromWishlist(item.id)} title="Delete item" className="w-8 h-8 bg-black/20 backdrop-blur-lg border border-yellow-600/20 text-red-600 rounded-lg flex items-center justify-center  hover:bg-yellow-700/20 hover:text-red-500 transition-colors">
                               <Trash2 className="h-4 w-4" />
                             </button>
-                            <button title='Add to cart' className="w-10 h-10 bg-black/20 backdrop-blur-lg border border-yellow-600/20 rounded-lg flex items-center justify-center text-white text-sm md:text-xs hover:bg-yellow-700/20 transition-colors">
+                            <button onClick={() => handleAddToCart(item)} title='Add to cart' className="w-8 h-8 bg-black/20 backdrop-blur-lg border border-yellow-600/20 rounded-lg flex items-center justify-center text-white text-sm md:text-xs hover:bg-yellow-700/20 transition-colors">
                               <Plus className="h-4 w-4"/>
                             </button>
                           </div>
@@ -478,10 +455,10 @@ const AccountPage: React.FC = () => {
                     exit={{ opacity: 0, x: -20 }}
                     className="bg-black/20 backdrop-blur-lg border border-yellow-500/20 rounded-2xl shadow-sm"
                   >
-                    <div className="p-6 border-b flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                    <div className="p-6 border-b border-yellow-600/20 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                       <div>
-                        <h2 className="text-xl font-semibold">Saved Addresses</h2>
-                        <p className="text-gray-600 mt-1">Manage your delivery addresses</p>
+                        <h2 className="text-xl font-semibold text-purple-600">Saved Addresses</h2>
+                        <p className="text-gray-300 mt-1">Manage your delivery addresses</p>
                       </div>
                       <button className="bg-blue-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
                         <Plus className="h-4 w-4 mr-2" />
@@ -491,16 +468,16 @@ const AccountPage: React.FC = () => {
                     
                     <div className="grid md:grid-cols-2 gap-6 p-6">
                       {addresses.map((address) => (
-                        <div key={address.id} className="border border-gray-200 rounded-lg p-4">
+                        <div key={address.id} className="border border-yellow-600/20 rounded-lg p-4">
                           <div className="flex justify-between items-start mb-3">
-                            <div className="font-semibold">{address.name}</div>
+                            <div className="font-semibold text-white">{address.name}</div>
                             {address.isDefault && (
                               <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">
                                 Default
                               </span>
                             )}
                           </div>
-                          <div className="space-y-1 text-sm text-gray-600">
+                          <div className="space-y-1 text-sm text-gray-300">
                             <p>{address.street}</p>
                             <p>{address.city}, {address.region}</p>
                             <p>{address.phone}</p>
@@ -529,10 +506,10 @@ const AccountPage: React.FC = () => {
                     exit={{ opacity: 0, x: -20 }}
                     className="bg-black/20 backdrop-blur-lg border border-yellow-500/20 rounded-2xl shadow-sm"
                   >
-                    <div className="p-6 border-b flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                    <div className="p-6 border-b border-yellow-600/20 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                       <div>
-                        <h2 className="text-xl font-semibold">Payment Methods</h2>
-                        <p className="text-gray-600 mt-1">Manage your saved payment methods</p>
+                        <h2 className="text-xl font-semibold text-purple-600">Payment Methods</h2>
+                        <p className="text-gray-300 mt-1">Manage your saved payment methods</p>
                       </div>
                       <button className="bg-blue-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
                         <Plus className="h-4 w-4 mr-2" />
@@ -542,21 +519,23 @@ const AccountPage: React.FC = () => {
                     
                     <div className="p-6 space-y-4">
                       {paymentMethods.map((method) => (
-                        <div key={method.id} className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-2 border border-gray-200 rounded-lg">
+                        <div key={method.id} className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-2 border border-yellow-600/20 rounded-lg">
                           <div className="flex items-center space-x-4">
-                            <div className="w-12 h-8 bg-gray-100 rounded flex items-center justify-center">
+                            <div className="w-12 h-8 rounded flex items-center justify-center">
                               {method.type === 'card' ? (
-                                <CreditCard className="h-4 w-4 text-gray-600" />
+                                <img src="/creditcard.jpeg" alt="Credit Card"/>
                               ) : (
-                                <span className="text-xs font-semibold">{method.network}</span>
+                                <div className='inline-flex'>
+                                  <img src="/momo.png" alt="Mobile Money"/>
+                                </div>
                               )}
                             </div>
                             <div className='flex items-start justify-between gap-3'>
                               <div>
-                                <div className="text-sm font-semibold capitalize">
+                                <div className="text-sm font-semibold capitalize text-yellow-400">
                                   {method.type === 'card' ? 'Credit Card' : `${method.network} Mobile Money`}
                                 </div>
-                                <div className="text-sm text-gray-600">
+                                <div className="text-sm text-gray-300">
                                   {method.type === 'card' ? `•••• ${method.last4}` : `•••• ${method.last4}`}
                                 </div>
                               </div>
