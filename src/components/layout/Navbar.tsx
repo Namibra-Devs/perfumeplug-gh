@@ -277,7 +277,7 @@ export const Navbar: React.FC = () => {
                                                         setSearchQuery(brand);
                                                         searchInputRef.current?.focus();
                                                     }}
-                                                    className="block w-full text-left py-1 text-gray-300 hover:pl-2 duration-300 ease-out hover:text-yellow-600 hover:bg-yellow-600/20 rounded transition-colors"
+                                                    className="block text-sm w-full text-left py-1 text-gray-300 hover:pl-2 duration-300 ease-out hover:text-yellow-600 hover:bg-yellow-600/20 rounded transition-colors"
                                                 >
                                                     {brand}
                                                 </button>
@@ -292,7 +292,7 @@ export const Navbar: React.FC = () => {
                                                     key={category.name}
                                                     to={category.href}
                                                     onClick={closeAll}
-                                                    className="block py-1 text-gray-300 hover:pl-2 duration-300 hover:text-yellow-600 hover:bg-yellow-600/20 rounded transition-colors"
+                                                    className="block text-sm py-1 text-gray-300 hover:pl-2 duration-300 hover:text-yellow-600 hover:bg-yellow-600/20 rounded transition-colors"
                                                 >
                                                     {category.name}
                                                 </Link>
