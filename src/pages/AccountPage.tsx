@@ -1,21 +1,31 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Package, Heart, LogOut, Edit, Plus, Trash2, LoaderCircle} from 'lucide-react';
+import { Package, Heart, LogOut, Edit, Plus, Trash2, LoaderCircle, User} from 'lucide-react';
 import { useAuth } from '../hooks/useAuth'
 import Header from '../components/layout/Header';
 import { useLocation } from 'react-router-dom';
 import { useCart } from '../hooks/useCart';
 import { Product } from '../types/product';
 import { OrderList } from '../components/order/OrderList';
+import { updateProfile } from '../services/authService';
+import { useToast } from '../hooks/useToast';
 
 type TabType = 'profile' | 'orders' | 'wishlist';
 
 const AccountPage: React.FC = () => {
-  const { customer, isAuthenticated, logout, token } = useAuth();
+  const { customer, isAuthenticated, logout, token, isLoading } = useAuth();
   const [activeTab, setActiveTab] = useState<'profile' | 'orders' | 'wishlist'>('profile');
   const [isEditing, setIsEditing] = useState(false);
   const {wishlist, removeFromWishlist, addToCart} = useCart();
+  const toast = useToast();
   const location = useLocation();
+
+  const Navigation =[
+    { id: 'profile' as const, name: 'Profile Information', icon: User},
+    { id: 'orders' as const, name: 'Order History', icon: Package },
+    { id: 'wishlist' as const, name: 'Wishlist', icon: Heart },
+  ]
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -34,11 +44,23 @@ const AccountPage: React.FC = () => {
     phone: customer?.phone || '',
   });
 
-  const handleProfileUpdate = (e: React.FormEvent) => {
+  const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsEditing(false);
-    // In real app, this would update via API
+
+    try {
+
+      const updated = await updateProfile(profileData);
+
+      toast.success("Profile updated successfully!");
+      console.log("Updated Profile:", updated);
+
+    } catch (error: any) {
+      console.error("Profile update failed:", error);
+      toast.error(error?.message || "Failed to update profile. Please try again.");
+    }
   };
+
 
   const handleAddToCart = (product: Product) => {
     addToCart(product);
@@ -78,11 +100,7 @@ const AccountPage: React.FC = () => {
                 
                 {/* Navigation */}
                 <nav className="space-y-1">
-                  {[
-                    { id: 'profile' as const, name: 'Profile Information', icon: customer },
-                    { id: 'orders' as const, name: 'Order History', icon: Package },
-                    { id: 'wishlist' as const, name: 'Wishlist', icon: Heart },
-                  ].map((item) => (
+                  {Navigation.map((item) => (
                     <button
                       key={item.id}
                       onClick={() => setActiveTab(item.id)}
@@ -149,19 +167,6 @@ const AccountPage: React.FC = () => {
                               required
                             />
                           </div>
-                          {/* <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">
-                              Last Name *
-                            </label>
-                            <input
-                              title='Last Name'
-                              type="text"
-                              value={profileData.lastName}
-                              onChange={(e) => setProfileData(prev => ({ ...prev, lastName: e.target.value }))}
-                              className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                              required
-                            />
-                          </div> */}
                         </div>
 
                         <div className="grid md:grid-cols-2 gap-4">
@@ -194,9 +199,10 @@ const AccountPage: React.FC = () => {
                         <div className="flex space-x-3 pt-4">
                           <button
                             type="submit"
-                            className="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors"
+                            disabled={!!isLoading}
+                            className="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors flex items-center gap-1"
                           >
-                            Save Changes
+                            {isLoading ? <LoaderCircle className='animate-spin' size={18} /> : ""} Save Changes
                           </button>
                           <button
                             type="button"
