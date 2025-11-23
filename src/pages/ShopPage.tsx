@@ -1,159 +1,82 @@
-import React, { useState, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Filter, Grid, List } from 'lucide-react';
-import ProductCard from '../components/product/ProductCard';
-import { products } from '../constants/mockData';
-import Header from '../components/layout/Header';
-import CustomSelect from '../components/ui/CustomSelect';
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Filter, Grid, List } from "lucide-react";
+
+import ProductCard from "../components/product/ProductCard";
+import Header from "../components/layout/Header";
+import CustomSelect from "../components/ui/CustomSelect";
+
+import { useProducts } from "../hooks/useProducts";
+import { useCategories } from "../hooks/useCategories";
+import { ProductSkeleton } from "../components/product/ProductSkeleton";
 
 const ShopPage: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<string>('newest');
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
-  const [selectedGenders, setSelectedGenders] = useState<string[]>([]);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [showFilters, setShowFilters] = useState(false);
   const location = useLocation();
 
-  // Get URL query parameters and react to them
-  const queryParams = new URLSearchParams(location.search);
-  const categoryParam = queryParams.get('category');
-  const searchQuery = queryParams.get('q');
+  // Read query params
+  const query = new URLSearchParams(location.search);
+  const initialCategory = query.get("category") || "all";
+  const searchQuery = query.get("q") || "";
 
-  // Categories data
-  const categories = [
-    { id: 'all', name: 'All Products', count: products.length },
-    { id: 'men', name: "Men's Perfumes", count: products.filter(p => p.gender === 'men').length },
-    { id: 'women', name: "Women's Perfumes", count: products.filter(p => p.gender === 'women').length },
-    { id: 'unisex', name: 'Unisex Perfumes', count: products.filter(p => p.gender === 'unisex').length },
-    { id: 'luxury', name: 'Luxury Collection', count: products.filter(p => p.category === 'luxury').length },
-    { id: 'body-sprays', name: 'Body Sprays & Deodorants', count: products.filter(p => p.category === 'body-sprays').length },
-    { id: 'gift-sets', name: 'Gift Sets', count: products.filter(p => p.category === 'gift-sets').length },
-  ];
+  // UI states
+  const [category, setCategory] = useState(initialCategory);
+  const [maxPrice, setMaxPrice] = useState(1000);
+  const [sortBy, setSortBy] = useState("newest");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
+  // API hooks
+  const { categories, loading: catLoading, error: catError } = useCategories();
+  const { products, loading, error, fetchProducts } = useProducts({
+    category: category === "all" ? "" : category,
+    search: searchQuery,
+    minPrice: 0,
+    maxPrice,
+    sortBy,
+  });
 
   const sortList = [
     { value: "newest", label: "Newest" },
-    { value: "best-selling", label: "Best Selling" },
     { value: "price-low-high", label: "Price: Low to High" },
     { value: "price-high-low", label: "Price: High to Low" },
-  ]
-  // Brands data
-  const brands = Array.from(new Set(products.map(p => p.brand))).sort();
+  ];
 
-  // Filter and sort products
-  const filteredProducts = useMemo(() => {
-    let filtered = products;
-
-    // Filter by category
-    if (selectedCategory !== 'all') {
-      if (['men', 'women', 'unisex'].includes(selectedCategory)) {
-        filtered = filtered.filter(p => p.gender === selectedCategory);
-      } else {
-        filtered = filtered.filter(p => p.category === selectedCategory);
-      }
+  // Sync category with URL
+  useEffect(() => {
+    if (initialCategory) {
+      setCategory(initialCategory.toLowerCase());
     }
-
-    // Filter by price range
-    filtered = filtered.filter(p => p.price >= priceRange[0] && p.price <= priceRange[1]);
-
-    // Filter by brands
-    if (selectedBrands.length > 0) {
-      filtered = filtered.filter(p => selectedBrands.includes(p.brand));
-    }
-
-    // Filter by genders
-    if (selectedGenders.length > 0) {
-      filtered = filtered.filter(p => selectedGenders.includes(p.gender));
-    }
-
-    // Search query filtering
-    if (searchQuery) {
-      filtered = filtered.filter(
-        (p) =>
-          p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.gender.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-    // Sort products
-    switch (sortBy) {
-      case 'newest':
-        filtered.sort((a, b) => new Date(b.id).getTime() - new Date(a.id).getTime());
-        break;
-      case 'price-low-high':
-        filtered.sort((a, b) => a.price - b.price);
-        break;
-      case 'price-high-low':
-        filtered.sort((a, b) => b.price - a.price);
-        break;
-      case 'best-selling':
-        filtered.sort((a, b) => b.rating - a.rating);
-        break;
-      default:
-        break;
-    }
-
-    return filtered;
-  }, [selectedCategory, selectedBrands, selectedGenders, searchQuery, sortBy, priceRange]);
-
-  //React to search/category from URL
-  // Automatically update category when ?category= is present
-  React.useEffect(() => {
-    if (categoryParam) {
-      setSelectedCategory(categoryParam.toLowerCase());
-    }
-  }, [categoryParam]);
-
-  // Optional: log or debug
-  // React.useEffect(() => console.log({ categoryParam, searchQuery }), [categoryParam, searchQuery]);
-
-  const handleBrandToggle = (brand: string) => {
-    setSelectedBrands(prev =>
-      prev.includes(brand)
-        ? prev.filter(b => b !== brand)
-        : [...prev, brand]
-    );
-  };
-
-  const handleGenderToggle = (gender: string) => {
-    setSelectedGenders(prev =>
-      prev.includes(gender)
-        ? prev.filter(g => g !== gender)
-        : [...prev, gender]
-    );
-  };
+  }, [initialCategory]);
 
   const clearFilters = () => {
-    setSelectedCategory('all');
-    setPriceRange([0, 1000]);
-    setSelectedBrands([]);
-    setSelectedGenders([]);
+    setCategory("all");
+    setMaxPrice(1000);
+    setSortBy("newest");
   };
 
   return (
     <>
-    <Header title='Shop Perfumes' descripton='Discover our curated collection of premium fragrances'/>
-    <div className="min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar - Filters */}
+      <Header title="Shop Perfumes" descripton="Discover our curated collection" />
+
+      <div className="min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16 flex flex-col lg:flex-row gap-8">
+
+          {/* -------------------------------------- */}
+          {/* SIDEBAR (Always visible) */}
+          {/* -------------------------------------- */}
           <div className="lg:w-80">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               className="bg-black/20 backdrop-blur-lg rounded-lg border border-yellow-600/20 shadow-2xl p-6 sticky top-24"
             >
-              {/* Filters Header */}
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-semibold text-white">Filters</h2>
                 <button
                   onClick={clearFilters}
-                  className="text-sm text-blue-600 hover:text-blue-700"
+                  className="text-sm text-blue-400 hover:text-blue-600"
                 >
-                  Clear All
+                  Reset
                 </button>
               </div>
 
@@ -161,206 +84,210 @@ const ShopPage: React.FC = () => {
               <div className="mb-6">
                 <h3 className="font-medium text-yellow-500 mb-3">Categories</h3>
                 <div className="space-y-2">
-                  {categories.map((category) => (
-                    <button
-                      key={category.id}
-                      onClick={() => setSelectedCategory(category.id)}
-                      className={`block w-full text-left text-sm px-3 py-2 rounded-lg transition-colors ${
-                        selectedCategory === category.id
-                          ? 'bg-yellow-800/30 text-yellow-500 font-medium'
-                          : 'text-gray-300 hover:bg-yellow-700/30'
-                      }`}
-                    >
-                      <div className="flex justify-between items-center">
-                        <span>{category.name}</span>
-                        <span className="text-sm text-gray-100">({category.count})</span>
-                      </div>
-                    </button>
-                  ))}
+                  <button
+                    onClick={() => setCategory("all")}
+                    className={`block w-full text-left px-3 py-2 rounded-lg ${
+                      category === "all"
+                        ? "bg-yellow-800/30 text-yellow-400"
+                        : "text-gray-300 hover:bg-yellow-700/20"
+                    }`}
+                  >
+                    All Products
+                  </button>
+
+                  {/* Show skeleton placeholders while category loading */}
+                  {catLoading &&
+                    Array.from({ length: 4 }).map((_, idx) => (
+                      <div
+                        key={idx}
+                        className="h-8 bg-yellow-900/20 animate-pulse rounded-md"
+                      />
+                    ))}
+
+                  {!catLoading &&
+                    categories?.map((c) => (
+                      <button
+                        key={c.name}
+                        onClick={() => setCategory(c.name.toLowerCase())}
+                        className={`block w-full text-left px-3 py-2 rounded-lg ${
+                          category === c.name.toLowerCase()
+                            ? "bg-yellow-800/30 text-yellow-400"
+                            : "text-gray-300 hover:bg-yellow-700/20"
+                        }`}
+                      >
+                        <div className="flex justify-between items-center">
+                          <span>{c.name}</span>
+                          {c.productCount && (
+                            <span className="text-gray-100 text-sm">({c.productCount})</span>
+                          )}
+                        </div>
+                      </button>
+                    ))}
                 </div>
               </div>
 
               {/* Price Range */}
               <div className="mb-6">
-                <h3 className="font-medium text-yellow-500 mb-3">Price Range</h3>
-                <div className="space-y-4">
-                  <div>
+                <h3 className="font-medium text-yellow-500 mb-3">Max Price</h3>
+
+                {loading ? (
+                  <div className="h-3 w-full bg-yellow-900/20 animate-pulse rounded-md" />
+                ) : (
+                  <>
                     <input
-                      title='Price Range'
+                      title="Range"
                       type="range"
                       min="0"
                       max="1000"
-                      value={priceRange[1]}
-                      onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                      className="w-full h-1 bg-yellow-900 rounded-lg appearance-none cursor-pointer"
+                      value={maxPrice}
+                      onChange={(e) => setMaxPrice(Number(e.target.value))}
+                      className="w-full h-1 bg-yellow-900 rounded-lg"
                     />
-                    <div className="flex justify-between text-sm text-gray-200">
+
+                    <div className="text-sm text-gray-200 flex justify-between">
                       <span>₵0</span>
-                      <span>₵{priceRange[1]}</span>
+                      <span>₵{maxPrice}</span>
                     </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Brands */}
-              <div className="mb-6">
-                <h3 className="font-medium text-yellow-500 mb-3">Brands</h3>
-                <div className="space-y-2 max-h-40 overflow-y-auto">
-                  {brands.map((brand) => (
-                    <label key={brand} className="flex items-center space-x-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={selectedBrands.includes(brand)}
-                        onChange={() => handleBrandToggle(brand)}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                      />
-                      <span className="text-sm text-gray-200">{brand}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Gender */}
-              <div className="mb-6">
-                <h3 className="font-medium text-yellow-500 mb-3">Gender</h3>
-                <div className="space-y-2">
-                  {['men', 'women', 'unisex'].map((gender) => (
-                    <label key={gender} className="flex items-center space-x-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={selectedGenders.includes(gender)}
-                        onChange={() => handleGenderToggle(gender)}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                      />
-                      <span className="text-sm text-gray-200 capitalize">{gender}</span>
-                    </label>
-                  ))}
-                </div>
+                  </>
+                )}
               </div>
             </motion.div>
           </div>
 
-          {/* Main Content */}
+          {/* -------------------------------------- */}
+          {/* MAIN CONTENT AREA */}
+          {/* -------------------------------------- */}
           <div className="flex-1">
+
             {/* Toolbar */}
             <div className="bg-black/20 rounded-lg border border-yellow-600/20 shadow-2xl p-4 mb-6">
               <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div className="flex items-center space-x-4">
-                  <span className="text-sm text-gray-200">
-                    <span className="bg-yellow-600/20 text-yellow-400 px-4 py-1.5 rounded-lg border border-yellow-600/20">
-                      {filteredProducts.length}
-                    </span>{" "}
-                    products found{" "}
-                    {searchQuery && (
-                      <>
-                        for: <span className="text-yellow-300">{searchQuery}</span>
-                      </>
-                    )}
-                  </span>
+                
+                {/* Number of results */}
+                <span className="text-sm text-gray-200">
+                  <span className="bg-yellow-600/20 text-yellow-400 px-3 py-1 rounded-lg">
+                    {loading ? "…" : products.length}
+                  </span>{" "}
+                  products found
+                  {searchQuery && (
+                    <>
+                      {" "}
+                      for <span className="text-yellow-300">{searchQuery}</span>
+                    </>
+                  )}
+                </span>
 
-                  
-                  {/* Mobile Filters Toggle */}
-                  <button
-                    onClick={() => setShowFilters(!showFilters)}
-                    className="lg:hidden flex items-center space-x-2 px-3 py-2 border border-yellow-600/20 text-yellow-400 rounded-lg text-sm"
-                  >
-                    <Filter className="h-4 w-4" />
-                    <span>Filters</span>
-                  </button>
-                </div>
-
+                {/* View + Sort */}
                 <div className="flex items-center space-x-4">
-                  {/* View Mode Toggle */}
+
+                  {/* View Mode Buttons */}
                   <div className="flex border border-yellow-600/20 rounded-lg overflow-hidden">
                     <button
-                      title='Grid'
-                      onClick={() => setViewMode('grid')}
-                      className={`p-2 ${viewMode === 'grid' ? 'bg-yellow-600/20 text-white' : 'text-white'}`}
+                      title="Grid"
+                      onClick={() => setViewMode("grid")}
+                      className={`p-2 ${
+                        viewMode === "grid"
+                          ? "bg-yellow-600/20 text-white"
+                          : "text-white"
+                      }`}
                     >
                       <Grid className="h-4 w-4" />
                     </button>
+
                     <button
-                      title='List'
-                      onClick={() => setViewMode('list')}
-                      className={`p-2 ${viewMode === 'list' ? 'bg-yellow-600/20 text-white' : 'text-white'}`}
+                      title="List"
+                      onClick={() => setViewMode("list")}
+                      className={`p-2 ${
+                        viewMode === "list"
+                          ? "bg-yellow-600/20 text-white"
+                          : "text-white"
+                      }`}
                     >
                       <List className="h-4 w-4" />
                     </button>
                   </div>
 
-                  {/* Sort By */}
-                  <div className="flex items-center space-x-2">
-                    <CustomSelect
-                      label=""
-                      value={sortBy}
-                      onChange={setSortBy}
-                      options={sortList}
-                      className='px-3 py-2 min-w-48'
-                    />
-                  </div>
+                  {/* Sort Dropdown */}
+                  <CustomSelect
+                    value={sortBy}
+                    onChange={setSortBy}
+                    options={sortList}
+                    className="px-3 py-2 min-w-40"
+                  />
                 </div>
               </div>
-
-              {/* Mobile Filters */}
-              {showFilters && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="lg:hidden mt-4 p-4 border-t border-yellow-600/20"
-                >
-                  {/* Mobile filters content would go here */}
-                  <div className="space-y-4">
-                    <div>
-                      <h3 className="font-medium text-gray-300 text-sm mb-2">Price Range</h3>
-                      <input
-                        title='Price Range'
-                        type="range"
-                        min="0"
-                        max="1000"
-                        value={priceRange[1]}
-                        onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                        className="w-full bg-yellow-600/20"
-                      />
-                    </div>
-                    {/* Add other mobile filters as needed */}
-                  </div>
-                </motion.div>
-              )}
             </div>
 
-            {/* Products Grid */}
-            {filteredProducts.length > 0 ? (
+            {/* --------------------------------------------------- */}
+            {/* PRODUCT SECTION */}
+            {/* --------------------------------------------------- */}
+
+            {/* LOADING: Show skeletons inside product area */}
+            {loading && (
+              <div
+                className={
+                  viewMode === "grid"
+                    ? "grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
+                    : "space-y-4"
+                }
+              >
+                {Array.from({ length: 6 }).map((_, idx) => (
+                  <ProductSkeleton key={idx} viewMode={viewMode} />
+                ))}
+              </div>
+            )}
+
+            {/* ERROR (shows inside layout, not full page) */}
+            {!loading && (error || catError) && (
+              <div className="flex flex-col items-center gap-4">
+              <div className="text-red-400 text-center">
+                Failed to load products.  
+                <br />
+                <span className="text-sm opacity-70">
+                  {error || catError}
+                </span>
+              </div>
+
+              <button
+                onClick={() => fetchProducts()}
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Retry
+              </button>
+              </div>
+            )}
+
+            {/* 👍 SUCCESS */}
+            {!loading && !error && products.length > 0 && (
               <motion.div
                 layout
                 className={
-                  viewMode === 'grid'
-                    ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'
-                    : 'space-y-4'
+                  viewMode === "grid"
+                    ? "grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
+                    : "space-y-4"
                 }
               >
-                {filteredProducts.map((product) => (
+                {products.map((product) => (
                   <motion.div
-                    key={product.id}
+                    key={product._id}
                     layout
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3 }}
                   >
-                    <ProductCard product={product} />
+                    <ProductCard product={product} viewMode={viewMode} />
                   </motion.div>
                 ))}
               </motion.div>
-            ) : (
-              <div className="text-center py-12">
-                <div className="text-gray-400 mb-4">
-                  <Filter className="h-16 w-16 mx-auto text-yellow-400" />
-                </div>
-                <h3 className="text-lg font-medium text-gray-200 mb-2">No products found for <span className='text-red-500'>{searchQuery}</span></h3>
-                <p className="text-gray-300 text-sm mb-4">Try adjusting your filters to see more results.</p>
+            )}
+
+            {/* EMPTY STATE */}
+            {!loading && !error && products.length === 0 && (
+              <div className="text-center py-12 text-gray-300">
+                <Filter className="h-12 w-12 mx-auto text-yellow-400" />
+                <h3 className="text-lg mt-4">No products found</h3>
                 <button
                   onClick={clearFilters}
-                  className="bg-blue-600 text-white text-sm px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="bg-blue-600 text-white px-6 py-2 rounded-lg mt-4"
                 >
                   Clear All Filters
                 </button>
@@ -369,7 +296,6 @@ const ShopPage: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
     </>
   );
 };

@@ -1,13 +1,14 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Star, Clock, ArrowRight, Mail, Shield, Lock, X } from 'lucide-react';
-import ProductCard from '../components/product/ProductCard';
-import { products } from '../constants/mockData';
 import { Navbar } from '../components/layout/Navbar';
 import { Badge } from '../components/ui/Badge';
+// import { useProducts } from '../hooks/useProducts';
+import ProductGrid from '../components/product/ProductGrid';
 
 const HomePage: React.FC = () => {
-  const featuredProducts = products.filter(product => product.featured).slice(0, 8);
+  // const { products, loading, error, pagination, fetchProducts } = useProducts();
+  // const featuredProducts = products.filter(product => product.category).slice(0, 8);
 
   // Testimonials
   const testimonials = [
@@ -142,20 +143,29 @@ const HomePage: React.FC = () => {
               </Link>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
-              {featuredProducts.map((product, index) => (
-                <motion.div
-                  key={product.id}
-                  initial={{ y: 50, opacity: 0 }}
-                  whileInView={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  whileHover={{ y: -5 }}
+            <ProductGrid/>
+
+            {/* {pagination && (
+              <div className="mt-8 flex justify-center gap-2">
+                <button
+                  onClick={() => fetchProducts(pagination.currentPage - 1)}
+                  disabled={!pagination.hasPrevPage}
+                  className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
                 >
-                  <ProductCard product={product} />
-                </motion.div>
-              ))}
-            </div>
+                  Previous
+                </button>
+                <span className="px-4 py-2">
+                  Page {pagination.currentPage} of {pagination.totalPages}
+                </span>
+                <button
+                  onClick={() => fetchProducts(pagination.currentPage + 1)}
+                  disabled={!pagination.hasNextPage}
+                  className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            )} */}
           </motion.div>
         </div>
       </section>

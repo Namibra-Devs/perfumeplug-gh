@@ -1,8 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, ShoppingCart, User, Menu, X } from 'lucide-react';
-import { useCart } from '../../context/CartContext';
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from 'framer-motion';
+import { useCart } from '../../hooks/useCart';
+import { searchProducts } from '../../services/productService';
+import { Product } from '../../types/product';
+import { Navigation } from '../../constants/navLinks';
 
 export const Navbar: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,15 +13,11 @@ export const Navbar: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const searchInputRef = useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
+    const [results, setResults] = useState<Product[]>([]);
+    const [isSearching, setIsSearching] = useState(false);
+    const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const { getTotalItems } = useCart();
-
-    const navigation = [
-        { name: 'Home', href: '/' },
-        { name: 'Shop', href: '/shop' },
-        { name: 'About', href: '/about' },
-        { name: 'Contact', href: '/contact' },
-    ];
 
     const categories = [
         { name: "Men's Perfumes", href: '/shop?category=men' },
@@ -86,6 +85,33 @@ export const Navbar: React.FC = () => {
         }
     };
 
+    const handleSearchChange = (value: string) => {
+        setSearchQuery(value);
+
+        if (searchTimeout.current) {
+            clearTimeout(searchTimeout.current);
+        }
+
+        if (!value.trim()) {
+            setResults([]);
+            return;
+        }
+
+        searchTimeout.current = setTimeout(async () => {
+            try {
+            setIsSearching(true);
+
+            const data = await searchProducts(value.trim());
+            setResults(data);
+            } catch (error) {
+            console.error("Search failed:", error);
+            } finally {
+            setIsSearching(false);
+            }
+        }, 400); // debounce 400ms
+    };
+
+
     return (
         <header className={`${isMenuOpen ? "bg-gradient-to-r from-black/100 to-yellow-700/95" : 'bg-gradient-to-r from-black to-yellow-700 bg-cover bg-no-repeat top-0'} sticky top-0 z-50`}>
             <div className="mx-auto px-6 sm:px-6 lg:px-32 relative z-50">
@@ -97,7 +123,7 @@ export const Navbar: React.FC = () => {
 
                     {/* Desktop Navigation */}
                     <nav className="hidden lg:flex items-center space-x-8">
-                        {navigation.map((item) => (
+                        {Navigation.map((item) => (
                             <Link
                                 key={item.name}
                                 to={item.href}
@@ -183,7 +209,7 @@ export const Navbar: React.FC = () => {
                                         placeholder="Search perfumes, brands, categories..."
                                         className="w-full pl-12 pr-24 py-3 text-sm bg-transparent text-white border border-yellow-600/20 rounded-xl outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                                         value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        onChange={(e) => handleSearchChange(e.target.value)}
                                         autoFocus
                                     />
                                     <div className="absolute right-1 top-1/2 transform -translate-y-1/2 flex gap-2">
@@ -196,6 +222,48 @@ export const Navbar: React.FC = () => {
                                         </button>
                                     </div>
                                 </form>
+
+                                {/* LIVE SEARCH RESULTS */}
+                                {searchQuery && (
+                                <div className="mt-4 bg-black/40 border border-yellow-600/20 backdrop-blur-lg rounded-xl p-3 max-h-72 overflow-y-auto">
+
+                                    {isSearching && (
+                                    <p className="text-gray-300 text-sm px-2">Searching...</p>
+                                    )}
+
+                                    {!isSearching && results.length === 0 && (
+                                    <p className="text-gray-400 text-sm px-2">No results found</p>
+                                    )}
+
+                                    {!isSearching && results.length > 0 && (
+                                    <ul className="space-y-2">
+                                        {results.map((p) => (
+                                        <li key={p._id}>
+                                            <button
+                                            onClick={() => {
+                                                closeAll();
+                                                navigate(`/product/${p._id}`);
+                                            }}
+                                            className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-yellow-600/20 transition"
+                                            >
+                                            <img
+                                                src={p.images?.[0]?.url}
+                                                className="w-10 h-10 rounded object-cover"
+                                                alt={p.name}
+                                            />
+
+                                            <div className="text-left">
+                                                <p className="text-white text-sm font-medium">{p.name}</p>
+                                                <p className="text-yellow-400 text-xs">₵{p.sellingPrice}</p>
+                                            </div>
+                                            </button>
+                                        </li>
+                                        ))}
+                                    </ul>
+                                    )}
+                                </div>
+                                )}
+
 
                                 {/* Search Suggestions */}
                                 <div className="mt-12 md:mt-4 grid grid-cols-2 gap-4">
@@ -249,7 +317,7 @@ export const Navbar: React.FC = () => {
                         >
                             <div className="py-4">
                                 <div className="flex flex-col space-y-4">
-                                    {navigation.map((item) => (
+                                    {Navigation.map((item) => (
                                         <Link
                                             key={item.name}
                                             to={item.href}

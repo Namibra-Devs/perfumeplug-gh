@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Footer from './Footer';
-import { useCart } from '../../context/CartContext';
 import { AlertCartItems } from '../cart/AlertCartItems';
+import { useCart } from '../../hooks/useCart';
 
 interface LayoutProps {
   children: React.ReactNode;
