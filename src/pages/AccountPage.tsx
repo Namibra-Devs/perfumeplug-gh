@@ -39,7 +39,8 @@ const AccountPage: React.FC = () => {
   }, [location.search]);
 
   const [profileData, setProfileData] = useState({
-    fullName: customer?.name || '',
+    firstName: customer?.firstName || '',
+    lastName: customer?.lastName || '',
     email: customer?.email || '',
     phone: customer?.phone || '',
   });
@@ -78,7 +79,7 @@ const AccountPage: React.FC = () => {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-purple-600">My Account</h1>
-            <p className="text-sm text-gray-300">Welcome back, {customer.name}!</p>
+            <p className="text-sm text-gray-300">Welcome back, {customer.firstName}!</p>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
@@ -89,11 +90,11 @@ const AccountPage: React.FC = () => {
                 <div className="flex items-center gap-2 mb-6">
                   <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-lg">
-                      {customer.name[0]}
+                      {customer.firstName[0] && customer.lastName[0]}
                     </span>
                   </div>
                   <div>
-                    <p className="font-semibold text-purple-600">{customer.name}</p>
+                    <p className="font-semibold text-purple-600">{customer.firstName}</p>
                     <p className="text-sm text-gray-300">{customer.email}</p>
                   </div>
                 </div>
@@ -156,13 +157,26 @@ const AccountPage: React.FC = () => {
                         <div className="grid md:grid-cols-2 gap-4">
                           <div>
                             <label className="block text-sm font-medium text-gray-300 mb-2">
-                              Full Name *
+                              First Name *
                             </label>
                             <input
-                              title="Full Name"
+                              title="First Name"
                               type="text"
-                              value={profileData.fullName}
+                              value={profileData.firstName}
                               onChange={(e) => setProfileData(prev => ({ ...prev, firstName: e.target.value }))}
+                              className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                              Last Name *
+                            </label>
+                            <input
+                              title="Last Name"
+                              type="text"
+                              value={profileData.lastName}
+                              onChange={(e) => setProfileData(prev => ({ ...prev, lastName: e.target.value }))}
                               className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                               required
                             />
@@ -217,9 +231,15 @@ const AccountPage: React.FC = () => {
                       <div className="grid md:grid-cols-2 gap-6">
                         <div>
                           <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Full Name:
+                            First Name:
                           </label>
-                          <p className="text-gray-300">{profileData.fullName}</p>
+                          <p className="text-gray-300">{profileData.firstName}</p>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Last Name:
+                          </label>
+                          <p className="text-gray-300">{profileData.lastName}</p>
                         </div>
                         <div className="md:col-span-2">
                           <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -317,7 +337,8 @@ const AccountPage: React.FC = () => {
 const LoginRegisterSection: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
     phone: '',
@@ -352,17 +373,32 @@ const LoginRegisterSection: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <div>
-                <label className="block text-sm font-medium text-yellow-400 mb-1">
-                  Full Name *
-                </label>
-                <input
-                  title='First Name'
-                  type="text"
-                  required={!isLogin}
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                />
+                <div>
+                  <label className="block text-sm font-medium text-yellow-400 mb-1">
+                    Full Name *
+                  </label>
+                  <input
+                    title='First Name'
+                    type="text"
+                    required={!isLogin}
+                    value={formData.firstName}
+                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                    className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-yellow-400 mb-1">
+                    Full Name *
+                  </label>
+                  <input
+                    title='First Name'
+                    type="text"
+                    required={!isLogin}
+                    value={formData.lastName}
+                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                    className="w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border border-yellow-600/20 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  />
+                </div>
               </div>
             )}
             

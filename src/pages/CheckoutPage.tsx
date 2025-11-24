@@ -22,14 +22,16 @@ const CheckoutPage: React.FC = () => {
 
   // Customer Info
   const [customerDetails, setCustomerDetails] = useState({
-    fullName: customer?.name || "",
+    firstName: customer?.firstName || "",
+    lastName: customer?.lastName || "",
     email: customer?.email || "",
     phone: customer?.phone || "",
   });
 
   // Delivery Info
   const [deliveryDetails, setDeliveryDetails] = useState<ShippingAddress>({
-    fullName: "",
+    firstName: "",
+    lastName: "",
     phone: "",
     email: customer?.email ?? "",
     addressLine1: "",
@@ -171,13 +173,25 @@ const CheckoutPage: React.FC = () => {
 
                       <input
                         className="input"
-                        placeholder="Full Name"
+                        placeholder="First Name"
                         required
-                        value={customerDetails.fullName}
+                        value={customerDetails.firstName}
                         onChange={(e) =>
                           setCustomerDetails({
                             ...customerDetails,
-                            fullName: e.target.value,
+                            firstName: e.target.value,
+                          })
+                        }
+                      />
+                      <input
+                        className="input"
+                        placeholder="Last Name"
+                        required
+                        value={customerDetails.lastName}
+                        onChange={(e) =>
+                          setCustomerDetails({
+                            ...customerDetails,
+                            lastName: e.target.value,
                           })
                         }
                       />
@@ -233,13 +247,25 @@ const CheckoutPage: React.FC = () => {
 
                       <input
                         className="input"
-                        placeholder="Full Name"
+                        placeholder="First Name"
                         required
-                        value={deliveryDetails.fullName}
+                        value={deliveryDetails.firstName}
                         onChange={(e) =>
                           setDeliveryDetails({
                             ...deliveryDetails,
-                            fullName: e.target.value,
+                            firstName: e.target.value,
+                          })
+                        }
+                      />
+                      <input
+                        className="input"
+                        placeholder="Last Name"
+                        required
+                        value={deliveryDetails.lastName}
+                        onChange={(e) =>
+                          setDeliveryDetails({
+                            ...deliveryDetails,
+                            lastName: e.target.value,
                           })
                         }
                       />
