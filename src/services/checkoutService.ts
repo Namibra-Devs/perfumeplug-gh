@@ -4,7 +4,7 @@ import { OrderItem, ShippingAddress } from "../types/order";
 
 class EcommerceCheckout {
   private baseUrl = 'https://pos-api-pm1f.onrender.com';
-  private tenantDomain = 'https://perfumeplug-gh.onrender.com/';
+  private tenantDomain = 'https://perfumeplug-gh.onrender.com';
 
   private getHeaders(includeAuth = false) {
     const headers: HeadersInit = {

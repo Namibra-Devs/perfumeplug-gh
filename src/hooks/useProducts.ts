@@ -41,7 +41,7 @@ export function useProducts(options: UseProductsOptions = {}): UseProductsResult
     } = opts;
 
     try {
-      const url = new URL(`https://api.yourpos.com/api/v1/ecommerce/products`);
+      const url = new URL(`https://pos-api-pm1f.onrender.com/products`);
 
       url.searchParams.append("page", page.toString());
       url.searchParams.append("limit", "20");
