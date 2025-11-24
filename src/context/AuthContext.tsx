@@ -53,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       const data = await apiFetch<{ token: string; customer: Customer }>(
-        '/customers/login',
+        '/api/ecommerce/customers/login',
         {
           method: 'POST',
           body: JSON.stringify({ email, password })
@@ -83,7 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     try{
       const data = await apiFetch<{ token: string; customer: Customer }>(
-        '/customers/register',
+        '/api/ecommerce/customers/register',
         {
           method: 'POST',
           body: JSON.stringify(customerData)
