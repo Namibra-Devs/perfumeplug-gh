@@ -10,8 +10,8 @@ import { apiFetch } from '../lib/api';
 interface AuthContextType {
   customer: Customer | null;
   token: string | null;
-  login: (email: string, password: string) => Promise<void>;
-  register: (data: RegisterCustomerRequest) => Promise<void>;
+  login: (email: string, password: string) => Promise<Customer | undefined>;
+  register: (data: RegisterCustomerRequest) => Promise<Customer | undefined>;
   logout: () => void;
   isAuthenticated: boolean;
   isLoading: boolean;
