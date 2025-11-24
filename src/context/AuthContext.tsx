@@ -68,7 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         {
           method: 'POST',
           headers: {
-            'X-Tenant-Domain': 'https://perfumeplug-gh.onrender.com/',
+            'X-Tenant-Domain': 'https://perfumeplug-gh.onrender.com',
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({ email, password })
@@ -108,7 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         {
           method: 'POST',
           headers: {
-            'X-Tenant-Domain': 'https://perfumeplug-gh.onrender.com/',
+            'X-Tenant-Domain': 'https://perfumeplug-gh.onrender.com',
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(customerData)
