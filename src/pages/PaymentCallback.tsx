@@ -26,7 +26,7 @@ const PaymentCallback = () => {
 
       try {
         const result = await checkoutService.handlePaymentCallback(orderId, reference);
-        const order = result.order;
+        const order = result.order as any;
 
         console.log("Verified Order:", order);
 
