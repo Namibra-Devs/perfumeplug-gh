@@ -1,6 +1,6 @@
 
 import { parseApiError } from "../lib/apiError";
-import { OrderItem, ShippingAddress } from "../types/order";
+import { Order, OrderItem, ShippingAddress } from "../types/order";
 import { apiFetch } from "../lib/api";
 
 class EcommerceCheckout {
@@ -12,7 +12,7 @@ class EcommerceCheckout {
   ) {
     try {
       // Step 1: Create order
-      const orderData = await apiFetch<{ order: any }>(
+      const orderData = await apiFetch<{ order: Order }>(
         '/orders',
         {
           method: 'POST',
