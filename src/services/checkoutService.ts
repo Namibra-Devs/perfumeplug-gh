@@ -13,7 +13,7 @@ class EcommerceCheckout {
     try {
       // Step 1: Create order
       const orderData = await apiFetch<{ order: Order }>(
-        '/orders',
+        '/api/ecommerce/orders',
         {
           method: 'POST',
           body: JSON.stringify({
@@ -30,7 +30,7 @@ class EcommerceCheckout {
 
       // Step 2: Initialize payment
       const paymentData = await apiFetch<{ authorizationUrl: string }>(
-        `/orders/${order._id}/initialize-payment`,
+        `/api/ecommerce/orders/${order._id}/initialize-payment`,
         {
           method: 'POST',
           body: JSON.stringify({
@@ -52,7 +52,7 @@ class EcommerceCheckout {
   async handlePaymentCallback(orderId: string, reference: string) {
     try {
       const data = await apiFetch(
-        `/orders/${orderId}/verify-payment?reference=${reference}`
+        `/api/ecommerce/orders/${orderId}/verify-payment?reference=${reference}`
       );
 
       return data;

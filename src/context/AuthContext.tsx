@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchProfile = async () => {
     try {
-      const data = await apiFetch<{ customer: Customer }>('/customers/profile', {}, true);
+      const data = await apiFetch<{ customer: Customer }>('/api/ecommerce/customers/profile', {}, true);
       setCustomer(data.customer);
     } catch (error) {
       console.error('Failed to fetch profile:', error);

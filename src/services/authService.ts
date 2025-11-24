@@ -14,7 +14,7 @@ export interface RegisterPayload {
 export async function register(payload: RegisterPayload): Promise<{ customer: Customer; token: string }> {
  try {
     const data = await apiFetch<{ customer: Customer; token: string }>(
-      '/customers/register',
+      '/api/ecommerce/customers/register',
       { method: 'POST', body: JSON.stringify(payload) },
       false
     );
@@ -28,7 +28,7 @@ export async function register(payload: RegisterPayload): Promise<{ customer: Cu
 export async function login(email: string, password: string): Promise<{ customer: Customer; token: string }> {
   try {
     const data = await apiFetch<{ customer: Customer; token: string }>(
-      '/customers/login',
+      '/api/ecommerce/customers/login',
       { method: 'POST', body: JSON.stringify({ email, password }) },
       false
     );
@@ -41,7 +41,7 @@ export async function login(email: string, password: string): Promise<{ customer
 
 export async function fetchProfile() {
   try {
-    return await apiFetch<{ customer: Customer }>('/customers/profile', {}, true);
+    return await apiFetch<{ customer: Customer }>('/api/ecommerce/customers/profile', {}, true);
   } catch (err) {
     throw parseApiError(err);
   }
@@ -50,7 +50,7 @@ export async function fetchProfile() {
 export async function updateProfile(payload: Partial<RegisterPayload>) {
   try {
     return await apiFetch<{ customer: Customer; message?: string }>(
-      '/customers/profile',
+      '/api/ecommerce/customers/profile',
       { method: 'PUT', body: JSON.stringify(payload) },
       true
     );

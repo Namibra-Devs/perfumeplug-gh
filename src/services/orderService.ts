@@ -10,7 +10,7 @@ export async function createOrder(
 ) {
   try {
     return await apiFetch<{ order: OrderItem }>(
-      '/orders',
+      '/api/ecommerce/orders',
       {
         method: 'POST',
         body: JSON.stringify({ items, shippingAddress, customerNotes, paymentMethod: 'paystack' }),
@@ -24,7 +24,7 @@ export async function createOrder(
 
 export async function getOrder(orderId: string) {
   try {
-    return await apiFetch<{ order: Order }>(`/orders/${orderId}`, {}, true);
+    return await apiFetch<{ order: Order }>(`/api/ecommerce/orders/${orderId}`, {}, true);
   } catch (err) {
     throw parseApiError(err);
   }
@@ -32,7 +32,7 @@ export async function getOrder(orderId: string) {
 
 export async function getCustomerOrders() {
   return await apiFetch<RawGetCustomerOrdersResponse>(
-    "/customers/orders",
+    "/api/ecommerce/customers/orders",
     {},
     true // includeAuth = true
   );
