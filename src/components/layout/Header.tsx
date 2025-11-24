@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 type HeaderProps = {
   title: string;
-  descripton: string;
+  descripton: string | undefined;
 }
 const Header: React.FC<HeaderProps> = ({title="", descripton=""}) => {
 

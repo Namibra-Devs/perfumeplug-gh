@@ -1,32 +1,33 @@
-import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
-import { CartItem, DeliveryMethod, Order, PaymentMethod, Product } from '../types';
+/* eslint-disable react-refresh/only-export-components */
+import { Product } from "../types/product";
+import { CartItem } from "../types/cart";
+import React, { createContext, useReducer, ReactNode, useEffect } from "react";
+import { OrderItem, ShippingAddress } from "../types/order";
+// import { checkoutService, createOrder } from "../services/checkoutService";
+// import { CartItem, DeliveryMethod, Order, PaymentMethod, Product } from '../types';
 
 interface CartState {
   items: CartItem[];
   wishlist: Product[];
-  orders: Order[];
+  orders: OrderItem[];
 }
 
 type CartAction =
-  | { type: 'ADD_TO_CART'; product: Product }
-  | { type: 'REMOVE_FROM_CART'; productId: string }
-  | { type: 'UPDATE_QUANTITY'; productId: string; quantity: number }
-  | { type: 'CLEAR_CART' }
-
-  | { type: 'ADD_TO_WISHLIST'; product: Product }
-  | { type: 'REMOVE_FROM_WISHLIST'; productId: string }
-  | { type: 'CLEAR_WISHLIST' }
-
-  | { type: 'PLACE_ORDER'; order: Order }
-  | { type: 'CLEAR_ORDERS' }
-
-  | { type: 'LOAD_STATE'; state: CartState };
-  
+  | { type: "ADD_TO_CART"; product: Product }
+  | { type: "REMOVE_FROM_CART"; productId: string }
+  | { type: "UPDATE_QUANTITY"; productId: string; quantity: number }
+  | { type: "CLEAR_CART" }
+  | { type: "ADD_TO_WISHLIST"; product: Product }
+  | { type: "REMOVE_FROM_WISHLIST"; productId: string }
+  | { type: "CLEAR_WISHLIST" }
+  | { type: "PLACE_ORDER"; order: OrderItem }
+  | { type: "CLEAR_ORDERS" }
+  | { type: "LOAD_STATE"; state: CartState };
 
 interface CartContextType {
   items: CartItem[];
   wishlist: Product[];
-  orders: Order[];
+  orders: OrderItem[];
   addToCart: (product: Product) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
@@ -39,130 +40,152 @@ interface CartContextType {
   clearWishlist: () => void;
   isInWishlist: (productId: string) => boolean;
 
-  placeOrder: (deliveryMethod: DeliveryMethod, paymentMethod: PaymentMethod, userId: string) => void;
-  clearOrders?: () => void;
+  placeOrder?: (
+    items: OrderItem[],
+    shippingAddress: ShippingAddress,
+    customerNotes?: string
+  ) => void;
+  // clearOrders?: () => void;
 }
 
-const CartContext = createContext<CartContextType | undefined>(undefined);
+export const CartContext = createContext<CartContextType | undefined>(
+  undefined
+);
 
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
-    case 'ADD_TO_CART':
-      { const existingItem = state.items.find(item => item.product.id === action.product.id);
-      
+    case "ADD_TO_CART": {
+      const existingItem = state.items.find(
+        (item) => item.product._id === action.product._id
+      );
+
       if (existingItem) {
         return {
           ...state,
-          items: state.items.map(item =>
-            item.product.id === action.product.id
+          items: state.items.map((item) =>
+            item.product._id === action.product._id
               ? { ...item, quantity: item.quantity + 1 }
               : item
-          )
+          ),
         };
       }
-      
+
       return {
         ...state,
-        items: [...state.items, { product: action.product, quantity: 1 }]
-      }; }
-    
-    case 'REMOVE_FROM_CART':
-      return {
-        ...state,
-        items: state.items.filter(item => item.product.id !== action.productId)
+        items: [...state.items, { product: action.product, quantity: 1 }],
       };
-    
-    case 'UPDATE_QUANTITY':
+    }
+
+    case "REMOVE_FROM_CART":
+      return {
+        ...state,
+        items: state.items.filter(
+          (item) => item.product._id !== action.productId
+        ),
+      };
+
+    case "UPDATE_QUANTITY":
       if (action.quantity <= 0) {
         return {
           ...state,
-          items: state.items.filter(item => item.product.id !== action.productId)
+          items: state.items.filter(
+            (item) => item.product._id !== action.productId
+          ),
         };
       }
-      
+
       return {
         ...state,
-        items: state.items.map(item =>
-          item.product.id === action.productId
+        items: state.items.map((item) =>
+          item.product._id === action.productId
             ? { ...item, quantity: action.quantity }
             : item
-        )
+        ),
       };
-    
-    case 'CLEAR_CART':
-      return {...state, items: [] };
 
-    case 'ADD_TO_WISHLIST': {
-      const exists = state.wishlist.some(item => item.id === action.product.id);
+    case "CLEAR_CART":
+      return { ...state, items: [] };
+
+    case "ADD_TO_WISHLIST": {
+      const exists = state.wishlist.some(
+        (item) => item._id === action.product._id
+      );
       if (exists) return state;
       return { ...state, wishlist: [...state.wishlist, action.product] };
     }
 
-    case 'REMOVE_FROM_WISHLIST':
+    case "REMOVE_FROM_WISHLIST":
       return {
         ...state,
-        wishlist: state.wishlist.filter(item => item.id !== action.productId)
+        wishlist: state.wishlist.filter(
+          (item) => item._id !== action.productId
+        ),
       };
 
-    case 'CLEAR_WISHLIST':
+    case "CLEAR_WISHLIST":
       return { ...state, wishlist: [] };
 
-    case 'PLACE_ORDER':
+    case "PLACE_ORDER":
       return {
         ...state,
-        orders: [...state.orders, action.order],
-        items: [] // clear cart after order placement
+        items: [], // clear cart after order placement
       };
 
-    case 'CLEAR_ORDERS':
+    case "CLEAR_ORDERS":
       return {
         ...state,
-        orders: []
+        orders: [],
       };
 
-    case 'LOAD_STATE':
+    case "LOAD_STATE":
       return action.state;
-    
+
     default:
       return state;
   }
 };
 
-export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [state, dispatch] = useReducer(cartReducer, {items: [], wishlist: [], orders: []});
+export const CartProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const [state, dispatch] = useReducer(cartReducer, {
+    items: [],
+    wishlist: [],
+    orders: [],
+  });
 
   // Load cart & wishlist from localStorage on first render
   useEffect(() => {
-    const savedState = localStorage.getItem('cartState');
+    const savedState = localStorage.getItem("cartState");
     if (savedState) {
       try {
-        dispatch({ type: 'LOAD_STATE', state: JSON.parse(savedState) });
+        dispatch({ type: "LOAD_STATE", state: JSON.parse(savedState) });
       } catch (err) {
-        console.error('Failed to parse saved cart:', err);
+        console.error("Failed to parse saved cart:", err);
       }
     }
   }, []);
 
   // Save to localStorage whenever state changes
   useEffect(() => {
-    localStorage.setItem('cartState', JSON.stringify(state));
+    localStorage.setItem("cartState", JSON.stringify(state));
   }, [state]);
 
   //Cart methods
   const addToCart = (product: Product) => {
-    dispatch({ type: 'ADD_TO_CART', product });
+    dispatch({ type: "ADD_TO_CART", product });
   };
 
   const removeFromCart = (productId: string) => {
-    dispatch({ type: 'REMOVE_FROM_CART', productId });
+    dispatch({ type: "REMOVE_FROM_CART", productId });
   };
 
   const updateQuantity = (productId: string, quantity: number) => {
-    dispatch({ type: 'UPDATE_QUANTITY', productId, quantity });
+    dispatch({ type: "UPDATE_QUANTITY", productId, quantity });
   };
 
   const clearCart = () => {
-    dispatch({ type: 'CLEAR_CART' });
+    dispatch({ type: "CLEAR_CART" });
   };
 
   const getTotalItems = () => {
@@ -170,70 +193,61 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const getTotalPrice = () => {
-    return state.items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+    return state.items.reduce(
+      (total, item) => total + item.product.sellingPrice * item.quantity,
+      0
+    );
   };
-  
+
   // Wishlist methods
-  const addToWishlist = (product: Product) => dispatch({ type: 'ADD_TO_WISHLIST', product });
+  const addToWishlist = (product: Product) =>
+    dispatch({ type: "ADD_TO_WISHLIST", product });
   const removeFromWishlist = (productId: string) =>
-    dispatch({ type: 'REMOVE_FROM_WISHLIST', productId });
-  const clearWishlist = () => dispatch({ type: 'CLEAR_WISHLIST' });
-  const isInWishlist = (productId: string) => state.wishlist.some(p => p.id === productId);
+    dispatch({ type: "REMOVE_FROM_WISHLIST", productId });
+  const clearWishlist = () => dispatch({ type: "CLEAR_WISHLIST" });
+  const isInWishlist = (productId: string) =>
+    state.wishlist.some((p) => p._id === productId);
 
-  const placeOrder = (
-    deliveryMethod: DeliveryMethod,
-    paymentMethod: PaymentMethod,
-    userId: string
-  ) => {
-    if (state.items.length === 0) return;
+  // const placeOrder = async (
+  //   items: OrderItem[],
+  //   shippingAddress: ShippingAddress,
+  //   customerNotes?: string
+  // ) => {
+  //   const newOrder = await checkoutService.checkout({
+  //     items: items.map((item) => ({
+  //       productId: item.productId,
+  //       quantity: item.quantity,
+  //       price: item.price,
+  //     })),
+  //     shippingAddress,
+  //     customerNotes,
+  //   });
+  //   dispatch({ type: "PLACE_ORDER", order: newOrder as unknown as OrderItem });
+  // };
 
-    const newOrder: Order = {
-      id: Date.now().toString(),
-      userId,
-      createdAt: new Date().toISOString(),
-      items: state.items,
-      total: state.items.reduce(
-        (sum, item) => sum + item.product.price * item.quantity,
-        0
-      ),
-      status: 'pending',
-      deliveryMethod,
-      paymentMethod,
-    };
-
-    dispatch({ type: 'PLACE_ORDER', order: newOrder });
-  };
-
-  
-  const clearOrders = () => dispatch({ type: 'CLEAR_ORDERS' });
+  // const clearOrders = () => dispatch({ type: "CLEAR_ORDERS" });
 
   return (
-    <CartContext.Provider value={{
-      items: state.items,
-      wishlist: state.wishlist,
-      orders: state.orders,
-      addToCart,
-      removeFromCart,
-      updateQuantity,
-      clearCart,
-      getTotalItems,
-      getTotalPrice,
-      addToWishlist,
-      removeFromWishlist,
-      clearWishlist,
-      isInWishlist,
-      placeOrder,
-      clearOrders
-    }}>
+    <CartContext.Provider
+      value={{
+        items: state.items,
+        wishlist: state.wishlist,
+        orders: state.orders,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        getTotalItems,
+        getTotalPrice,
+        addToWishlist,
+        removeFromWishlist,
+        clearWishlist,
+        isInWishlist,
+        // placeOrder,
+        // clearOrders,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
-};
-
-export const useCart = () => {
-  const context = useContext(CartContext);
-  if (context === undefined) {
-    throw new Error('useCart must be used within a CartProvider');
-  }
-  return context;
 };

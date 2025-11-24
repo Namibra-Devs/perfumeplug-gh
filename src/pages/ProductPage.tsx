@@ -3,9 +3,9 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 // import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Heart, ShoppingCart, Truck, Shield, ZoomIn, ChevronLeft, ChevronRight, User2, HeartOff } from 'lucide-react';
 import ProductCard from '../components/product/ProductCard';
-import { products } from '../constants/mockData';
-import { useCart } from '../context/CartContext';
 import Header from '../components/layout/Header';
+import { useCart } from '../hooks/useCart';
+import { useProducts } from '../hooks/useProducts';
 
 const ProductPage: React.FC = () => {
   const { id } = useParams();
@@ -16,9 +16,13 @@ const ProductPage: React.FC = () => {
   const [showZoom, setShowZoom] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const navigate = useNavigate();
+  const { products, loading, error } = useProducts();
+
+  if (loading) return <div>Loading products...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   // Find product by ID
-  const product = products.find(p => p.id === id);
+  const product = products.find(p => p._id === id);
 
   // If product not found
   if (!product) {
@@ -37,17 +41,17 @@ const ProductPage: React.FC = () => {
 
   // Related products (same category, excluding current product)
   const relatedProducts = products
-    .filter(p => p.category === product.category && p.id !== product.id)
+    .filter(p => p.category === product.category && p._id !== product._id)
     .slice(0, 4);
 
   // Size options
   const sizeOptions = [
-    { value: '50ml', price: product.price * 0.6 },
-    { value: '100ml', price: product.price },
-    { value: '150ml', price: product.price * 1.4 }
+    { value: '50ml', price: product.sellingPrice * 0.6 },
+    { value: '100ml', price: product.sellingPrice },
+    { value: '150ml', price: product.sellingPrice * 1.4 }
   ];
 
-  const selectedPrice = sizeOptions.find(size => size.value === selectedSize)?.price || product.price;
+  const selectedPrice = sizeOptions.find(size => size.value === selectedSize)?.price || product.sellingPrice;
 
   // Mock reviews data
   const reviews = [
@@ -77,14 +81,6 @@ const ProductPage: React.FC = () => {
     }
   ];
 
-  // Image gallery with multiple angles
-  const productImages = [
-    product.images[0],
-    '/1.jpg',
-    '/2.jpg',
-    '/1.jpg'
-  ];
-
   const handleImageZoom = (e: React.MouseEvent<HTMLImageElement>) => {
     const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
     const x = ((e.clientX - left) / width) * 100;
@@ -94,12 +90,12 @@ const ProductPage: React.FC = () => {
 
   //Handle Next image preview product
   const nextImage = () => {
-    setSelectedImage((prev) => (prev + 1) % productImages.length);
+    setSelectedImage((prev) => (prev + 1) % product.images.length);
   };
 
   //Handle pevious image preview product
   const prevImage = () => {
-    setSelectedImage((prev) => (prev - 1 + productImages.length) % productImages.length);
+    setSelectedImage((prev) => (prev - 1 + product.images.length) % product.images.length);
   };
 
   //Handle Add to Cart
@@ -113,7 +109,7 @@ const ProductPage: React.FC = () => {
   const handleIncrease = () => {
     const newQuantity= quantity + 1;
     setQuantity(newQuantity);
-    updateQuantity(product.id, newQuantity)
+    updateQuantity(product._id, newQuantity)
   };
 
   //Descrease Product Quantity
@@ -121,7 +117,7 @@ const ProductPage: React.FC = () => {
     if(quantity > 1){
       const newQuantity = quantity - 1;
       setQuantity(newQuantity);
-      updateQuantity(product.id, newQuantity);
+      updateQuantity(product._id, newQuantity);
     }
   };
 
@@ -162,7 +158,7 @@ const ProductPage: React.FC = () => {
                 onMouseMove={handleImageZoom}
               >
                 <img
-                  src={productImages[selectedImage]}
+                  src={product.images[selectedImage].url}
                   alt={product.name}
                   className="w-full h-full object-cover"
                 />
@@ -180,7 +176,7 @@ const ProductPage: React.FC = () => {
                     <div 
                       className="w-[200%] h-[200%] bg-cover bg-no-repeat"
                       style={{
-                        backgroundImage: `url(${productImages[selectedImage]})`,
+                        backgroundImage: `url(${product.images[selectedImage].url})`,
                         backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`
                       }}
                     />
@@ -205,13 +201,13 @@ const ProductPage: React.FC = () => {
 
                 {/* Image Counter */}
                 <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
-                  {selectedImage + 1} / {productImages.length}
+                  {selectedImage + 1} / {product.images.length}
                 </div>
               </div>
 
               {/* Thumbnail Gallery */}
               <div className="grid grid-cols-4 gap-4">
-                {productImages.map((image, index) => (
+                {product.images.map((image, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
@@ -220,7 +216,7 @@ const ProductPage: React.FC = () => {
                     }`}
                   >
                     <img
-                      src={image}
+                      src={image.url}
                       alt={`${product.name} view ${index + 1}`}
                       className="w-full h-full object-cover hover:scale-110 transition-transform"
                     />
@@ -232,11 +228,11 @@ const ProductPage: React.FC = () => {
             {/* Product Info */}
             <div className="space-y-6 text-white">
               <div>
-                <span className="text-yellow-400 font-semibold">{product.brand}</span>
+                {/* <span className="text-yellow-400 font-semibold">{product.brand}</span> */}
                 <h1 className="text-3xl md:text-4xl font-bold text-gray-50 mt-2">{product.name}</h1>
                 
                 {/* Rating */}
-                <div className="flex items-center space-x-2 mt-3">
+                {/* <div className="flex items-center space-x-2 mt-3">
                   <div className="flex items-center space-x-1">
                     {[...Array(5)].map((_, i) => (
                       <Star
@@ -250,18 +246,18 @@ const ProductPage: React.FC = () => {
                   <span className="text-gray-200 text-sm">
                     {product.rating} ({product.reviewCount} reviews)
                   </span>
-                </div>
+                </div> */}
               </div>
 
               {/* Price */}
               <div className="flex items-center space-x-4">
                 <span className="text-lg font-bold text-green-500">₵{selectedPrice.toFixed(2)}</span>
-                {product.originalPrice && selectedPrice < product.originalPrice && (
-                  <span className="text-sm text-gray-300 line-through">₵{product.originalPrice.toFixed(2)}</span>
+                {product.sellingPrice && selectedPrice < product.sellingPrice && (
+                  <span className="text-sm text-gray-300 line-through">₵{product.sellingPrice.toFixed(2)}</span>
                 )}
-                {product.originalPrice && selectedPrice < product.originalPrice && (
+                {product.sellingPrice && selectedPrice < product.sellingPrice && (
                   <span className="bg-red-100 text-red-600 px-2 py-1 rounded text-xs font-semibold">
-                    Save ₵{(product.originalPrice - selectedPrice).toFixed(2)}
+                    Save ₵{(product.sellingPrice - selectedPrice).toFixed(2)}
                   </span>
                 )}
               </div>
@@ -326,10 +322,10 @@ const ProductPage: React.FC = () => {
                 </button>
 
                 {/* Wish button */}
-                <button onClick={() => isInWishlist(product.id)
-                  ? removeFromWishlist(product.id)
+                <button onClick={() => isInWishlist(product._id)
+                  ? removeFromWishlist(product._id)
                   : addToWishlist(product)} title='Add wish list' className="w-12 h-12 bg-purple-600/20 border border-purple-500 rounded-lg flex items-center justify-center hover:border-orange-400 transition-colors">
-                  {isInWishlist(product.id) ? <Heart size={24} className='text-white'/> : <HeartOff />}
+                  {isInWishlist(product._id) ? <Heart size={24} className='text-white'/> : <HeartOff />}
                 </button>
               </div>
 
@@ -376,7 +372,7 @@ const ProductPage: React.FC = () => {
               </div>
 
               {/* Fragrance Notes */}
-              <div className="mt-8">
+              {/* <div className="mt-8">
                 <h3 className="text-lg text-yellow-400 font-semibold mb-6">Fragrance Notes</h3>
                 <div className="grid md:grid-cols-3 gap-6">
                   <div className="text-center p-4 bg-blue-50 rounded-lg">
@@ -398,7 +394,7 @@ const ProductPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/* Reviews */}
               <div className="mt-8">
@@ -440,9 +436,9 @@ const ProductPage: React.FC = () => {
           {relatedProducts.length > 0 && (
             <div className="mt-16">
               <h2 className="text-2xl font-bold text-gray-300 mb-8">Related Products</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 {relatedProducts.map((relatedProduct) => (
-                  <ProductCard key={relatedProduct.id} product={relatedProduct} />
+                  <ProductCard key={relatedProduct._id} product={relatedProduct} />
                 ))}
               </div>
             </div>
