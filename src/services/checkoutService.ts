@@ -3,8 +3,8 @@ import { parseApiError } from "../lib/apiError";
 import { OrderItem, ShippingAddress } from "../types/order";
 
 class EcommerceCheckout {
-  private baseUrl = 'https://api.yourpos.com/api/v1/ecommerce';
-  private tenantDomain = 'shop.example.com';
+  private baseUrl = 'https://pos-api-pm1f.onrender.com';
+  private tenantDomain = 'https://perfumeplug-gh.onrender.com/';
 
   private getHeaders(includeAuth = false) {
     const headers: HeadersInit = {

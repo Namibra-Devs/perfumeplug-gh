@@ -14,6 +14,7 @@ interface AuthContextType {
   logout: () => void;
   isAuthenticated: boolean;
   isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -39,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const fetchProfile = async (authToken: string) => {
     try {
       const response = await fetch(
-        'https://api.yourpos.com/api/v1/ecommerce/customers/profile',
+        'https://pos-api-pm1f.onrender.com/customers/profile',
         {
           headers: {
             'X-Tenant-Domain': import.meta.env.NEXT_PUBLIC_TENANT_DOMAIN!,
@@ -63,11 +64,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       const response = await fetch(
-        'https://api.yourpos.com/api/v1/ecommerce/customers/login',
+        'https://pos-api-pm1f.onrender.com/customers/login',
         {
           method: 'POST',
           headers: {
-            'X-Tenant-Domain': 'shop.example.com',
+            'X-Tenant-Domain': 'https://perfumeplug-gh.onrender.com/',
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({ email, password })
@@ -100,17 +101,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const register = async (customerData: RegisterCustomerRequest) => {
-    console.log(customerData);
-
     setIsLoading(true);
-
     try{
       const response = await fetch(
-        'https://api.yourpos.com/api/v1/ecommerce/customers/register',
+        'https://pos-api-pm1f.onrender.com/customers/register',
         {
           method: 'POST',
           headers: {
-            'X-Tenant-Domain': 'shop.example.com',
+            'X-Tenant-Domain': 'https://perfumeplug-gh.onrender.com/',
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(customerData)
@@ -181,7 +179,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         register,
         logout,
         isAuthenticated: !!token,
-        isLoading
+        isLoading,
+        setIsLoading
       }}
     >
       {children}
