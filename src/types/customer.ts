@@ -1,6 +1,7 @@
 export interface Customer {
   _id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   phone: string;            // you can create a Phone type if needed
   address: string;
@@ -22,7 +23,8 @@ export interface CustomerResponse {
 export type Phone = `+${number}`;
 
 export interface UpdateCustomerProfileRequest {
-  name?: string;      // optional because user may update only one field
+  firstName?: string;
+  lastName?: string;     
   phone?: string;
   address?: string;
 }
@@ -33,7 +35,8 @@ export interface UpdateCustomerProfileResponse {
   data: {
     customer: {
       _id: string;
-      name: string;
+      firstName: string;
+      lastName: string;
       email: string;
       phone?: string;
       address?: string;

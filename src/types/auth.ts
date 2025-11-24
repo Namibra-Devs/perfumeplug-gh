@@ -1,7 +1,8 @@
 import { Customer } from "./customer";
 
 export interface RegisterCustomerRequest {
-  name: string;          // 2–100 chars
+  firstName: string;          // 2–100 chars
+  lastName: string;          // 2–100 chars
   email: string;         // valid + unique
   password: string;      // min 8, strong
   phone?: string;
