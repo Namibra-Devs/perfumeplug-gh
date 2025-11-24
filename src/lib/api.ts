@@ -1,8 +1,8 @@
 import { getCache, setCache } from "./cache";
 
 // src/lib/api.ts
-export const BASE = 'https://api.yourpos.com/api/v1/ecommerce';
-export const TENANT = 'shop.example.com';
+export const BASE = import.meta.env.NEXT_PUBLIC_API_URL || 'https://pos-api-pm1f.onrender.com';
+export const TENANT = import.meta.env.NEXT_PUBLIC_TENANT_DOMAIN || 'https://perfumeplug-gh.onrender.com';
 
 export async function apiFetch<T = Record<string, unknown>>(
   path: string,
