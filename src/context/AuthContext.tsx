@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 // contexts/AuthContext.tsx
 import { useToast } from '../hooks/useToast';
-import { RegisterCustomerRequest } from '../types/auth';
+import { RegisterCustomerRequest, RegisterCustomerResponse } from '../types/auth';
 import { Customer } from '../types/customer';
 import { createContext, useState, useEffect, ReactNode } from 'react';
 import { apiFetch } from '../lib/api';
@@ -11,7 +11,7 @@ interface AuthContextType {
   customer: Customer | null;
   token: string | null;
   login: (email: string, password: string) => Promise<Customer | undefined>;
-  register: (data: RegisterCustomerRequest) => Promise<Customer | undefined>;
+  register: (data: RegisterCustomerRequest) => Promise<Customer | undefined | null>;
   logout: () => void;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -82,7 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (customerData: RegisterCustomerRequest) => {
     setIsLoading(true);
     try{
-      const data = await apiFetch<{ token: string; customer: Customer }>(
+      const response = await apiFetch<RegisterCustomerResponse>(
         '/api/ecommerce/customers/register',
         {
           method: 'POST',
@@ -90,15 +90,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       );
 
-      setToken(data.token);
-      setCustomer(data.customer);
-      console.log("Register Info:", data);
+      // Handle backend-level error (success=false)
+      if (!response.success) {
+        toast.error(response.message || "Registration failed");
+        console.error("Registration error:", response.error);
+        return null;
+      }
+
+
+      setToken(response.data.token);
+      setCustomer(response.data.customer);
+      console.log("Register Info:", response);
       toast.success("Registration Successfull!");
 
       //Store Token
-      localStorage.setItem('customerToken', data.token);
+      localStorage.setItem('customerToken', response.data.token);
 
-      return data.customer;
+      return response.data.customer;
 
     }catch(error){
       console.log(error);
@@ -107,20 +115,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }finally{
       setIsLoading(false);
     }
-
-  
-    // Usage
-    // try {
-    //   const customer = await registerCustomer({
-    //     name: 'John Doe',
-    //     email: 'john@example.com',
-    //     password: 'SecurePass123!',
-    //     phone: '+1234567890'
-    //   });
-    //   console.log('Registration successful:', customer);
-    // } catch (error) {
-    //   console.error('Registration failed:', error.message);
-    // }
   };
 
   const logout = () => {
