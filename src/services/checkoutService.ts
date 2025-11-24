@@ -1,26 +1,9 @@
 
 import { parseApiError } from "../lib/apiError";
 import { OrderItem, ShippingAddress } from "../types/order";
+import { apiFetch } from "../lib/api";
 
 class EcommerceCheckout {
-  private baseUrl = 'https://pos-api-pm1f.onrender.com';
-  private tenantDomain = 'https://perfumeplug-gh.onrender.com';
-
-  private getHeaders(includeAuth = false) {
-    const headers: HeadersInit = {
-      'X-Tenant-Domain': this.tenantDomain,
-      'Content-Type': 'application/json'
-    };
-
-    if (includeAuth) {
-      const token = localStorage.getItem('customerToken');
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-    }
-
-    return headers;
-  }
 
   async checkout(
     items: OrderItem[],
@@ -29,30 +12,27 @@ class EcommerceCheckout {
   ) {
     try {
       // Step 1: Create order
-      const orderResponse = await fetch(`${this.baseUrl}/orders`, {
-        method: 'POST',
-        headers: this.getHeaders(true),
-        body: JSON.stringify({
-          items,
-          shippingAddress,
-          customerNotes,
-          paymentMethod: 'paystack'
-        })
-      });
-
-      if (!orderResponse.ok) {
-        throw new Error('Failed to create order');
-      }
-
-      const orderData = await orderResponse.json();
-      const order = orderData.data.order;
-
-      // Step 2: Initialize payment
-      const paymentResponse = await fetch(
-        `${this.baseUrl}/orders/${order._id}/initialize-payment`,
+      const orderData = await apiFetch<{ order: any }>(
+        '/orders',
         {
           method: 'POST',
-          headers: this.getHeaders(),
+          body: JSON.stringify({
+            items,
+            shippingAddress,
+            customerNotes,
+            paymentMethod: 'paystack'
+          })
+        },
+        true
+      );
+
+      const order = orderData.order;
+
+      // Step 2: Initialize payment
+      const paymentData = await apiFetch<{ authorizationUrl: string }>(
+        `/orders/${order._id}/initialize-payment`,
+        {
+          method: 'POST',
           body: JSON.stringify({
             email: shippingAddress.email,
             callbackUrl: `${window.location.origin}/payment/callback?orderId=${order._id}`
@@ -60,14 +40,8 @@ class EcommerceCheckout {
         }
       );
 
-      if (!paymentResponse.ok) {
-        throw new Error('Failed to initialize payment');
-      }
-
-      const paymentData = await paymentResponse.json();
-
       // Step 3: Redirect to payment
-      window.location.href = paymentData.data.authorizationUrl;
+      window.location.href = paymentData.authorizationUrl;
 
     } catch (error) {
       console.error('Checkout failed:', error);
@@ -77,19 +51,11 @@ class EcommerceCheckout {
 
   async handlePaymentCallback(orderId: string, reference: string) {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/orders/${orderId}/verify-payment?reference=${reference}`,
-        {
-          headers: this.getHeaders()
-        }
+      const data = await apiFetch(
+        `/orders/${orderId}/verify-payment?reference=${reference}`
       );
 
-      if (!response.ok) {
-        throw new Error('Payment verification failed');
-      }
-
-      const data = await response.json();
-      return data.data;
+      return data;
 
     } catch (error) {
       console.error('Payment verification failed:', error);

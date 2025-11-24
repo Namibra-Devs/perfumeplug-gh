@@ -2,7 +2,7 @@
 // hooks/useProducts.ts
 import { useState, useEffect } from "react";
 import { Product, Pagination } from "../types/product";
-import { TENANT } from "../lib/api";
+import { apiFetch } from "../lib/api";
 
 export interface UseProductsOptions {
   page?: number;
@@ -41,42 +41,34 @@ export function useProducts(options: UseProductsOptions = {}): UseProductsResult
     } = opts;
 
     try {
-      const url = new URL(`https://pos-api-pm1f.onrender.com/products`);
+      const params = new URLSearchParams();
+      params.append("page", page.toString());
+      params.append("limit", "20");
 
-      url.searchParams.append("page", page.toString());
-      url.searchParams.append("limit", "20");
-
-      if (search) url.searchParams.append("search", search);
-      if (category) url.searchParams.append("category", category);
-      if (minPrice) url.searchParams.append("minPrice", minPrice.toString());
-      if (maxPrice) url.searchParams.append("maxPrice", maxPrice.toString());
+      if (search) params.append("search", search);
+      if (category) params.append("category", category);
+      if (minPrice) params.append("minPrice", minPrice.toString());
+      if (maxPrice) params.append("maxPrice", maxPrice.toString());
 
       // Determine sort rules
       if (sortBy === "price-low-high") {
-        url.searchParams.append("sortBy", "price");
-        url.searchParams.append("sortOrder", "asc");
+        params.append("sortBy", "price");
+        params.append("sortOrder", "asc");
       } else if (sortBy === "price-high-low") {
-        url.searchParams.append("sortBy", "price");
-        url.searchParams.append("sortOrder", "desc");
+        params.append("sortBy", "price");
+        params.append("sortOrder", "desc");
       } else {
-        url.searchParams.append("sortBy", "createdAt");
-        url.searchParams.append("sortOrder", "desc");
+        params.append("sortBy", "createdAt");
+        params.append("sortOrder", "desc");
       }
 
-      const response = await fetch(url.toString(), {
-        headers: {
-          "X-Tenant-Domain": TENANT,
-        },
-      });
+      const data = await apiFetch<{ products: Product[]; pagination: Pagination }>(
+        `/products?${params.toString()}`
+      );
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch products");
-      }
-
-      const data = await response.json();
       console.log("Products:", data);
-      setProducts(data.data.products);
-      setPagination(data.data.pagination);
+      setProducts(data.products);
+      setPagination(data.pagination);
     } catch (error: any) {
       setError(error.message || "An error occurred");
     } finally {

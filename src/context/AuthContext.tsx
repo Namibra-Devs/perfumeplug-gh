@@ -4,6 +4,7 @@ import { useToast } from '../hooks/useToast';
 import { RegisterCustomerRequest } from '../types/auth';
 import { Customer } from '../types/customer';
 import { createContext, useState, useEffect, ReactNode } from 'react';
+import { apiFetch } from '../lib/api';
 
 
 interface AuthContextType {
@@ -31,28 +32,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (savedToken) {
       setToken(savedToken);
       // Optionally fetch customer profile
-      fetchProfile(savedToken);
+      fetchProfile();
     }else{
       console.log("No Token Found!");
     }
   }, []);
 
-  const fetchProfile = async (authToken: string) => {
+  const fetchProfile = async () => {
     try {
-      const response = await fetch(
-        'https://pos-api-pm1f.onrender.com/customers/profile',
-        {
-          headers: {
-            'X-Tenant-Domain': import.meta.env.NEXT_PUBLIC_TENANT_DOMAIN!,
-            'Authorization': `Bearer ${authToken}`
-          }
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setCustomer(data.data.customer);
-      }
+      const data = await apiFetch<{ customer: Customer }>('/customers/profile', {}, true);
+      setCustomer(data.customer);
     } catch (error) {
       console.error('Failed to fetch profile:', error);
     }
@@ -63,32 +52,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch(
-        'https://pos-api-pm1f.onrender.com/customers/login',
+      const data = await apiFetch<{ token: string; customer: Customer }>(
+        '/customers/login',
         {
           method: 'POST',
-          headers: {
-            'X-Tenant-Domain': 'perfumeplug-gh.onrender.com',
-            'Content-Type': 'application/json'
-          },
           body: JSON.stringify({ email, password })
         }
       );
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error.message);
-      }
-
-      const data = await response.json();
       console.log("Login Info:", data);
-      setToken(data.data.token);
-      setCustomer(data.data.customer);
+      setToken(data.token);
+      setCustomer(data.customer);
       toast.success("Login Successfull!"); 
       // Store token
-      localStorage.setItem('customerToken', data.data.token);
+      localStorage.setItem('customerToken', data.token);
 
-      return data.data.customer;
+      return data.customer;
 
     }catch(error){
       console.log(error);
@@ -103,34 +82,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (customerData: RegisterCustomerRequest) => {
     setIsLoading(true);
     try{
-      const response = await fetch(
-        'https://pos-api-pm1f.onrender.com/customers/register',
+      const data = await apiFetch<{ token: string; customer: Customer }>(
+        '/customers/register',
         {
           method: 'POST',
-          headers: {
-            'X-Tenant-Domain': 'perfumeplug-gh.onrender.com',
-            'Content-Type': 'application/json'
-          },
           body: JSON.stringify(customerData)
         }
       );
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error.message);
-      }
-
-      const data = await response.json();
-
-      setToken(data.data.token);
-      setCustomer(data.data.customer);
+      setToken(data.token);
+      setCustomer(data.customer);
       console.log("Register Info:", data);
       toast.success("Registration Successfull!");
 
       //Store Token
-      localStorage.setItem('customerToken', data.data.token);
+      localStorage.setItem('customerToken', data.token);
 
-      return data.data.customer;
+      return data.customer;
 
     }catch(error){
       console.log(error);
