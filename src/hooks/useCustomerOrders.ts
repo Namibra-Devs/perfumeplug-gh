@@ -21,7 +21,6 @@ export function useCustomerOrders(token?: string | null) {
         setPagination(orderList.data.pagination);
       } catch (err: any) {
         setError(err.message);
-        toast.error("Failed to load orders");
       } finally {
         setLoading(false);
       }

@@ -39,10 +39,10 @@ const AccountPage: React.FC = () => {
   }, [location.search]);
 
   const [profileData, setProfileData] = useState({
-    firstName: customer?.firstName || '',
-    lastName: customer?.lastName || '',
-    email: customer?.email || '',
-    phone: customer?.phone || '',
+    firstName: customer?.firstName,
+    lastName: customer?.lastName,
+    email: customer?.email,
+    phone: customer?.phone,
   });
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
@@ -94,7 +94,7 @@ const AccountPage: React.FC = () => {
                     </span>
                   </div>
                   <div>
-                    <p className="font-semibold text-purple-600">{customer.firstName}</p>
+                    <p className="font-semibold text-purple-600">{customer.firstName} {customer.lastName}</p>
                     <p className="text-sm text-gray-300">{customer.email}</p>
                   </div>
                 </div>
@@ -302,7 +302,7 @@ const AccountPage: React.FC = () => {
                               <div className="text-xs md:text-sm font-semibold text-white">{item.name}</div>
                               <div className='flex flex-col md:flex-row itemsc-enter gap-2'>
                                 {/* <span className="text-xs md:text-sm text-gray-300">{item.brand}</span> */}
-                                <span className="text-xs md:text-sm font-semibold text-blue-600">₵{item.sellingPrice.toFixed(2)}</span>
+                                <span className="text-xs md:text-sm font-semibold text-blue-600">₵{item?.sellingPrice.toFixed(2)}</span>
                               </div>
                               
                               {/* <div className={`text-xs w-fit ${item.inStock ? 'text-green-400 rounded-full px-2 py-1 text-xs bg-green-700/20 border border-green-600/40' : 'text-red-400 rounded-full px-2 py-1 text-xs bg-red-700/20 border border-red-600/40'}`}>
@@ -372,7 +372,7 @@ const LoginRegisterSection: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
-              <div>
+              <div className='space-y-4'>
                 <div>
                   <label className="block text-sm font-medium text-yellow-400 mb-1">
                     Full Name *
