@@ -4,7 +4,8 @@ import { useProducts } from "../../hooks/useProducts";
 
 const ProductGrid = () => {
   const { products, loading, error, fetchProducts } = useProducts();
-  const featuredProducts = products.filter(product => product.category).slice(0, 8);
+  const featuredProducts = products.slice(0, 8);
+  console.log("Featured Products:", featuredProducts);
 
   // Loading: show skeleton cards in the same grid layout 
   if (loading) {
@@ -26,7 +27,7 @@ const ProductGrid = () => {
   }
 
   // ─── Error state ───────────────────────────────────────────────────────
-  if (error) {
+  if (!error) {
     return (
       <div className="text-center py-10 col-span-full">
         <p className="text-red-500">Error loading products: {String(error)}</p>

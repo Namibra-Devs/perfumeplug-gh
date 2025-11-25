@@ -16,10 +16,9 @@ const ProductPage: React.FC = () => {
   const [showZoom, setShowZoom] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const navigate = useNavigate();
-  const { products, loading, error } = useProducts();
+  const { products, error } = useProducts();
 
-  if (loading) return <div>Loading products...</div>;
-  if (error) return <div>Error: {error}</div>;
+  console.log(error);
 
   // Find product by ID
   const product = products.find(p => p._id === id);
@@ -228,7 +227,7 @@ const ProductPage: React.FC = () => {
             {/* Product Info */}
             <div className="space-y-6 text-white">
               <div>
-                {/* <span className="text-yellow-400 font-semibold">{product.brand}</span> */}
+                <span className="text-yellow-400 font-semibold">{product?.brand}</span>
                 <h1 className="text-3xl md:text-4xl font-bold text-gray-50 mt-2">{product.name}</h1>
                 
                 {/* Rating */}

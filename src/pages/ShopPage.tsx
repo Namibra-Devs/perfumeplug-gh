@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Filter, Grid, List } from "lucide-react";
+import { Filter, Grid, List, RotateCcw } from "lucide-react";
 
 import ProductCard from "../components/product/ProductCard";
 import Header from "../components/layout/Header";
@@ -26,7 +26,7 @@ const ShopPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   // API hooks
-  const { categories, loading: catLoading, error: catError } = useCategories();
+  const { categories, loading: catLoading} = useCategories();
   const { products, loading, error, fetchProducts } = useProducts({
     category: category === "all" ? "" : category,
     search: searchQuery,
@@ -108,14 +108,14 @@ const ShopPage: React.FC = () => {
                     categories?.map((c) => (
                       <button
                         key={c.name}
-                        onClick={() => setCategory(c.name.toLowerCase())}
+                        onClick={() => setCategory(c.name)}
                         className={`block w-full text-left px-3 py-2 rounded-lg ${
                           category === c.name.toLowerCase()
                             ? "bg-yellow-800/30 text-yellow-400"
                             : "text-gray-300 hover:bg-yellow-700/20"
                         }`}
                       >
-                        <div className="flex justify-between items-center">
+                        <div className="flex justify-between items-center text-sm">
                           <span>{c.name}</span>
                           {c.productCount && (
                             <span className="text-gray-100 text-sm">({c.productCount})</span>
@@ -179,6 +179,13 @@ const ShopPage: React.FC = () => {
 
                 {/* View + Sort */}
                 <div className="flex items-center space-x-4">
+                  <button
+                    title="Sync"
+                    onClick={() => fetchProducts()}
+                    className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                  >
+                    <RotateCcw size={18} />
+                  </button>
 
                   {/* View Mode Buttons */}
                   <div className="flex border border-yellow-600/20 rounded-lg overflow-hidden">
@@ -237,28 +244,8 @@ const ShopPage: React.FC = () => {
               </div>
             )}
 
-            {/* ERROR (shows inside layout, not full page) */}
-            {!loading && (error || catError) && (
-              <div className="flex flex-col items-center gap-4">
-              <div className="text-red-400 text-center">
-                Failed to load products.  
-                <br />
-                <span className="text-sm opacity-70">
-                  {error || catError}
-                </span>
-              </div>
-
-              <button
-                onClick={() => fetchProducts()}
-                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                Retry
-              </button>
-              </div>
-            )}
-
-            {/* 👍 SUCCESS */}
-            {!loading && !error && products.length > 0 && (
+            {/* SUCCESS */}
+            {products.length > 0 && (
               <motion.div
                 layout
                 className={

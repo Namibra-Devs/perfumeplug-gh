@@ -218,11 +218,11 @@ export const MockProducts: Product[] = [
 ];
 
 // Auto-calc category counts
-export const categories = [
-  { id: "men", name: "Men's Perfumes", count: MockProducts.filter(p => p.category === "men").length },
-  { id: "women", name: "Women's Perfumes", count: MockProducts.filter(p => p.category === "women").length },
-  { id: "unisex", name: "Unisex", count: MockProducts.filter(p => p.category === "unisex").length },
-  { id: "luxury", name: "Luxury Collection", count: MockProducts.filter(p => p.category === "luxury").length },
-  { id: "body-sprays", name: "Body Sprays", count: MockProducts.filter(p => p.category === "body-sprays").length },
-  { id: "gift-sets", name: "Gift Sets", count: MockProducts.filter(p => p.category === "gift-sets").length },
+export const MockCategories = [
+  { id: "men", name: "Men's Perfumes", productCount: MockProducts.filter(p => p.category === "men").length },
+  { id: "women", name: "Women's Perfumes", productCount: MockProducts.filter(p => p.category === "women").length },
+  { id: "unisex", name: "Unisex", productCount: MockProducts.filter(p => p.category === "unisex").length },
+  { id: "luxury", name: "Luxury Collection", productCount: MockProducts.filter(p => p.category === "luxury").length },
+  { id: "body-sprays", name: "Body Sprays", productCount: MockProducts.filter(p => p.category === "body-sprays").length },
+  { id: "gift-sets", name: "Gift Sets", productCount: MockProducts.filter(p => p.category === "gift-sets").length },
 ];

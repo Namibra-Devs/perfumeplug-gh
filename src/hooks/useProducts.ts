@@ -80,7 +80,6 @@ export function useProducts(options: UseProductsOptions = {}): UseProductsResult
     */
 
      let filtered = [...MockProducts];
-     console.log(filtered);
 
      //Apply search filter
      if(search){
@@ -119,8 +118,8 @@ export function useProducts(options: UseProductsOptions = {}): UseProductsResult
       const pageSize = 20;
       const start = (page - 1) * pageSize;
       const paginated = filtered.slice(start, start + pageSize);
-
-      setProducts(paginated);
+      console.log(paginated);
+      setProducts(filtered);
 
       setPagination({
         currentPage: page,
