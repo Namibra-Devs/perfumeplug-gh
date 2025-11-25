@@ -9,12 +9,14 @@ import { useAuth } from "../hooks/useAuth";
 import { useCart } from "../hooks/useCart";
 import { checkoutService } from "../services/checkoutService";
 import { ShippingAddress } from "../types/order";
+import { useToast } from "../hooks/useToast";
 
 type CheckoutStep = "customer" | "delivery" | "payment";
 
 const CheckoutPage: React.FC = () => {
   const { customer } = useAuth();
   const { items, getTotalPrice } = useCart();
+  const toast = useToast();
 
   const [currentStep, setCurrentStep] = useState<CheckoutStep>("customer");
   const [loading, setLoading] = useState(false);
@@ -45,12 +47,36 @@ const CheckoutPage: React.FC = () => {
   const [notes] = useState("");
   // const [notes, setNotes] = useState("");
 
-  const regionSelect = [
-    { value: "Greater Accra", label: "Greater Accra" },
-    { value: "Ashanti", label: "Ashanti" },
-    { value: "Western", label: "Western" },
-    { value: "Northern", label: "Northern" },
-  ];
+const regionSelect = [
+  { value: "Ahafo", label: "Ahafo" },
+  { value: "Ashanti", label: "Ashanti" },
+  { value: "Bono", label: "Bono" },
+  { value: "Bono East", label: "Bono East" },
+  { value: "Central", label: "Central" },
+  { value: "Eastern", label: "Eastern" },
+  { value: "Greater Accra", label: "Greater Accra" },
+  { value: "North East", label: "North East" },
+  { value: "Northern", label: "Northern" },
+  { value: "Oti", label: "Oti" },
+  { value: "Savannah", label: "Savannah" },
+  { value: "Upper East", label: "Upper East" },
+  { value: "Upper West", label: "Upper West" },
+  { value: "Volta", label: "Volta" },
+  { value: "Western", label: "Western" },
+  { value: "Western North", label: "Western North" },
+];
+
+
+const countrySelect = [
+  { value: "Ghana", label: "Ghana" },
+  { value: "Nigeria", label: "Nigeria" },
+  { value: "Kenya", label: "Kenya" },
+  { value: "South Africa", label: "South Africa" },
+  { value: "United States", label: "United States" },
+  { value: "United Kingdom", label: "United Kingdom" },
+  { value: "Canada", label: "Canada" }
+];
+
 
   const steps = [
     { id: "customer", name: "Customer Details", icon: User },
@@ -96,9 +122,13 @@ const CheckoutPage: React.FC = () => {
 
       // Call checkout class — this redirects to Paystack
       await checkoutService.checkout(orderItems, deliveryDetails, notes);
+      toast.success("Order created successfull!. You'll be redirected to Paystack");
     } catch (err) {
       console.log(err);
-      setError("Payment failed. Please try again.");
+      setError("Failed to create order. Please try again.");
+      if(err){
+        toast.error("Failed to create order. Please try again!");
+      }
     }
 
     setLoading(false);
@@ -184,6 +214,7 @@ const CheckoutPage: React.FC = () => {
                           })
                         }
                       />
+
                       <input
                         className="input w-full px-3 py-2.5 bg-transparent text-white text-sm outline-none border border-yellow-600/20 rounded-lg focus:ring-2 focus:ring-yellow-500"
                         placeholder="Last Name"
@@ -198,7 +229,7 @@ const CheckoutPage: React.FC = () => {
                       />
 
                       <input
-                        className="input w-full px-3 py-2.5 bg-transparent text-white text-sm outline-none border border-yellow-600/20 rounded-lg focus:ring-2 focus:ring-yellow-500 mt-4"
+                        className="input w-full px-3 py-2.5 bg-transparent text-white text-sm outline-none border border-yellow-600/20 rounded-lg focus:ring-2 focus:ring-yellow-500"
                         placeholder="Email"
                         required
                         type="email"
@@ -212,7 +243,7 @@ const CheckoutPage: React.FC = () => {
                       />
 
                       <input
-                        className="input w-full px-3 py-2.5 bg-transparent text-white text-sm outline-none border border-yellow-600/20 rounded-lg focus:ring-2 focus:ring-yellow-500 mt-4"
+                        className="input w-full px-3 py-2.5 bg-transparent text-white text-sm outline-none border border-yellow-600/20 rounded-lg focus:ring-2 focus:ring-yellow-500"
                         placeholder="Phone"
                         required
                         value={customerDetails.phone}
@@ -249,6 +280,7 @@ const CheckoutPage: React.FC = () => {
                       </h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 col-span-3 gap-4">
                       <input
                         className="input w-full px-3 py-2.5 bg-transparent text-white text-sm outline-none border border-yellow-600/20 rounded-lg focus:ring-2 focus:ring-yellow-500"
                         placeholder="First Name"
@@ -275,7 +307,7 @@ const CheckoutPage: React.FC = () => {
                       />
 
                       <input
-                        className="input w-full px-3 py-2.5 bg-transparent text-white text-sm outline-none border border-yellow-600/20 rounded-lg focus:ring-2 focus:ring-yellow-500 mt-4"
+                        className="input w-full px-3 py-2.5 bg-transparent text-white text-sm outline-none border border-yellow-600/20 rounded-lg focus:ring-2 focus:ring-yellow-500"
                         placeholder="Phone"
                         required
                         value={deliveryDetails.phone}
@@ -288,8 +320,8 @@ const CheckoutPage: React.FC = () => {
                       />
 
                       <input
-                        className="input w-full px-3 py-2.5 bg-transparent text-white text-sm outline-none border border-yellow-600/20 rounded-lg focus:ring-2 focus:ring-yellow-500 mt-4"
-                        placeholder="Address"
+                        className="input w-full px-3 py-2.5 bg-transparent text-white text-sm outline-none border border-yellow-600/20 rounded-lg focus:ring-2 focus:ring-yellow-500"
+                        placeholder="Address Line 1"
                         required
                         value={deliveryDetails.addressLine1}
                         onChange={(e) =>
@@ -301,7 +333,20 @@ const CheckoutPage: React.FC = () => {
                       />
 
                       <input
-                        className="input w-full px-3 py-2.5 bg-transparent text-white text-sm outline-none border border-yellow-600/20 rounded-lg focus:ring-2 focus:ring-yellow-500 mt-4"
+                        className="input w-full px-3 py-2.5 bg-transparent text-white text-sm outline-none border border-yellow-600/20 rounded-lg focus:ring-2 focus:ring-yellow-500"
+                        placeholder="Address Line 2"
+                        required
+                        value={deliveryDetails.addressLine2}
+                        onChange={(e) =>
+                          setDeliveryDetails({
+                            ...deliveryDetails,
+                            addressLine2: e.target.value,
+                          })
+                        }
+                      />
+
+                      <input
+                        className="input w-full px-3 py-2.5 bg-transparent text-white text-sm outline-none border border-yellow-600/20 rounded-lg focus:ring-2 focus:ring-yellow-500"
                         placeholder="City"
                         required
                         value={deliveryDetails.city}
@@ -312,15 +357,43 @@ const CheckoutPage: React.FC = () => {
                           })
                         }
                       />
+                      </div>
 
-                      <CustomSelect
-                        value={deliveryDetails.country}
-                        className="min-w-full px-6 py-2.5 mt-4"
-                        onChange={(country) =>
-                          setDeliveryDetails({ ...deliveryDetails, country })
-                        }
-                        options={regionSelect}
-                      />
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 col-span-3">
+                        <CustomSelect
+                          value={deliveryDetails.state}
+                          placeholder="Select Region"
+                          className="min-w-full px-6 py-2.5"
+                          onChange={(state) =>
+                            setDeliveryDetails({ ...deliveryDetails, state })
+                          }
+                          options={regionSelect}
+                        />
+
+                        <input
+                          className="input w-full px-3 py-2.5 bg-transparent text-white text-sm outline-none border border-yellow-600/20 rounded-lg focus:ring-2 focus:ring-yellow-500"
+                          placeholder="Zip Code"
+                          required
+                          value={deliveryDetails.zipCode}
+                          onChange={(e) =>
+                            setDeliveryDetails({
+                              ...deliveryDetails,
+                              zipCode: e.target.value,
+                            })
+                          }
+                        />
+
+                        <CustomSelect
+                          value={deliveryDetails.country}
+                          placeholder="Select Country"
+                          className="min-w-full px-6 py-2.5"
+                          onChange={(country) =>
+                            setDeliveryDetails({ ...deliveryDetails, country })
+                          }
+                          options={countrySelect}
+                        />
+                      </div>
+
                     </div>
 
                       <button className="btn-primary bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors flex items-center gap-1 mt-6">
