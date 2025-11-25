@@ -10,25 +10,6 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { showAlertCart, setShowAlertCart } = useCart();
 
-  // Store previous item count
-  // const prevCount = useRef(items.length);
-
-  // useEffect(() => {
-  //   // Only show alert if item count increased (i.e. item added)
-  //   if (items.length > prevCount.current) {
-  //     setShowAlertCart(true);
-  //   }
-  //   prevCount.current = items.length;
-  // }, [items.length]);
-
-  //Close alert after 6 seconds
-  // useEffect(() => {
-  //   if (showAlertCart) {
-  //     const timer = setTimeout(() => setShowAlertCart(false), 5000);
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [showAlertCart]);
-
   //Close alert function
   const handleCloseAlert = () => {
     setShowAlertCart(false);
