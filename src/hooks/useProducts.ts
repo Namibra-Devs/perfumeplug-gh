@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Product, Pagination } from "../types/product";
 import { apiFetch } from "../lib/api";
+import { MockProducts} from "../constants/mockData";
 
 export interface UseProductsOptions {
   page?: number;
@@ -71,6 +72,63 @@ export function useProducts(options: UseProductsOptions = {}): UseProductsResult
       setPagination(data.pagination);
     } catch (error: any) {
       setError(error.message || "An error occurred");
+
+    /*  
+      -----------------------------------------------
+      🔥 FALLBACK TO MOCK DATA IF API REQUEST FAILS
+      -----------------------------------------------
+    */
+
+     let filtered = [...MockProducts];
+     console.log(filtered);
+
+     //Apply search filter
+     if(search){
+      filtered =filtered.filter((p) => 
+        p.name.toLowerCase().includes(search.toLowerCase())
+      );
+     }
+
+     //Category filter
+     if(category){
+      filtered = filtered.filter((p) => 
+        p.category?.toLowerCase().includes(category.toLowerCase())
+      )
+     }
+
+     // Price range filter
+      filtered = filtered.filter(
+        (p) => p.sellingPrice >= minPrice && p.sellingPrice <= maxPrice
+      );
+
+      // Sorting
+      if (sortBy === "price-low-high") {
+        filtered.sort((a, b) => a.sellingPrice - b.sellingPrice);
+      } else if (sortBy === "price-high-low") {
+        filtered.sort((a, b) => b.sellingPrice - a.sellingPrice);
+      } else {
+        // newest → sort by createdAt
+        filtered.sort(
+          (a, b) =>
+            new Date(b.createdAt || "").getTime() -
+            new Date(a.createdAt || "").getTime()
+        );
+      }
+
+      // Manual Pagination (client-side)
+      const pageSize = 20;
+      const start = (page - 1) * pageSize;
+      const paginated = filtered.slice(start, start + pageSize);
+
+      setProducts(paginated);
+
+      setPagination({
+        currentPage: page,
+        limit: pageSize,
+        totalPages: Math.ceil(filtered.length / pageSize),
+        totalProducts: filtered.length,
+      } as any);
+
     } finally {
       setLoading(false);
     }

@@ -17,10 +17,12 @@ export interface Product {
   name: string;
   sku?: string;
   barcode?: string;
+  brand?: string;
   description?: string;
   category?: string;
   purchasePrice?: number;
   sellingPrice: number;
+  originalPrice?: number;
   wholesalePrice?: number;
   images: Image[];
   seo?: { title?: string; description?: string; tags?: string[]; };
