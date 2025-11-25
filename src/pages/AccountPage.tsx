@@ -373,7 +373,7 @@ const ProfileView = ({ profile }: { profile: any }) => (
     {Object.entries(profile).map(([key, val]) => (
       <div key={key} className="md:col-span-2">
         <label className="block text-sm font-medium text-gray-300 capitalize mb-2">
-          {key.replace(/([A-Z])/g, " ₵1")}:
+          {key.replace(/([A-Z])/g, "N")}:
         </label>
         <p className="text-gray-300">
           {val && typeof val === "object" && "country" in val
