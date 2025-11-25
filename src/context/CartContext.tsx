@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Product } from "../types/product";
 import { CartItem } from "../types/cart";
-import React, { createContext, useReducer, ReactNode, useEffect } from "react";
+import React, { createContext, useReducer, ReactNode, useEffect, useState } from "react";
 import { OrderItem, ShippingAddress } from "../types/order";
 // import { checkoutService, createOrder } from "../services/checkoutService";
 // import { CartItem, DeliveryMethod, Order, PaymentMethod, Product } from '../types';
@@ -46,6 +46,9 @@ interface CartContextType {
     customerNotes?: string
   ) => void;
   // clearOrders?: () => void;
+
+  showAlertCart: boolean;
+  setShowAlertCart: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const CartContext = createContext<CartContextType | undefined>(
@@ -153,6 +156,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
     wishlist: [],
     orders: [],
   });
+  const [showAlertCart, setShowAlertCart] = useState(false);
 
   // Load cart & wishlist from localStorage on first render
   useEffect(() => {
@@ -174,6 +178,10 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
   //Cart methods
   const addToCart = (product: Product) => {
     dispatch({ type: "ADD_TO_CART", product });
+    // Add to cart logic...
+    setShowAlertCart(true);
+    // Auto hide after some time
+    setTimeout(() => setShowAlertCart(false), 5000);
   };
 
   const removeFromCart = (productId: string) => {
@@ -243,8 +251,8 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
         removeFromWishlist,
         clearWishlist,
         isInWishlist,
-        // placeOrder,
-        // clearOrders,
+        showAlertCart,
+        setShowAlertCart
       }}
     >
       {children}

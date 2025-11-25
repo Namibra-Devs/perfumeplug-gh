@@ -61,6 +61,7 @@ const HomePage: React.FC = () => {
         <div className="mist"></div>
         <div className="mist2"></div>
         <div className="mist3"></div>
+
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
@@ -89,6 +90,7 @@ const HomePage: React.FC = () => {
                     alt={category.name}
                     className="w-full h-64 object-cover bg-black/40 inset-0 rounded-2xl"
                   />
+                  
                   <div className={`absolute inset-0 bg-gradient-to-b from-${category.color} opacity-70`}></div>
                   <div className="absolute font-semibold top-4 left-4 w-10 h-10 bg-white/20 text-white backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30">
                     {category.name[0]}

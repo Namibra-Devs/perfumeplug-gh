@@ -43,7 +43,7 @@ export const MockProducts: Product[] = [
     originalPrice: 480.0,
     images: productImages,
     description: "A fresh, spicy fragrance with bold character and magnetic appeal.",
-    category: "men",
+    category: "women",
     purchasePrice: 270,
     inventory: { quantity: 8, trackInventory: true },
   },
@@ -94,7 +94,7 @@ export const MockProducts: Product[] = [
     images: productImages,
     description:
       "A sensual, provocative fragrance with contrasting notes of coffee and flowers.",
-    category: "luxury",
+    category: "women",
     purchasePrice: 260,
     inventory: { quantity: 6, trackInventory: true },
   },
@@ -172,7 +172,7 @@ export const MockProducts: Product[] = [
     images: productImages,
     description:
       "A golden floral bouquet celebrating the beauty of women.",
-    category: "luxury",
+    category: "women",
     purchasePrice: 290,
     inventory: { quantity: 11, trackInventory: true },
   },

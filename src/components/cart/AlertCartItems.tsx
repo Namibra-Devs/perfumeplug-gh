@@ -106,6 +106,7 @@ export const AlertCartItems = ({onClose}: AlertCartItemsProps) => {
                         </motion.div>
                         ))}
                     </div>
+                    
                     <div className="flex items-center justify-center gap-5 text-sm py-4 ">
                         <div className="flex items-center text-white gap-2">
                             Total Price:<span className="text-yellow-400 font-bold">₵{getTotalPrice()}</span>

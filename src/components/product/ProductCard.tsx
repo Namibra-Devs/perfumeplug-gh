@@ -31,7 +31,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
       >
         <div className="block">
           <div className="flex">
-            <div className="w-36 min-h-full relative">
+            <div className="w-36 md:w-36 min-h-full relative">
               <img
                 src={product.images[0]?.url}
                 alt={product.images[0]?.altText || product.name}
@@ -53,39 +53,38 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
             <Link to={`/product/${product._id}`} className="flex-1 p-6 bg-white">
               <div className="flex justify-between items-start mb-2">
                 <div>
-                  <span className="text-sm font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                    {product?.brand}
-                  </span>
+                  <div className='flex items-center gap-2'>
+                    <span className="text-xs md:text-sm font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                      {product?.brand}
+                    </span>
+                    <div className="flex items-center space-x-1">
+                      <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                      {/* <span className="text-sm text-gray-600">{product.rating}</span> */}
+                    </div>
+                  </div>
                   <h3 className="font-semibold text-gray-900 text-sm mt-2">{product.name}</h3>
                 </div>
 
               </div>
               
-              <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+              <p className="text-gray-600 text-xs md:text-sm mb-4 line-clamp-2">
                 {product.description}
               </p>
               
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <span className="text-lg font-bold text-gray-900">₵{product.sellingPrice.toFixed(2)}</span>
-                  {product.wholesalePrice && (
-                    <span className="text-sm text-gray-500 line-through">₵{product.wholesalePrice.toFixed(2)}</span>
-                  )}
-                </div>
-                
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-1">
-                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                    {/* <span className="text-sm text-gray-600">{product.rating}</span> */}
-                  </div>
-                  <button
-                    onClick={handleAddToCart}
-                    className="w-full bg-gradient-to-r from-black to-yellow-700 text-white py-2 px-6 md:py-3 rounded-lg text-xs md:text-sm font-semibold transition-colors flex items-center justify-center"
-                  >
-                    <ShoppingCart className="h-4 w-4 mr-2" />
-                    Add to Cart
-                  </button>
-                </div>
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
+
+                <span className="text-sm md:text-lg font-bold text-gray-900">₵{product.sellingPrice.toFixed(2)}</span>
+                {product.wholesalePrice && (
+                  <span className="text-xs md:text-sm text-gray-500 line-through">₵{product.wholesalePrice.toFixed(2)}</span>
+                )}
+       
+                <button
+                  onClick={handleAddToCart}
+                  className="w-full md:w-auto bg-gradient-to-r from-black to-yellow-700 text-white py-2 px-6 md:py-3 rounded-lg text-xs md:text-sm font-semibold transition-colors flex items-center justify-center"
+                >
+                  <ShoppingCart className="hidden md:flex h-4 w-4 mr-2" />
+                  Add to Cart
+                </button>
               </div>
             </Link>
           </div>
