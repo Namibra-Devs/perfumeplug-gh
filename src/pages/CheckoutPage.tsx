@@ -171,8 +171,9 @@ const CheckoutPage: React.FC = () => {
                         Customer Information
                       </h2>
 
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <input
-                        className="input"
+                        className="input w-full px-3 py-2.5 bg-transparent text-white text-sm border border-yellow-600/20 rounded-lg focus:ring-2 focus:ring-yellow-500"
                         placeholder="First Name"
                         required
                         value={customerDetails.firstName}
@@ -184,7 +185,7 @@ const CheckoutPage: React.FC = () => {
                         }
                       />
                       <input
-                        className="input"
+                        className="input w-full px-3 py-2.5 bg-transparent text-white text-sm border border-yellow-600/20 rounded-lg focus:ring-2 focus:ring-yellow-500"
                         placeholder="Last Name"
                         required
                         value={customerDetails.lastName}
@@ -197,7 +198,7 @@ const CheckoutPage: React.FC = () => {
                       />
 
                       <input
-                        className="input mt-4"
+                        className="input w-full px-3 py-2.5 bg-transparent text-white text-sm border border-yellow-600/20 rounded-lg focus:ring-2 focus:ring-yellow-500 mt-4"
                         placeholder="Email"
                         required
                         type="email"
@@ -211,7 +212,7 @@ const CheckoutPage: React.FC = () => {
                       />
 
                       <input
-                        className="input mt-4"
+                        className="input w-full px-3 py-2.5 bg-transparent text-white text-sm border border-yellow-600/20 rounded-lg focus:ring-2 focus:ring-yellow-500 mt-4"
                         placeholder="Phone"
                         required
                         value={customerDetails.phone}
@@ -223,7 +224,9 @@ const CheckoutPage: React.FC = () => {
                         }
                       />
 
-                      <button className="btn-primary mt-6">
+                      </div>
+
+                      <button className="btn-primary bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors flex items-center gap-1 mt-6">
                         Continue to Delivery
                       </button>
                     </form>
@@ -245,6 +248,7 @@ const CheckoutPage: React.FC = () => {
                         Delivery Address
                       </h2>
 
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <input
                         className="input"
                         placeholder="First Name"
@@ -311,13 +315,15 @@ const CheckoutPage: React.FC = () => {
 
                       <CustomSelect
                         value={deliveryDetails.country}
+                        className="w-44"
                         onChange={(country) =>
                           setDeliveryDetails({ ...deliveryDetails, country })
                         }
                         options={regionSelect}
                       />
+                    </div>
 
-                      <button className="btn-primary mt-6">
+                      <button className="btn-primary bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors flex items-center gap-1 mt-6">
                         Continue to Payment
                       </button>
                     </form>
@@ -348,7 +354,7 @@ const CheckoutPage: React.FC = () => {
                         payment.
                       </p>
 
-                      <button className="btn-primary mt-6" disabled={loading}>
+                      <button className="btn-primary bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors flex items-center gap-1 mt-6" disabled={loading}>
                         {loading ? "Processing..." : `Pay ₵${total.toFixed(2)}`}
                       </button>
                     </form>
