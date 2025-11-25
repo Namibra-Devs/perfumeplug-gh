@@ -302,7 +302,7 @@ const AccountPage: React.FC = () => {
                               <div className="text-xs md:text-sm font-semibold text-white">{item.name}</div>
                               <div className='flex flex-col md:flex-row itemsc-enter gap-2'>
                                 {/* <span className="text-xs md:text-sm text-gray-300">{item.brand}</span> */}
-                                <span className="text-xs md:text-sm font-semibold text-blue-600">₵{item?.sellingPrice.toFixed(2)}</span>
+                                <span className="text-xs md:text-sm font-semibold text-blue-600">₵{item?.sellingPrice.toFixed(2) || ""}</span>
                               </div>
                               
                               {/* <div className={`text-xs w-fit ${item.inStock ? 'text-green-400 rounded-full px-2 py-1 text-xs bg-green-700/20 border border-green-600/40' : 'text-red-400 rounded-full px-2 py-1 text-xs bg-red-700/20 border border-red-600/40'}`}>
