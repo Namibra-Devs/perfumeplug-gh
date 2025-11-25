@@ -136,7 +136,7 @@ export function useProducts(options: UseProductsOptions = {}): UseProductsResult
 
   useEffect(() => {
     fetchProducts(options);
-  }, [options]);
+  }, [JSON.stringify(options)]);
 
   return {
     products,
