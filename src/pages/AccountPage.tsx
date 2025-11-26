@@ -158,7 +158,7 @@ const AccountPage: React.FC = () => {
                   {/* LOGOUT */}
                   <button
                     onClick={logout}
-                    className="w-full text-left text-sm px-3 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors flex items-center space-x-3 mt-4"
+                    className="w-full text-left text-sm px-3 py-3 rounded-lg text-red-600 bg-yellow-600/20 transition-colors flex items-center space-x-3 mt-4"
                   >
                     <LogOut className="h-4 w-4" />
                     <span>Sign Out</span>
@@ -375,10 +375,10 @@ const InputField = ({
 );
 
 const ProfileView = ({ profile }: { profile: any }) => (
-  <div className="grid md:grid-cols-2 gap-6">
+  <div className="grid md:grid-cols-2 gap-4">
     {Object.entries(profile).map(([key, val]) => (
-      <div key={key} className="flex flex-col md:flex-row items-center gap-2">
-        <label className="block text-sm font-medium text-gray-300 capitalize mb-2">
+      <div key={key} className="bg-yellow-500/30 rounded-lg px-3 py-2 flex flex-col md:flex-row items-center gap-2 text-sm">
+        <label className="block text-sm font-medium text-gray-300 capitalize">
           {key.replace(/([A-Z])/g, " N")}:
         </label>
         <p className="text-gray-300">
