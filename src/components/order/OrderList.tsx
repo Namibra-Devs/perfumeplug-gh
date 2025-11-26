@@ -70,7 +70,7 @@ export const OrderList = ({ token }: OrderListProps) => {
   // ─────────────────────────────────────────────
   if (!orders || orders.length === 0) {
     return (
-      <div className="flex flex-col items-center gap-3">
+      <div className="flex flex-col items-center gap-3 p-6">
         <CircleSlash2 className="text-gray-400" size={18}/>
         <span className="text-sm text-gray-400 text-center">You've no orders yet!</span>
       </div>

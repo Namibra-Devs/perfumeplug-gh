@@ -22,7 +22,7 @@ export function useCustomerOrders(token?: string | null) {
         setOrders(orderList.orders);
         setPagination(orderList.pagination);
 
-        toast.success("Orders loaded successfully!");
+        // toast.success("Orders loaded successfully!");
       } catch (err: any) {
         console.log(err);
         setError(err.message);
