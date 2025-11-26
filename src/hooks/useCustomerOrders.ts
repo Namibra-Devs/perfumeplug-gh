@@ -22,7 +22,6 @@ export function useCustomerOrders(token?: string | null) {
         toast.success("Orders loaded successful!")
       } catch (err: any) {
         setError(err.message);
-        toast.error(err.message ?? "Error occured while loading orders. Please try again!");
       } finally {
         setLoading(false);
       }

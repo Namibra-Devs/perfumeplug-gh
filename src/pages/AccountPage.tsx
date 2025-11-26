@@ -333,7 +333,7 @@ const AccountPage: React.FC = () => {
                           ))}
                         </>
                       ) : <>
-                        <span className="text-sm text-gray-300">Wish list is empty!</span>
+                        <span className="text-sm text-gray-300 text-center">Wish list is empty!</span>
                       </>}
                     </div>
                   </motion.div>
