@@ -1,4 +1,5 @@
 
+import { CircleSlash2 } from "lucide-react";
 import { useCustomerOrders } from "../../hooks/useCustomerOrders";
 
 interface OrderListProps {
@@ -69,8 +70,9 @@ export const OrderList = ({ token }: OrderListProps) => {
   // ─────────────────────────────────────────────
   if (!orders || orders.length === 0) {
     return (
-      <div className="text-center py-10 text-gray-400">
-        You have no orders yet.
+      <div className="flex flex-col items-center gap-3">
+        <CircleSlash2 className="text-gray-400" size={18}/>
+        <span className="text-sm text-gray-400 text-center">You've no orders yet!</span>
       </div>
     );
   }

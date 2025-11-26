@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Package, Heart, LogOut, Edit, Plus, Trash2, LoaderCircle, User } from "lucide-react";
+import { Package, Heart, LogOut, Edit, Plus, Trash2, LoaderCircle, User, CircleSlash2 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import Header from "../components/layout/Header";
 import { useLocation } from "react-router-dom";
@@ -158,7 +158,7 @@ const AccountPage: React.FC = () => {
                   {/* LOGOUT */}
                   <button
                     onClick={logout}
-                    className="w-full text-left text-sm px-3 py-3 rounded-lg text-red-600 bg-yellow-600/20 transition-colors flex items-center space-x-3 mt-4"
+                    className="w-full text-left text-sm px-3 py-3 rounded-lg text-red-600 bg-transparent hover:bg-yellow-600/20 transition-colors flex items-center space-x-3 mt-4"
                   >
                     <LogOut className="h-4 w-4" />
                     <span>Sign Out</span>
@@ -332,9 +332,10 @@ const AccountPage: React.FC = () => {
                             </div>
                           ))}
                         </>
-                      ) : <>
-                        <span className="text-sm text-gray-300 text-center">Wish list is empty!</span>
-                      </>}
+                      ) : <div className="flex flex-col items-center gap-3">
+                        <CircleSlash2 className="text-gray-400" size={18}/>
+                        <span className="text-sm text-gray-400 text-center">Wishlist is empty!</span>
+                      </div>}
                     </div>
                   </motion.div>
                 )}
@@ -377,7 +378,7 @@ const InputField = ({
 const ProfileView = ({ profile }: { profile: any }) => (
   <div className="grid md:grid-cols-2 gap-4">
     {Object.entries(profile).map(([key, val]) => (
-      <div key={key} className="bg-yellow-500/30 rounded-lg px-3 py-2 flex flex-col md:flex-row items-center gap-2 text-sm">
+      <div key={key} className="bg-yellow-600/20 rounded-lg px-3 py-2 flex flex-col md:flex-row items-start md:items-center gap-2 text-sm">
         <label className="block text-sm font-medium text-gray-300 capitalize">
           {key.replace(/([A-Z])/g, " N")}:
         </label>
