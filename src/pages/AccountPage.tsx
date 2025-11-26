@@ -377,7 +377,7 @@ const InputField = ({
 const ProfileView = ({ profile }: { profile: any }) => (
   <div className="grid md:grid-cols-2 gap-6">
     {Object.entries(profile).map(([key, val]) => (
-      <div key={key} className="md:col-span-2">
+      <div key={key} className="flex flex-col md:flex-row items-center gap-2">
         <label className="block text-sm font-medium text-gray-300 capitalize mb-2">
           {key.replace(/([A-Z])/g, " N")}:
         </label>
