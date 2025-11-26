@@ -288,47 +288,53 @@ const AccountPage: React.FC = () => {
                     </div>
 
                     <div className="grid lg:grid-cols-1 gap-4 p-6">
-                      {wishlist.map((item) => (
-                        <div
-                          key={item._id}
-                          className="flex flex-col md:flex-row items-start justify-between gap-4 p-2 bg-black/20 rounded-lg"
-                        >
-                          {/* Item info */}
-                          <div className="flex items-start gap-2">
-                            <img src={item.images[0]?.url} alt={item.name} className="w-16 h-16 object-cover rounded" />
+                      {wishlist.length > 0 ? (
+                        <>
+                          {wishlist.map((item) => (
+                            <div
+                              key={item._id}
+                              className="flex flex-col md:flex-row items-start justify-between gap-4 p-2 bg-black/20 rounded-lg"
+                            >
+                              {/* Item info */}
+                              <div className="flex items-start gap-2">
+                                <img src={item.images[0]?.url} alt={item.name} className="w-16 h-16 object-cover rounded" />
 
-                            <div className="flex-1">
-                              <div className="text-sm font-semibold text-white">{item.name}</div>
+                                <div className="flex-1">
+                                  <div className="text-sm font-semibold text-white">{item.name}</div>
 
-                              <span className="text-sm font-semibold text-blue-600">
-                                ₵
-                                {item?.sellingPrice
-                                  ? item.sellingPrice.toFixed(2)
-                                  : "0.00"}
-                              </span>
+                                  <span className="text-sm font-semibold text-blue-600">
+                                    ₵
+                                    {item?.sellingPrice
+                                      ? item.sellingPrice.toFixed(2)
+                                      : "0.00"}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Actions */}
+                              <div className="flex items-center gap-2 w-full md:w-auto">
+                                <button
+                                  title="Reduce"
+                                  onClick={() => removeFromWishlist(item._id)}
+                                  className="w-8 h-8 bg-black/20 border border-yellow-600/20 text-red-600 rounded-lg flex items-center justify-center hover:bg-yellow-700/20"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+
+                                <button
+                                  title="Increase"
+                                  onClick={() => handleAddToCart(item)}
+                                  className="w-8 h-8 bg-black/20 border border-yellow-600/20 text-white rounded-lg flex items-center justify-center hover:bg-yellow-700/20"
+                                >
+                                  <Plus className="h-4 w-4" />
+                                </button>
+                              </div>
                             </div>
-                          </div>
-
-                          {/* Actions */}
-                          <div className="flex items-center gap-2 w-full md:w-auto">
-                            <button
-                              title="Reduce"
-                              onClick={() => removeFromWishlist(item._id)}
-                              className="w-8 h-8 bg-black/20 border border-yellow-600/20 text-red-600 rounded-lg flex items-center justify-center hover:bg-yellow-700/20"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-
-                            <button
-                              title="Increase"
-                              onClick={() => handleAddToCart(item)}
-                              className="w-8 h-8 bg-black/20 border border-yellow-600/20 text-white rounded-lg flex items-center justify-center hover:bg-yellow-700/20"
-                            >
-                              <Plus className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
+                          ))}
+                        </>
+                      ) : <>
+                        <span className="text-sm text-gray-300">Wish list is empty!</span>
+                      </>}
                     </div>
                   </motion.div>
                 )}

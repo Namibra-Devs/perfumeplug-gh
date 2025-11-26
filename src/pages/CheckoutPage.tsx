@@ -44,8 +44,8 @@ const CheckoutPage: React.FC = () => {
     zipCode: "",
   });
 
-  const [notes] = useState("");
-  // const [notes, setNotes] = useState("");
+
+const [notes, setNotes] = useState("");
 
 const regionSelect = [
   { value: "Ahafo", label: "Ahafo" },
@@ -65,7 +65,6 @@ const regionSelect = [
   { value: "Western", label: "Western" },
   { value: "Western North", label: "Western North" },
 ];
-
 
 const countrySelect = [
   { value: "Ghana", label: "Ghana" },
@@ -391,6 +390,16 @@ const countrySelect = [
                             setDeliveryDetails({ ...deliveryDetails, country })
                           }
                           options={countrySelect}
+                        />
+                      </div>
+
+                      <div className="grid col-span-3">
+                        <textarea
+                          
+                          className="w-full h-14 resize-none px-3 py-2.5 bg-transparent text-white text-sm outline-none border border-yellow-600/20 rounded-lg focus:ring-2 focus:ring-yellow-500"
+                          placeholder="Additional Notes / Delivery Instructions"
+                          value={notes}
+                          onChange={(e) => setNotes(e.target.value)}
                         />
                       </div>
 

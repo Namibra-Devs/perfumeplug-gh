@@ -58,7 +58,7 @@ export const OrderList = ({ token }: OrderListProps) => {
   // ─────────────────────────────────────────────
   if (error) {
     return (
-      <div className="text-center py-10 text-red-500">
+      <div className="text-center text-xs py-10 text-red-500">
         Failed to load orders: {error}
       </div>
     );

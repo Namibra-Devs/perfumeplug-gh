@@ -19,8 +19,10 @@ export function useCustomerOrders(token?: string | null) {
         const orderList = await getCustomerOrders();
         setOrders(orderList.data.orders);  // ← correct for array response
         setPagination(orderList.data.pagination);
+        toast.success("Orders loaded successful!")
       } catch (err: any) {
         setError(err.message);
+        toast.error(err.message ?? "Error occured while loading orders. Please try again!");
       } finally {
         setLoading(false);
       }
