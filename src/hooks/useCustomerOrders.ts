@@ -17,11 +17,16 @@ export function useCustomerOrders(token?: string | null) {
     async function load() {
       try {
         const orderList = await getCustomerOrders();
-        setOrders(orderList.data.orders);  // ← correct for array response
-        setPagination(orderList.data.pagination);
-        toast.success("Orders loaded successful!")
+
+        // apiFetch ALREADY returns data.data, so we use the fields directly
+        setOrders(orderList.orders);
+        setPagination(orderList.pagination);
+
+        toast.success("Orders loaded successfully!");
       } catch (err: any) {
+        console.log(err);
         setError(err.message);
+        // toast.error("Failed to load orders");
       } finally {
         setLoading(false);
       }

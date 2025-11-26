@@ -1,6 +1,6 @@
 // src/services/orderService.ts
 import { apiFetch } from '../lib/api';
-import type { Order,  OrderItem, RawGetCustomerOrdersResponse, ShippingAddress } from '../types/order';
+import type { CustomerOrderSummary, Order,  OrderItem, Pagination, ShippingAddress } from '../types/order';
 import { parseApiError } from '../lib/apiError';
 
 export async function createOrder(
@@ -31,12 +31,12 @@ export async function getOrder(orderId: string) {
 }
 
 export async function getCustomerOrders() {
-  return await apiFetch<RawGetCustomerOrdersResponse>(
-    "/api/ecommerce/customers/orders",
-    {},
-    true // includeAuth = true
-  );
+  return await apiFetch<{
+    orders: CustomerOrderSummary[];
+    pagination: Pagination;
+  }>("/api/ecommerce/customers/orders", {}, true);
 }
+
 
 
 
