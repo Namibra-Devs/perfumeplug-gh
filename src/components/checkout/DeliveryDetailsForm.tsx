@@ -81,7 +81,6 @@ const DeliveryDetailsForm: FC<Props> = ({
             {errors.lastName && <p className="text-red-400 text-xs">{errors.lastName}</p>}
           </div>
 
-
           {/* PHONE */}
           <div>
             <input
@@ -98,7 +97,7 @@ const DeliveryDetailsForm: FC<Props> = ({
             <input
               className="input w-full px-3 py-2.5 outline-none bg-transparent text-white text-sm border border-yellow-600/20 focus:ring-2 focus:ring-yellow-500 rounded-lg"
               placeholder="Email"
-              value={data.phone}
+              value={data.email}
               onChange={(e) => setData({ ...data, email: e.target.value })}
             />
             {errors.email && <p className="text-red-400 text-xs">{errors.email}</p>}
