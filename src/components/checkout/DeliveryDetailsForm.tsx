@@ -180,7 +180,7 @@ const DeliveryDetailsForm: FC<Props> = ({
         <button
           type="button"
           onClick={onBack}
-          className="border-2 border-yellow-600/20 text-sm text-center text-yellow-500 px-8 py-2.5 hover:bg-yellow-800/40 hover:text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+          className="border-2 border-yellow-600/20 text-sm text-center text-yellow-500 px-8 py-2 hover:bg-yellow-800/40 hover:text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors"
         >
           Back
         </button>
