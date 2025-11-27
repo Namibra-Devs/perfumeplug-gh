@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { LoaderCircle } from "lucide-react";
 import { FC } from "react";
 
 interface Props {
@@ -33,16 +34,23 @@ const PaymentForm: FC<Props> = ({
         <button
           type="button"
           onClick={onBack}
-          className="bg-gray-700 text-white px-4 py-2 rounded"
+          className="border-2 border-yellow-600/20 text-sm text-center text-yellow-500 px-8 py-2 hover:bg-yellow-800/40 hover:text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors"
         >
           Back
         </button>
 
         <button
           disabled={loading}
-          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+          className="bg-blue-600 text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-700 flex items-center justify-center gap-2"
         >
-          {loading ? "Processing..." : `Pay ₵${total.toFixed(2)}`}
+          {loading ? (
+            <>
+              <LoaderCircle className="h-4 w-4 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            `Pay ₵${total.toFixed(2)}`
+          )}
         </button>
       </div>
     </form>
