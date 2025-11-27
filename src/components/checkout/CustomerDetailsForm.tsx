@@ -43,7 +43,6 @@ const CustomerDetailsForm: FC<Props> = ({ data, setData, onNext }) => {
       <h2 className="text-xl text-purple-600 mb-4">Customer Information</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
         <div>
           <input
             className="input w-full px-3 py-2.5 bg-transparent text-white text-sm border border-yellow-600/20 focus:ring-2 focus:ring-yellow-500 outline-none rounded-lg"
@@ -94,7 +93,7 @@ const CustomerDetailsForm: FC<Props> = ({ data, setData, onNext }) => {
         </div>
       </div>
 
-      <button className="mt-6 bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700">
+      <button className="mt-6 bg-blue-600 text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-700">
         Continue to Delivery
       </button>
     </form>

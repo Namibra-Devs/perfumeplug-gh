@@ -180,12 +180,12 @@ const DeliveryDetailsForm: FC<Props> = ({
         <button
           type="button"
           onClick={onBack}
-          className="bg-gray-700 text-white px-4 py-2 rounded"
+          className="border-2 border-yellow-600/20 text-sm text-center text-yellow-500 px-8 py-2.5 hover:bg-yellow-800/40 hover:text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors"
         >
           Back
         </button>
 
-        <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+        <button className="bg-blue-600 text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-700">
           Continue to Payment
         </button>
       </div>
