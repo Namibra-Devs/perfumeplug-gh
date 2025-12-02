@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { apiFetch } from "../lib/api";
-import { Category, GetCategoriesResponse } from "../types/categories";
+import { Category } from "../types/categories";
 import { MockCategories } from "../constants/mockData";
 
 
