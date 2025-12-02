@@ -153,6 +153,17 @@ const CheckoutPage: React.FC = () => {
         notes
       });
 
+      // Store checkout data in localStorage for confirmation page
+      const checkoutData = {
+        items: orderItems,
+        customerDetails,
+        deliveryDetails,
+        shippingMethod,
+        notes,
+        total: getTotalPrice()
+      };
+      localStorage.setItem('checkoutData', JSON.stringify(checkoutData));
+
       await checkoutService.checkout(orderItems, deliveryDetails, shippingMethod, notes);
       toast.success("Order created successfully! Redirecting to payment...");
     } catch (err: any) {

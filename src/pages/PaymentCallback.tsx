@@ -39,16 +39,57 @@ const PaymentCallback = () => {
           // Clear cart on successful payment
           clearCart();
 
-          // Build confirmation page data from the API response
+          // Get stored checkout data
+          const storedCheckoutData = localStorage.getItem('checkoutData');
+          let checkoutData = null;
+          
+          if (storedCheckoutData) {
+            try {
+              checkoutData = JSON.parse(storedCheckoutData);
+            } catch (e) {
+              console.error('Failed to parse checkout data:', e);
+            }
+          }
+
+          // Build confirmation page data from API response and stored data
+          const apiData = result as any;
           const confirmationData = {
             orderId: orderId,
-            orderNumber: 'N/A',
-            total: (result as any).amount || 0,
+            orderNumber: apiData.data?.order?.orderNumber || 'N/A',
+            total: apiData.data?.amount || checkoutData?.total || 0,
             paymentMethod: 'Paystack',
-            reference: (result as any).reference || reference,
-            paidAt: (result as any).paid_at,
-            items: [],
+            reference: apiData.data?.reference || reference,
+            paidAt: apiData.data?.paid_at,
+            shippingAddress: checkoutData ? {
+              fullName: `${checkoutData.deliveryDetails?.firstName || ''} ${checkoutData.deliveryDetails?.lastName || ''}`.trim(),
+              email: checkoutData.deliveryDetails?.email || checkoutData.customerDetails?.email || 'N/A',
+              phone: checkoutData.deliveryDetails?.phone || checkoutData.customerDetails?.phone || 'N/A',
+              addressLine1: checkoutData.deliveryDetails?.addressLine1 || 'N/A',
+              addressLine2: checkoutData.deliveryDetails?.addressLine2 || '',
+              city: checkoutData.deliveryDetails?.city || 'N/A',
+              state: checkoutData.deliveryDetails?.state || 'N/A',
+              zipCode: checkoutData.deliveryDetails?.zipCode || 'N/A',
+              country: checkoutData.deliveryDetails?.country || 'N/A'
+            } : {
+              fullName: 'Customer',
+              email: 'N/A',
+              phone: 'N/A',
+              addressLine1: 'N/A',
+              city: 'N/A',
+              state: 'N/A',
+              zipCode: 'N/A',
+              country: 'N/A'
+            },
+            items: checkoutData?.items?.map((item: any) => ({
+              productName: item.product?.name || 'Product',
+              quantity: item.quantity || 1,
+              price: item.price || 0,
+              subtotal: (item.price || 0) * (item.quantity || 1)
+            })) || []
           };
+
+          // Clear stored checkout data
+          localStorage.removeItem('checkoutData');
 
           setTimeout(() => {
             navigate("/order-confirmation", {
