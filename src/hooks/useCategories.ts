@@ -15,10 +15,10 @@ export function useCategories() {
       try {
         setLoading(true);
 
-        // apiFetch returns ONLY data.data
-        const data = await apiFetch<GetCategoriesResponse>("/categories");
+        // apiFetch returns the 'data' part: { categories: [...] }
+        const data = await apiFetch<{ categories: string[] }>("/api/ecommerce/categories");
 
-        setCategories(data.data.categories);
+        setCategories(data.categories.map(name => ({ name, productCount: 0 })));
       } catch (err: any) {
         console.error("Category fetch failed → using fallback categories:", err);
 
