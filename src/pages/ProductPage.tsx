@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 // import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Heart, ShoppingCart, Truck, Shield, ZoomIn, ChevronLeft, ChevronRight, User2, HeartOff } from 'lucide-react';
@@ -6,6 +6,8 @@ import ProductCard from '../components/product/ProductCard';
 import Header from '../components/layout/Header';
 import { useCart } from '../hooks/useCart';
 import { useProducts } from '../hooks/useProducts';
+import { getProduct } from '../services/productService';
+import type { Product } from '../types/product';
 
 const ProductPage: React.FC = () => {
   const { id } = useParams();
@@ -15,21 +17,74 @@ const ProductPage: React.FC = () => {
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
   const [showZoom, setShowZoom] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { products, error } = useProducts();
+  const { products } = useProducts();
 
-  console.log(error);
+  // Fetch single product
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (!id) return;
+      
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await getProduct(id);
+        setProduct(response.product);
+      } catch (err: any) {
+        console.error('Failed to fetch product:', err);
+        setError(err.message || 'Failed to load product');
+        
+        // Fallback: try to find in products list
+        const fallbackProduct = products.find(p => p._id === id);
+        if (fallbackProduct) {
+          setProduct(fallbackProduct);
+          setError(null);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Find product by ID
-  const product = products.find(p => p._id === id);
+    fetchProduct();
+  }, [id, products]);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95 flex items-center justify-center">
+        <div className="text-center text-white">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400 mx-auto mb-4"></div>
+          <p>Loading product...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95 flex items-center justify-center">
+        <div className="text-center text-white">
+          <h1 className="text-4xl font-bold mb-4">Error Loading Product</h1>
+          <p className="text-gray-300 mb-8">{error}</p>
+          <Link to="/shop" className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+            Back to Shop
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   // If product not found
   if (!product) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Product Not Found</h1>
-          <p className="text-gray-600 mb-8">The product you're looking for doesn't exist.</p>
+      <div className="min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95 flex items-center justify-center">
+        <div className="text-center text-white">
+          <h1 className="text-4xl font-bold mb-4">Product Not Found</h1>
+          <p className="text-gray-300 mb-8">The product you're looking for doesn't exist.</p>
           <Link to="/shop" className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
             Back to Shop
           </Link>
@@ -87,14 +142,19 @@ const ProductPage: React.FC = () => {
     setZoomPosition({ x, y });
   };
 
+  // Get product images with fallback
+  const productImages = product.images && product.images.length > 0 
+    ? product.images 
+    : [{ url: '/placeholder-product.svg', altText: product.name }];
+
   //Handle Next image preview product
   const nextImage = () => {
-    setSelectedImage((prev) => (prev + 1) % product.images.length);
+    setSelectedImage((prev) => (prev + 1) % productImages.length);
   };
 
   //Handle pevious image preview product
   const prevImage = () => {
-    setSelectedImage((prev) => (prev - 1 + product.images.length) % product.images.length);
+    setSelectedImage((prev) => (prev - 1 + productImages.length) % productImages.length);
   };
 
   //Handle Add to Cart
@@ -157,9 +217,12 @@ const ProductPage: React.FC = () => {
                 onMouseMove={handleImageZoom}
               >
                 <img
-                  src={product.images[selectedImage].url}
-                  alt={product.name}
+                  src={productImages[selectedImage]?.url || '/placeholder-product.svg'}
+                  alt={productImages[selectedImage]?.altText || product.name}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/placeholder-product.svg';
+                  }}
                 />
                 
                 {/* Zoom Indicator */}
@@ -175,59 +238,72 @@ const ProductPage: React.FC = () => {
                     <div 
                       className="w-[200%] h-[200%] bg-cover bg-no-repeat"
                       style={{
-                        backgroundImage: `url(${product.images[selectedImage].url})`,
+                        backgroundImage: `url(${productImages[selectedImage]?.url || '/placeholder-product.svg'})`,
                         backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`
                       }}
                     />
                   </div>
                 )}
 
-                {/* Navigation Arrows */}
-                <button
-                 title='Previous'
-                  onClick={prevImage}
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm p-2 rounded-full hover:bg-white transition-colors"
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </button>
-                <button
-                  title='Next'
-                  onClick={nextImage}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm p-2 rounded-full hover:bg-white transition-colors"
-                >
-                  <ChevronRight className="h-5 w-5" />
-                </button>
+                {/* Navigation Arrows - only show if multiple images */}
+                {productImages.length > 1 && (
+                  <>
+                    <button
+                     title='Previous'
+                      onClick={prevImage}
+                      className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm p-2 rounded-full hover:bg-white transition-colors"
+                    >
+                      <ChevronLeft className="h-5 w-5" />
+                    </button>
+                    <button
+                      title='Next'
+                      onClick={nextImage}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm p-2 rounded-full hover:bg-white transition-colors"
+                    >
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
 
-                {/* Image Counter */}
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
-                  {selectedImage + 1} / {product.images.length}
+                    {/* Image Counter */}
+                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+                      {selectedImage + 1} / {productImages.length}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Thumbnail Gallery - only show if multiple images */}
+              {productImages.length > 1 && (
+                <div className="grid grid-cols-4 gap-4">
+                  {productImages.map((image, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedImage(index)}
+                      className={`aspect-square bg-white rounded-lg overflow-hidden border-2 transition-all ${
+                        selectedImage === index ? 'border-yellow-500' : 'border-transparent'
+                      }`}
+                    >
+                      <img
+                        src={image.url || '/placeholder-product.svg'}
+                        alt={`${product.name} view ${index + 1}`}
+                        className="w-full h-full object-cover hover:scale-110 transition-transform"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = '/placeholder-product.svg';
+                        }}
+                      />
+                    </button>
+                  ))}
                 </div>
-              </div>
-
-              {/* Thumbnail Gallery */}
-              <div className="grid grid-cols-4 gap-4">
-                {product.images.map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedImage(index)}
-                    className={`aspect-square bg-white rounded-lg overflow-hidden border-2 transition-all ${
-                      selectedImage === index ? 'border-yellow-500' : 'border-transparent'
-                    }`}
-                  >
-                    <img
-                      src={image.url}
-                      alt={`${product.name} view ${index + 1}`}
-                      className="w-full h-full object-cover hover:scale-110 transition-transform"
-                    />
-                  </button>
-                ))}
-              </div>
+              )}
             </div>
 
             {/* Product Info */}
             <div className="space-y-6 text-white">
               <div>
-                <span className="text-yellow-400 font-semibold">{product?.brand}</span>
+                {(product?.brand || product?.category) && (
+                  <span className="text-yellow-400 font-semibold">
+                    {product.brand || product.category}
+                  </span>
+                )}
                 <h1 className="text-3xl md:text-4xl font-bold text-gray-50 mt-2">{product.name}</h1>
                 
                 {/* Rating */}

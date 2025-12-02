@@ -27,7 +27,7 @@ const ProductGrid = () => {
   }
 
   // ─── Error state ───────────────────────────────────────────────────────
-  if (!error) {
+  if (error) {
     return (
       <div className="text-center py-10 col-span-full">
         <p className="text-red-500">Error loading products: {String(error)}</p>

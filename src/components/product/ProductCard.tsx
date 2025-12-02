@@ -33,9 +33,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
           <div className="flex">
             <div className="w-36 md:w-36 min-h-full relative">
               <img
-                src={product.images[0]?.url}
-                alt={product.images[0]?.altText || product.name}
+                src={product.images?.[0]?.url || '/placeholder-product.svg'}
+                alt={product.images?.[0]?.altText || product.name}
                 className="w-full h-full object-cover rounded-l-xl"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/placeholder-product.svg';
+                }}
               />
 
               <motion.button 
@@ -54,9 +57,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
               <div className="flex justify-between items-start mb-2">
                 <div>
                   <div className='flex items-center gap-2'>
-                    <span className="text-xs md:text-sm font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                      {product?.brand}
-                    </span>
+                    {product?.brand && (
+                      <span className="text-xs md:text-sm font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                        {product.brand}
+                      </span>
+                    )}
+                    {product?.category && !product?.brand && (
+                      <span className="text-xs md:text-sm font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                        {product.category}
+                      </span>
+                    )}
                     <div className="flex items-center space-x-1">
                       <Star className="h-4 w-4 text-yellow-400 fill-current" />
                       {/* <span className="text-sm text-gray-600">{product.rating}</span> */}
@@ -105,9 +115,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
           <motion.img
             whileHover={{ scale: 1.1 }}
             transition={{ duration: 0.3 }}
-            src={product.images[0]?.url}
-            alt={product.images[0]?.altText || product.name}
+            src={product.images?.[0]?.url || '/placeholder-product.svg'}
+            alt={product.images?.[0]?.altText || product.name}
             className="w-full h-56 object-cover"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = '/placeholder-product.svg';
+            }}
           />
           {product.wholesalePrice && (
             <motion.span 
@@ -133,9 +146,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
         <Link to={`/product/${product._id}`}>
         <div className="p-4 bg-white rounded-b-xl">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">
-              {product?.brand}
-            </span>
+            {product?.brand && (
+              <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                {product.brand}
+              </span>
+            )}
+            {product?.category && !product?.brand && (
+              <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                {product.category}
+              </span>
+            )}
             <div className="flex items-center space-x-1">
               <Star className="h-4 w-4 text-yellow-400 fill-current" />
               {/* <span className="text-sm text-gray-600">{product.rating}</span> */}

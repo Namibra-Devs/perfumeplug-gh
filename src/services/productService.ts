@@ -27,7 +27,69 @@ export async function fetchProducts(opts: FetchProductsOptions = {}) {
     if (opts.sortOrder) params.set('sortOrder', opts.sortOrder);
 
     const path = `/api/ecommerce/products${params.toString() ? `?${params.toString()}` : ''}`;
-    return await apiFetch<{ products: Product[]; pagination?: Pagination }>(path);
+    
+    // API returns different structure than expected
+    const apiResponse = await apiFetch<{
+      products: Array<{
+        _id: string;
+        name: string;
+        description?: string;
+        category?: string;
+        sellingPrice: number;
+        createdAt?: string;
+        updatedAt?: string;
+        ecommerceData?: {
+          images?: Array<{ url: string; altText?: string; isPrimary?: boolean }>;
+          seoTitle?: string;
+          seoDescription?: string;
+          tags?: string[];
+          displayOrder?: number;
+        };
+      }>;
+      pagination?: {
+        currentPage: number;
+        totalPages: number;
+        totalCount: number;
+        limit: number;
+        hasNextPage: boolean;
+        hasPrevPage: boolean;
+      };
+    }>(path);
+
+    // Transform API response to match frontend expectations
+    const transformedProducts: Product[] = apiResponse.products.map(product => ({
+      _id: product._id,
+      name: product.name,
+      description: product.description || '',
+      category: product.category || '',
+      sellingPrice: product.sellingPrice,
+      images: product.ecommerceData?.images || [],
+      seo: {
+        title: product.ecommerceData?.seoTitle || '',
+        description: product.ecommerceData?.seoDescription || '',
+        tags: product.ecommerceData?.tags || []
+      },
+      ecommerce: {
+        visible: true,
+        displayOrder: product.ecommerceData?.displayOrder || 0
+      },
+      createdAt: product.createdAt,
+      updatedAt: product.updatedAt
+    }));
+
+    const transformedPagination: Pagination | undefined = apiResponse.pagination ? {
+      currentPage: apiResponse.pagination.currentPage,
+      limit: apiResponse.pagination.limit,
+      totalPages: apiResponse.pagination.totalPages,
+      totalProducts: apiResponse.pagination.totalCount, // Map totalCount to totalProducts
+      hasNextPage: apiResponse.pagination.hasNextPage,
+      hasPrevPage: apiResponse.pagination.hasPrevPage
+    } : undefined;
+
+    return {
+      products: transformedProducts,
+      pagination: transformedPagination
+    };
   } catch (err) {
     throw parseApiError(err);
   }
@@ -35,7 +97,47 @@ export async function fetchProducts(opts: FetchProductsOptions = {}) {
 
 export async function getProduct(productId: string) {
   try {
-    return await apiFetch<{ product: Product }>(`/api/ecommerce/products/${productId}`);
+    const apiResponse = await apiFetch<{
+      product: {
+        _id: string;
+        name: string;
+        description?: string;
+        category?: string;
+        sellingPrice: number;
+        createdAt?: string;
+        updatedAt?: string;
+        ecommerceData?: {
+          images?: Array<{ url: string; altText?: string; isPrimary?: boolean }>;
+          seoTitle?: string;
+          seoDescription?: string;
+          tags?: string[];
+          displayOrder?: number;
+        };
+      };
+    }>(`/api/ecommerce/products/${productId}`);
+
+    // Transform single product response
+    const transformedProduct: Product = {
+      _id: apiResponse.product._id,
+      name: apiResponse.product.name,
+      description: apiResponse.product.description || '',
+      category: apiResponse.product.category || '',
+      sellingPrice: apiResponse.product.sellingPrice,
+      images: apiResponse.product.ecommerceData?.images || [],
+      seo: {
+        title: apiResponse.product.ecommerceData?.seoTitle || '',
+        description: apiResponse.product.ecommerceData?.seoDescription || '',
+        tags: apiResponse.product.ecommerceData?.tags || []
+      },
+      ecommerce: {
+        visible: true,
+        displayOrder: apiResponse.product.ecommerceData?.displayOrder || 0
+      },
+      createdAt: apiResponse.product.createdAt,
+      updatedAt: apiResponse.product.updatedAt
+    };
+
+    return { product: transformedProduct };
   } catch (err) {
     throw parseApiError(err);
   }
