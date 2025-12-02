@@ -27,7 +27,7 @@ const ShopPage: React.FC = () => {
 
   // API hooks
   const { categories, loading: catLoading} = useCategories();
-  const { products, loading, error, fetchProducts } = useProducts({
+  const { products, loading, error, refetch } = useProducts({
     category: category === "all" ? "" : category,
     search: searchQuery,
     minPrice: 0,
@@ -181,7 +181,7 @@ const ShopPage: React.FC = () => {
                 <div className="flex items-center space-x-4">
                   <button
                     title="Sync"
-                    onClick={() => fetchProducts()}
+                    onClick={() => refetch()}
                     className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                   >
                     <RotateCcw size={18} />
