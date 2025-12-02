@@ -387,7 +387,6 @@ const ProfileView = ({ profile }: { profile: any }) => (
             ? (val as any).country
             : val || "—"}
         </p>
-
       </div>
     ))}
   </div>
