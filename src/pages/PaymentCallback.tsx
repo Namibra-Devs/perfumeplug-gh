@@ -4,13 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { CheckCircle, XCircle, Loader } from "lucide-react";
 import { checkoutService } from "../services/checkoutService";
 import { useToast } from "../hooks/useToast";
-import { OrderItem } from "../types/order";
+import { useCart } from "../hooks/useCart";
 
 const PaymentCallback = () => {
   const navigate = useNavigate();
   const [status, setStatus] = useState<"loading" | "success" | "failed">("loading");
   const [message, setMessage] = useState("Verifying payment...");
   const toast = useToast();
+  const { clearCart } = useCart();
 
   useEffect(() => {
     const verifyPayment = async () => {
@@ -27,46 +28,82 @@ const PaymentCallback = () => {
 
       try {
         const result = await checkoutService.handlePaymentCallback(orderId, reference);
-        const order = result.order as any;
+        
+        console.log("Payment verification result:", result);
 
-        console.log("Verified Order:", order);
+        if (result.status === 'success') {
+          setStatus("success");
+          setMessage("Payment verified successfully!");
+          toast.success("Payment verified successfully!");
 
-        setStatus("success");
-        toast.success("Payment verified successfully!");
+          // Clear cart on successful payment
+          clearCart();
 
-        // Build confirmation page data
-        const confirmationData = {
-          orderId: order._id,
-          orderNumber: order.orderNumber,
-          total: order.totalAmount,
-          paymentMethod: order.paymentMethod,
-          shippingAddress: {
-            fullName: order.shippingAddress.fullName,
-            email: order.shippingAddress.email,
-            phone: order.shippingAddress.phone,
-            addressLine1: order.shippingAddress.addressLine1,
-            addressLine2: order.shippingAddress.addressLine2,
-            city: order.shippingAddress.city,
-            state: order.shippingAddress.state,
-            zipCode: order.shippingAddress.zipCode,
-            country: order.shippingAddress.country,
-          },
-          items: order.items.map((item: OrderItem) => ({
-            productName: item.productName,
-            quantity: item.quantity,
-            price: item.price,
-            subtotal: item.subtotal,
-          })),
-        };
+          // Get stored checkout data
+          const storedCheckoutData = localStorage.getItem('checkoutData');
+          let checkoutData = null;
+          
+          if (storedCheckoutData) {
+            try {
+              checkoutData = JSON.parse(storedCheckoutData);
+            } catch (e) {
+              console.error('Failed to parse checkout data:', e);
+            }
+          }
 
-        setTimeout(() => {
-          navigate("/order-confirmation", {
-            state: confirmationData,
-            replace: true,
-          });
-        }, 1500);
+          // Build confirmation page data from API response and stored data
+          const apiData = result as any;
+          const confirmationData = {
+            orderId: orderId,
+            orderNumber: apiData.data?.order?.orderNumber || 'N/A',
+            total: apiData.data?.amount || checkoutData?.total || 0,
+            paymentMethod: 'Paystack',
+            reference: apiData.data?.reference || reference,
+            paidAt: apiData.data?.paid_at,
+            shippingAddress: checkoutData ? {
+              fullName: `${checkoutData.deliveryDetails?.firstName || ''} ${checkoutData.deliveryDetails?.lastName || ''}`.trim(),
+              email: checkoutData.deliveryDetails?.email || checkoutData.customerDetails?.email || 'N/A',
+              phone: checkoutData.deliveryDetails?.phone || checkoutData.customerDetails?.phone || 'N/A',
+              addressLine1: checkoutData.deliveryDetails?.addressLine1 || 'N/A',
+              addressLine2: checkoutData.deliveryDetails?.addressLine2 || '',
+              city: checkoutData.deliveryDetails?.city || 'N/A',
+              state: checkoutData.deliveryDetails?.state || 'N/A',
+              zipCode: checkoutData.deliveryDetails?.zipCode || 'N/A',
+              country: checkoutData.deliveryDetails?.country || 'N/A'
+            } : {
+              fullName: 'Customer',
+              email: 'N/A',
+              phone: 'N/A',
+              addressLine1: 'N/A',
+              city: 'N/A',
+              state: 'N/A',
+              zipCode: 'N/A',
+              country: 'N/A'
+            },
+            items: checkoutData?.items?.map((item: any) => ({
+              productName: item.product?.name || 'Product',
+              quantity: item.quantity || 1,
+              price: item.price || 0,
+              subtotal: (item.price || 0) * (item.quantity || 1)
+            })) || []
+          };
 
-      } catch (error) {
+          // Clear stored checkout data
+          localStorage.removeItem('checkoutData');
+
+          setTimeout(() => {
+            navigate("/order-confirmation", {
+              state: confirmationData,
+              replace: true,
+            });
+          }, 1500);
+        } else {
+          setStatus("failed");
+          setMessage("Payment verification failed. Please contact support if you were charged.");
+          toast.error("Payment verification failed.");
+        }
+
+      } catch (error: any) {
         console.error("Payment verification failed:", error);
         setStatus("failed");
         setMessage("Payment verification failed. Please contact support.");

@@ -8,18 +8,20 @@ interface OrderConfirmationData {
   orderNumber: string;
   total: number;
   paymentMethod: string;
-  shippingAddress: {
-    fullName: string;
-    email: string;
-    phone: string;
-    addressLine1: string;
+  reference?: string;
+  paidAt?: string;
+  shippingAddress?: {
+    fullName?: string;
+    email?: string;
+    phone?: string;
+    addressLine1?: string;
     addressLine2?: string;
-    city: string;
-    state: string;
-    zipCode: string;
-    country: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    country?: string;
   };
-  items: {
+  items?: {
     productName: string;
     quantity: number;
     price: number;
@@ -44,9 +46,11 @@ const OrderConfirmationPage: React.FC = () => {
     );
   }
 
-  const nameParts = orderData.shippingAddress.fullName.split(" ");
-  const firstName = nameParts[0];
-  const lastName = nameParts[1] ?? "";
+  // Safely extract name parts with fallbacks
+  const fullName = orderData.shippingAddress?.fullName || 'Customer';
+  const nameParts = fullName.split(" ");
+  const firstName = nameParts[0] || 'Customer';
+  const lastName = nameParts[1] || "";
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95">
@@ -70,22 +74,33 @@ const OrderConfirmationPage: React.FC = () => {
             <h2 className="text-xl font-semibold mb-4 text-blue-500">Order Summary</h2>
 
             <div className="space-y-3 text-white/90">
-              <div className="flex justify-between"><span>Subtotal</span> ₵{orderData.total.toFixed(2)}</div>
+              <div className="flex justify-between"><span>Total Amount</span> <span className="font-semibold">₵{orderData.total.toFixed(2)}</span></div>
               <div className="flex justify-between"><span>Payment Method</span> {orderData.paymentMethod}</div>
+              <div className="flex justify-between"><span>Status</span> <span className="text-green-400">Paid</span></div>
             </div>
 
             {/* Items */}
-            <div className="mt-6">
-              <h3 className="text-lg font-semibold text-yellow-400 mb-3">Items</h3>
-              <div className="space-y-2 text-white/80">
-                {orderData.items.map((item, index) => (
-                  <div key={index} className="flex justify-between">
-                    <span>{item.productName} (x{item.quantity})</span>
-                    <span>₵{item.subtotal.toFixed(2)}</span>
-                  </div>
-                ))}
+            {orderData.items && orderData.items.length > 0 ? (
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold text-yellow-400 mb-3">Items</h3>
+                <div className="space-y-2 text-white/80">
+                  {orderData.items.map((item, index) => (
+                    <div key={index} className="flex justify-between">
+                      <span>{item.productName} (x{item.quantity})</span>
+                      <span>₵{item.subtotal.toFixed(2)}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold text-yellow-400 mb-3">Order Details</h3>
+                <p className="text-white/80 text-sm">
+                  Your order has been confirmed and payment has been processed successfully.
+                  You will receive an email confirmation shortly with detailed order information.
+                </p>
+              </div>
+            )}
           </motion.div>
 
           {/* Customer Information */}
@@ -98,22 +113,46 @@ const OrderConfirmationPage: React.FC = () => {
             <div className="space-y-3 text-gray-200">
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                  <span className="text-blue-600 font-semibold">{firstName[0]}{lastName[0]}</span>
+                  <span className="text-blue-600 font-semibold">
+                    {firstName[0]?.toUpperCase() || 'C'}{lastName[0]?.toUpperCase() || ''}
+                  </span>
                 </div>
                 <div>
                   <div className="font-medium text-white">{firstName} {lastName}</div>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-3"><Mail className="h-4 w-4" /> <span>{orderData.shippingAddress.email}</span></div>
-              <div className="flex items-center space-x-3"><Phone className="h-4 w-4" /> <span>{orderData.shippingAddress.phone}</span></div>
-              <div className="flex items-start space-x-3"><MapPin className="h-4 w-4 mt-0.5" />
-                <span>
-                  {orderData.shippingAddress.addressLine1}<br />
-                  {orderData.shippingAddress.city}, {orderData.shippingAddress.state} <br />
-                  {orderData.shippingAddress.country}
-                </span>
-              </div>
+              {orderData.shippingAddress?.email && orderData.shippingAddress.email !== 'customer@example.com' && (
+                <div className="flex items-center space-x-3">
+                  <Mail className="h-4 w-4" /> 
+                  <span>{orderData.shippingAddress.email}</span>
+                </div>
+              )}
+              
+              {orderData.shippingAddress?.phone && orderData.shippingAddress.phone !== 'N/A' && (
+                <div className="flex items-center space-x-3">
+                  <Phone className="h-4 w-4" /> 
+                  <span>{orderData.shippingAddress.phone}</span>
+                </div>
+              )}
+              
+              {orderData.shippingAddress?.addressLine1 && orderData.shippingAddress.addressLine1 !== 'N/A' && (
+                <div className="flex items-start space-x-3">
+                  <MapPin className="h-4 w-4 mt-0.5" />
+                  <span>
+                    {orderData.shippingAddress.addressLine1}<br />
+                    {orderData.shippingAddress.city}, {orderData.shippingAddress.state} <br />
+                    {orderData.shippingAddress.country}
+                  </span>
+                </div>
+              )}
+
+              {(!orderData.shippingAddress?.addressLine1 || orderData.shippingAddress.addressLine1 === 'N/A') && (
+                <div className="text-white/60 text-sm">
+                  <p>Order confirmation details have been sent to your email.</p>
+                  <p>Thank you for your purchase!</p>
+                </div>
+              )}
             </div>
           </motion.div>
         </div>
