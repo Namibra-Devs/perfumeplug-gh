@@ -50,3 +50,5 @@ export async function searchProducts(query: string, limit = 50) {
     throw parseApiError(err);
   }
 }
+
+// 
