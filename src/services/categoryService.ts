@@ -4,7 +4,7 @@ import { parseApiError } from '../lib/apiError';
 
 export async function getCategories() {
   try {
-    return await apiFetch<{ categories: Array<{ _id?: string; name: string; productCount?: number }> }>('/categories');
+    return await apiFetch<{ categories: Array<{ _id?: string; name: string; productCount?: number }> }>('/api/ecommerce/categories');
   } catch (err) {
     throw parseApiError(err);
   }

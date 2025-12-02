@@ -26,7 +26,7 @@ export async function fetchProducts(opts: FetchProductsOptions = {}) {
     if (opts.sortBy) params.set('sortBy', opts.sortBy);
     if (opts.sortOrder) params.set('sortOrder', opts.sortOrder);
 
-    const path = `/api/v1/products${params.toString() ? `?${params.toString()}` : ''}`;
+    const path = `/api/ecommerce/products${params.toString() ? `?${params.toString()}` : ''}`;
     return await apiFetch<{ products: Product[]; pagination?: Pagination }>(path);
   } catch (err) {
     throw parseApiError(err);
@@ -35,7 +35,7 @@ export async function fetchProducts(opts: FetchProductsOptions = {}) {
 
 export async function getProduct(productId: string) {
   try {
-    return await apiFetch<{ product: Product }>(`/api/v1/products/${productId}`);
+    return await apiFetch<{ product: Product }>(`/api/ecommerce/products/${productId}`);
   } catch (err) {
     throw parseApiError(err);
   }
@@ -44,7 +44,7 @@ export async function getProduct(productId: string) {
 export async function searchProducts(query: string, limit = 50) {
    try {
     const params = new URLSearchParams({ search: query, limit: String(limit) });
-    const data = await apiFetch<{ products: Product[] }>(`/api/v1/products?${params.toString()}`);
+    const data = await apiFetch<{ products: Product[] }>(`/api/ecommerce/products?${params.toString()}`);
     return data.products;
   } catch (err) {
     throw parseApiError(err);

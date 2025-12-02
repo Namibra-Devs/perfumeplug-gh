@@ -8,9 +8,23 @@ class EcommerceCheckout {
   async checkout(
     items: OrderItem[],
     shippingAddress: ShippingAddress,
+    shippingMethod: 'delivery' | 'pickup' = 'delivery',
     customerNotes?: string
   ) {
     try {
+      // Map frontend address fields to backend expected format
+      const mappedAddress = {
+        firstName: shippingAddress.firstName,
+        lastName: shippingAddress.lastName,
+        email: shippingAddress.email,
+        phone: shippingAddress.phone,
+        street: shippingAddress.addressLine1, // Backend expects 'street'
+        city: shippingAddress.city,
+        state: shippingAddress.state,
+        zipCode: shippingAddress.zipCode,
+        country: shippingAddress.country
+      };
+
       // Step 1: Create order
       const orderData = await apiFetch<{ order: Order }>(
         '/api/ecommerce/orders',
@@ -18,7 +32,8 @@ class EcommerceCheckout {
           method: 'POST',
           body: JSON.stringify({
             items,
-            shippingAddress,
+            shippingMethod,
+            shippingAddress: mappedAddress,
             customerNotes,
             paymentMethod: 'paystack'
           })
@@ -34,7 +49,7 @@ class EcommerceCheckout {
         {
           method: 'POST',
           body: JSON.stringify({
-            email: shippingAddress.email,
+            paymentMethod: 'paystack',
             callbackUrl: `${window.location.origin}/payment/callback?orderId=${order._id}`
           })
         }

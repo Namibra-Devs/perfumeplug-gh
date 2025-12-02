@@ -14,6 +14,7 @@ import { useToast } from "../hooks/useToast";
 import StepIndicator from "../components/checkout/StepIndicator";
 import CustomerDetailsForm from "../components/checkout/CustomerDetailsForm";
 import DeliveryDetailsForm from "../components/checkout/DeliveryDetailsForm";
+import ShippingMethodSelector from "../components/checkout/ShippingMethodSelector";
 import PaymentForm from "../components/checkout/PaymentForm";
 import OrderSummary from "../components/checkout/OrderSummary";
 
@@ -58,6 +59,11 @@ const CheckoutPage: React.FC = () => {
   });
 
   const [notes, setNotes] = useState("");
+
+  // --------------------------
+  // SHIPPING METHOD
+  // --------------------------
+  const [shippingMethod, setShippingMethod] = useState<'delivery' | 'pickup'>('delivery');
 
   // --------------------------
   // REGION & COUNTRY SELECT
@@ -124,7 +130,7 @@ const CheckoutPage: React.FC = () => {
         price: item.product.sellingPrice,
       }));
 
-      await checkoutService.checkout(orderItems, deliveryDetails, notes);
+      await checkoutService.checkout(orderItems, deliveryDetails, shippingMethod, notes);
       toast.success("Order created successfully! Redirecting...");
     } catch (err) {
       console.log(err);
@@ -191,6 +197,13 @@ const CheckoutPage: React.FC = () => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                   >
+                    {/* SHIPPING METHOD SELECTOR */}
+                    <ShippingMethodSelector
+                      value={shippingMethod}
+                      onChange={setShippingMethod}
+                    />
+
+                    {/* DELIVERY DETAILS FORM */}
                     <DeliveryDetailsForm
                       data={deliveryDetails}
                       setData={setDeliveryDetails}

@@ -25,8 +25,9 @@ export interface ShippingAddress {
   lastName: string;
   email: string;
   phone: string;
-  addressLine1: string;
+  addressLine1: string;  // Frontend uses this
   addressLine2?: string;
+  street?: string;       // Backend expects this (mapped from addressLine1)
   city: string;
   state: string;
   zipCode: string;
@@ -62,6 +63,7 @@ export interface CustomerOrderSummary {
   status: string;
   paymentStatus: string;
   totalAmount: number;
+  shippingMethod?: 'delivery' | 'pickup';
 
   items: {
     product: {
@@ -107,6 +109,7 @@ export interface Order {
   status: string;
   paymentStatus: string;
   totalAmount: number;
+  shippingMethod?: 'delivery' | 'pickup';
   items: OrderItem[];
   shippingAddress: ShippingAddress;
   createdAt: string;

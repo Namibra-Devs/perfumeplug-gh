@@ -6,6 +6,7 @@ import { parseApiError } from '../lib/apiError';
 export async function createOrder(
   items: { productId: string; quantity: number; price: number }[],
   shippingAddress: ShippingAddress,
+  shippingMethod: 'delivery' | 'pickup' = 'delivery',
   customerNotes?: string
 ) {
   try {
@@ -13,7 +14,7 @@ export async function createOrder(
       '/api/ecommerce/orders',
       {
         method: 'POST',
-        body: JSON.stringify({ items, shippingAddress, customerNotes, paymentMethod: 'paystack' }),
+        body: JSON.stringify({ items, shippingMethod, shippingAddress, customerNotes, paymentMethod: 'paystack' }),
       },
       true
     );
