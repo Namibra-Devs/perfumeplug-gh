@@ -3,7 +3,7 @@ import ProductCard from "./ProductCard";
 import { useProducts } from "../../hooks/useProducts";
 
 const ProductGrid = () => {
-  const { products, loading, error, fetchProducts } = useProducts();
+  const { products, loading, error, refetch} = useProducts();
   const featuredProducts = products.slice(0, 8);
   console.log("Featured Products:", featuredProducts);
 
@@ -32,7 +32,7 @@ const ProductGrid = () => {
       <div className="text-center py-10 col-span-full">
         <p className="text-red-500">Error loading products: {String(error)}</p>
         <button
-          onClick={() => fetchProducts()}
+          onClick={() => refetch()}
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           Retry

@@ -1,132 +1,92 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // hooks/useProducts.ts
-import { useState, useEffect } from "react";
-import { Product, Pagination } from "../types/product";
-import { apiFetch } from "../lib/api";
-import { MockProducts} from "../constants/mockData";
+import { useEffect, useState } from "react";
+import type { Product, Pagination } from "../types/product";
+import { fetchProducts as fetchProductService } from "../services/productService";
+import { MockProducts } from "../constants/mockData";
 
 export interface UseProductsOptions {
   page?: number;
+  limit?: number;
   category?: string;
   search?: string;
   minPrice?: number;
   maxPrice?: number;
-  sortBy?: string;  // "newest" | "price-low-high" | "price-high-low"
+  sortBy?: string;
 }
 
-interface UseProductsResult {
-  products: Product[];
-  loading: boolean;
-  error: string | null;
-  pagination: Pagination | null;
-  fetchProducts: (opts?: UseProductsOptions) => Promise<void>;
-}
-
-export function useProducts(options: UseProductsOptions = {}): UseProductsResult {
+export function useProducts(options: UseProductsOptions = {}) {
   const [products, setProducts] = useState<Product[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchProducts = async (opts: UseProductsOptions = {}) => {
+  const loadProducts = async (opts: UseProductsOptions = {}) => {
     setLoading(true);
     setError(null);
 
-    const {
-      page = 1,
-      category = "",
-      search = "",
-      minPrice = 0,
-      maxPrice = 10000,
-      sortBy = "newest",
-    } = opts;
-
     try {
-      const params = new URLSearchParams();
-      params.append("page", page.toString());
-      params.append("limit", "20");
+      // Call your service instead of rewriting logic
+      const data = await fetchProductService({
+        page: opts.page,
+        limit: opts.limit ?? 20,
+        search: opts.search,
+        category: opts.category,
+        minPrice: opts.minPrice,
+        maxPrice: opts.maxPrice,
+        sortBy: opts.sortBy,
+      });
 
-      if (search) params.append("search", search);
-      if (category) params.append("category", category);
-      if (minPrice) params.append("minPrice", minPrice.toString());
-      if (maxPrice) params.append("maxPrice", maxPrice.toString());
-
-      // Determine sort rules
-      if (sortBy === "price-low-high") {
-        params.append("sortBy", "price");
-        params.append("sortOrder", "asc");
-      } else if (sortBy === "price-high-low") {
-        params.append("sortBy", "price");
-        params.append("sortOrder", "desc");
-      } else {
-        params.append("sortBy", "createdAt");
-        params.append("sortOrder", "desc");
-      }
-
-      const data = await apiFetch<{ products: Product[]; pagination: Pagination }>(
-        `/api/v1/products?${params.toString()}`
-      );
-
-      console.log("Products:", data);
       setProducts(data.products);
-      setPagination(data.pagination);
-    } catch (error: any) {
-      setError(error.message || "An error occurred");
+      setPagination(data.pagination ?? null);
 
-    /*  
-      -----------------------------------------------
-      🔥 FALLBACK TO MOCK DATA IF API REQUEST FAILS
-      -----------------------------------------------
-    */
+    } catch (err: any) {
+      setError(err.message || "Failed to load products");
 
-     let filtered = [...MockProducts];
+      console.warn("⚠ Using mock products (API failed)");
 
-     //Apply search filter
-     if(search){
-      filtered =filtered.filter((p) => 
-        p.name.toLowerCase().includes(search.toLowerCase())
-      );
-     }
+      // ------------------------------------------
+      // FALLBACK TO MOCK DATA
+      // ------------------------------------------
+      let filtered = [...MockProducts];
 
-     //Category filter
-     if(category){
-      filtered = filtered.filter((p) => 
-        p.category?.toLowerCase().includes(category.toLowerCase())
-      )
-     }
-
-     // Price range filter
-      filtered = filtered.filter(
-        (p) => p.sellingPrice >= minPrice && p.sellingPrice <= maxPrice
-      );
-
-      // Sorting
-      if (sortBy === "price-low-high") {
-        filtered.sort((a, b) => a.sellingPrice - b.sellingPrice);
-      } else if (sortBy === "price-high-low") {
-        filtered.sort((a, b) => b.sellingPrice - a.sellingPrice);
-      } else {
-        // newest → sort by createdAt
-        filtered.sort(
-          (a, b) =>
-            new Date(b.createdAt || "").getTime() -
-            new Date(a.createdAt || "").getTime()
+      if (opts.search) {
+        filtered = filtered.filter(p =>
+          p.name.toLowerCase().includes(opts.search!.toLowerCase())
         );
       }
 
-      // Manual Pagination (client-side)
-      const pageSize = 20;
-      const start = (page - 1) * pageSize;
-      const paginated = filtered.slice(start, start + pageSize);
-      console.log(paginated);
-      setProducts(filtered);
+      if (opts.category) {
+        filtered = filtered.filter(p =>
+          p.category?.toLowerCase() === opts.category!.toLowerCase()
+        );
+      }
 
-      setPagination({
-        currentPage: page,
+      if (opts.minPrice !== undefined || opts.maxPrice !== undefined) {
+        filtered = filtered.filter(
+          p =>
+            p.sellingPrice >= (opts.minPrice ?? 0) &&
+            p.sellingPrice <= (opts.maxPrice ?? 999999)
+        );
+      }
+
+      // Manual Pagination (client-side fallback)
+      const pageSize = 20;
+      const currentPage = opts.page ?? 1;  // ← FIXED
+      const start = (currentPage - 1) * pageSize;
+
+      const paginated = filtered.slice(start, start + pageSize);
+
+      setProducts(paginated);
+
+      setPagination({ 
+        currentPage,
         limit: pageSize,
         totalPages: Math.ceil(filtered.length / pageSize),
         totalProducts: filtered.length,
-      } as any);
+        hasNextPage: currentPage < Math.ceil(filtered.length / pageSize),
+        hasPrevPage: currentPage > 1,
+      });
 
     } finally {
       setLoading(false);
@@ -134,7 +94,7 @@ export function useProducts(options: UseProductsOptions = {}): UseProductsResult
   };
 
   useEffect(() => {
-    fetchProducts(options);
+    loadProducts(options);
   }, [JSON.stringify(options)]);
 
   return {
@@ -142,6 +102,6 @@ export function useProducts(options: UseProductsOptions = {}): UseProductsResult
     loading,
     error,
     pagination,
-    fetchProducts,
+    refetch: loadProducts,
   };
 }

@@ -34,13 +34,13 @@ export interface Product {
 
 export interface Pagination {
   currentPage: number;
-  totalItems: number;
   limit: number;
-  totalPages?: number;
+  totalPages: number;
   totalProducts: number;
   hasNextPage: boolean;
   hasPrevPage: boolean;
 }
+
 
 export interface UseProductsResult {
   products: Product[];
