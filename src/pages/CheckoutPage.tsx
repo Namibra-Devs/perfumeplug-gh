@@ -124,18 +124,42 @@ const CheckoutPage: React.FC = () => {
     setError("");
 
     try {
+      // Validate required fields
+      if (!deliveryDetails.firstName || !deliveryDetails.lastName || !deliveryDetails.email) {
+        setError("Please fill in all required customer information.");
+        toast.error("Please fill in all required customer information.");
+        setLoading(false);
+        return;
+      }
+
+      if (!deliveryDetails.addressLine1 || !deliveryDetails.city || !deliveryDetails.state) {
+        setError("Please fill in all required address information.");
+        toast.error("Please fill in all required address information.");
+        setLoading(false);
+        return;
+      }
+
+      // Map cart items to order items format
       const orderItems = items.map((item) => ({
         productId: item.product._id,
         quantity: item.quantity,
-        price: item.product.sellingPrice,
+        price: item.product.sellingPrice, // Include for reference, backend will validate
       }));
 
+      console.log('Creating order with:', {
+        items: orderItems,
+        shippingAddress: deliveryDetails,
+        shippingMethod,
+        notes
+      });
+
       await checkoutService.checkout(orderItems, deliveryDetails, shippingMethod, notes);
-      toast.success("Order created successfully! Redirecting...");
-    } catch (err) {
-      console.log(err);
-      setError("Failed to create order.");
-      toast.error("Failed to create order.");
+      toast.success("Order created successfully! Redirecting to payment...");
+    } catch (err: any) {
+      console.error('Checkout error:', err);
+      const errorMessage = err.message || "Failed to create order. Please try again.";
+      setError(errorMessage);
+      toast.error(errorMessage);
     }
 
     setLoading(false);

@@ -12,51 +12,66 @@ class EcommerceCheckout {
     customerNotes?: string
   ) {
     try {
-      // Map frontend address fields to backend expected format
-      const mappedAddress = {
+      // Map frontend items to backend expected format
+      const mappedItems = items.map(item => ({
+        productId: item.productId,
+        quantity: item.quantity
+        // Backend will fetch price from product, don't send price
+      }));
+
+      // Map frontend address to backend customerInfo format
+      const customerInfo = {
         firstName: shippingAddress.firstName,
         lastName: shippingAddress.lastName,
         email: shippingAddress.email,
         phone: shippingAddress.phone,
-        street: shippingAddress.addressLine1, // Backend expects 'street'
-        city: shippingAddress.city,
-        state: shippingAddress.state,
-        zipCode: shippingAddress.zipCode,
-        country: shippingAddress.country
+        address: {
+          street: shippingAddress.addressLine1,
+          addressLine2: shippingAddress.addressLine2 || '',
+          city: shippingAddress.city,
+          state: shippingAddress.state,
+          zipCode: shippingAddress.zipCode,
+          country: shippingAddress.country
+        }
       };
 
       // Step 1: Create order
-      const orderData = await apiFetch<{ order: Order }>(
+      const orderResponse = await apiFetch<{ order: Order }>(
         '/api/ecommerce/orders',
         {
           method: 'POST',
           body: JSON.stringify({
-            items,
+            customerInfo,
+            items: mappedItems,
             shippingMethod,
-            shippingAddress: mappedAddress,
-            customerNotes,
-            paymentMethod: 'paystack'
+            shippingAmount: 0, // Default shipping amount
+            discountAmount: 0, // Default discount
+            notes: customerNotes
           })
         },
-        true
+        false // Don't require authentication for guest checkout
       );
 
-      const order = orderData.order;
+      const order = orderResponse.order;
 
       // Step 2: Initialize payment
-      const paymentData = await apiFetch<{ authorizationUrl: string }>(
+      const paymentResponse = await apiFetch<{ 
+        authorization_url: string;
+        access_code: string;
+        reference: string;
+      }>(
         `/api/ecommerce/orders/${order._id}/initialize-payment`,
         {
           method: 'POST',
           body: JSON.stringify({
-            paymentMethod: 'paystack',
-            callbackUrl: `${window.location.origin}/payment/callback?orderId=${order._id}`
+            callback_url: `${window.location.origin}/payment/callback?orderId=${order._id}`
           })
-        }
+        },
+        false // Don't require authentication for guest checkout
       );
 
       // Step 3: Redirect to payment
-      window.location.href = paymentData.authorizationUrl;
+      window.location.href = paymentResponse.authorization_url;
 
     } catch (error) {
       console.error('Checkout failed:', error);

@@ -4,13 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { CheckCircle, XCircle, Loader } from "lucide-react";
 import { checkoutService } from "../services/checkoutService";
 import { useToast } from "../hooks/useToast";
-import { OrderItem } from "../types/order";
+import { useCart } from "../hooks/useCart";
 
 const PaymentCallback = () => {
   const navigate = useNavigate();
   const [status, setStatus] = useState<"loading" | "success" | "failed">("loading");
   const [message, setMessage] = useState("Verifying payment...");
   const toast = useToast();
+  const { clearCart } = useCart();
 
   useEffect(() => {
     const verifyPayment = async () => {
@@ -27,46 +28,41 @@ const PaymentCallback = () => {
 
       try {
         const result = await checkoutService.handlePaymentCallback(orderId, reference);
-        const order = result.order as any;
+        
+        console.log("Payment verification result:", result);
 
-        console.log("Verified Order:", order);
+        if (result.status === 'success') {
+          setStatus("success");
+          setMessage("Payment verified successfully!");
+          toast.success("Payment verified successfully!");
 
-        setStatus("success");
-        toast.success("Payment verified successfully!");
+          // Clear cart on successful payment
+          clearCart();
 
-        // Build confirmation page data
-        const confirmationData = {
-          orderId: order._id,
-          orderNumber: order.orderNumber,
-          total: order.totalAmount,
-          paymentMethod: order.paymentMethod,
-          shippingAddress: {
-            fullName: order.shippingAddress.fullName,
-            email: order.shippingAddress.email,
-            phone: order.shippingAddress.phone,
-            addressLine1: order.shippingAddress.addressLine1,
-            addressLine2: order.shippingAddress.addressLine2,
-            city: order.shippingAddress.city,
-            state: order.shippingAddress.state,
-            zipCode: order.shippingAddress.zipCode,
-            country: order.shippingAddress.country,
-          },
-          items: order.items.map((item: OrderItem) => ({
-            productName: item.productName,
-            quantity: item.quantity,
-            price: item.price,
-            subtotal: item.subtotal,
-          })),
-        };
+          // Build confirmation page data from the API response
+          const confirmationData = {
+            orderId: orderId,
+            orderNumber: 'N/A',
+            total: (result as any).amount || 0,
+            paymentMethod: 'Paystack',
+            reference: (result as any).reference || reference,
+            paidAt: (result as any).paid_at,
+            items: [],
+          };
 
-        setTimeout(() => {
-          navigate("/order-confirmation", {
-            state: confirmationData,
-            replace: true,
-          });
-        }, 1500);
+          setTimeout(() => {
+            navigate("/order-confirmation", {
+              state: confirmationData,
+              replace: true,
+            });
+          }, 1500);
+        } else {
+          setStatus("failed");
+          setMessage("Payment verification failed. Please contact support if you were charged.");
+          toast.error("Payment verification failed.");
+        }
 
-      } catch (error) {
+      } catch (error: any) {
         console.error("Payment verification failed:", error);
         setStatus("failed");
         setMessage("Payment verification failed. Please contact support.");

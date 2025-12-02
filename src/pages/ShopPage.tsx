@@ -24,10 +24,12 @@ const ShopPage: React.FC = () => {
   const [maxPrice, setMaxPrice] = useState(1000);
   const [sortBy, setSortBy] = useState("newest");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [currentPage, setCurrentPage] = useState(1);
 
   // API hooks
   const { categories, loading: catLoading} = useCategories();
-  const { products, loading, error, refetch } = useProducts({
+  const { products, loading, error, refetch, pagination } = useProducts({
+    page: currentPage,
     category: category === "all" ? "" : category,
     search: searchQuery,
     minPrice: 0,
@@ -52,6 +54,31 @@ const ShopPage: React.FC = () => {
     setCategory("all");
     setMaxPrice(1000);
     setSortBy("newest");
+    setCurrentPage(1); // Reset to first page when clearing filters
+  };
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [category, maxPrice, sortBy, searchQuery]);
+
+  // Pagination handlers
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to top when page changes
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handlePrevPage = () => {
+    if (pagination?.hasPrevPage) {
+      handlePageChange(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (pagination?.hasNextPage) {
+      handlePageChange(currentPage + 1);
+    }
   };
 
   return (
@@ -169,6 +196,11 @@ const ShopPage: React.FC = () => {
                     {loading ? "…" : products.length}
                   </span>{" "}
                   products found
+                  {pagination && !loading && (
+                    <span className="text-gray-400 ml-2">
+                      (Page {pagination.currentPage} of {pagination.totalPages}, {pagination.totalProducts} total)
+                    </span>
+                  )}
                   {searchQuery && (
                     <>
                       {" "}
@@ -278,6 +310,110 @@ const ShopPage: React.FC = () => {
                 >
                   Clear All Filters
                 </button>
+              </div>
+            )}
+
+            {/* PAGINATION */}
+            {!loading && pagination && pagination.totalPages > 1 && (
+              <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4">
+                {/* Page Info */}
+                <div className="text-sm text-gray-300">
+                  Showing {((pagination.currentPage - 1) * pagination.limit) + 1} to{' '}
+                  {Math.min(pagination.currentPage * pagination.limit, pagination.totalProducts)} of{' '}
+                  {pagination.totalProducts} products
+                </div>
+
+                {/* Pagination Controls */}
+                <div className="flex items-center space-x-2">
+                  {/* Previous Button */}
+                  <button
+                    onClick={handlePrevPage}
+                    disabled={!pagination.hasPrevPage}
+                    className={`px-4 py-2 rounded-lg border transition-colors ${
+                      pagination.hasPrevPage
+                        ? 'bg-black/20 border-yellow-600/20 text-yellow-400 hover:bg-yellow-700/20'
+                        : 'bg-gray-800/20 border-gray-600/20 text-gray-500 cursor-not-allowed'
+                    }`}
+                  >
+                    Previous
+                  </button>
+
+                  {/* Page Numbers */}
+                  <div className="flex items-center space-x-1">
+                    {/* First page */}
+                    {pagination.currentPage > 3 && (
+                      <>
+                        <button
+                          onClick={() => handlePageChange(1)}
+                          className="w-10 h-10 rounded-lg bg-black/20 border border-yellow-600/20 text-yellow-400 hover:bg-yellow-700/20 transition-colors"
+                        >
+                          1
+                        </button>
+                        {pagination.currentPage > 4 && (
+                          <span className="text-gray-400 px-2">...</span>
+                        )}
+                      </>
+                    )}
+
+                    {/* Current page and neighbors */}
+                    {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                      let pageNum;
+                      if (pagination.totalPages <= 5) {
+                        pageNum = i + 1;
+                      } else if (pagination.currentPage <= 3) {
+                        pageNum = i + 1;
+                      } else if (pagination.currentPage >= pagination.totalPages - 2) {
+                        pageNum = pagination.totalPages - 4 + i;
+                      } else {
+                        pageNum = pagination.currentPage - 2 + i;
+                      }
+
+                      if (pageNum < 1 || pageNum > pagination.totalPages) return null;
+
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => handlePageChange(pageNum)}
+                          className={`w-10 h-10 rounded-lg border transition-colors ${
+                            pageNum === pagination.currentPage
+                              ? 'bg-yellow-600/30 border-yellow-400 text-yellow-400'
+                              : 'bg-black/20 border-yellow-600/20 text-yellow-400 hover:bg-yellow-700/20'
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    })}
+
+                    {/* Last page */}
+                    {pagination.currentPage < pagination.totalPages - 2 && (
+                      <>
+                        {pagination.currentPage < pagination.totalPages - 3 && (
+                          <span className="text-gray-400 px-2">...</span>
+                        )}
+                        <button
+                          onClick={() => handlePageChange(pagination.totalPages)}
+                          className="w-10 h-10 rounded-lg bg-black/20 border border-yellow-600/20 text-yellow-400 hover:bg-yellow-700/20 transition-colors"
+                        >
+                          {pagination.totalPages}
+                        </button>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Next Button */}
+                  <button
+                    onClick={handleNextPage}
+                    disabled={!pagination.hasNextPage}
+                    className={`px-4 py-2 rounded-lg border transition-colors ${
+                      pagination.hasNextPage
+                        ? 'bg-black/20 border-yellow-600/20 text-yellow-400 hover:bg-yellow-700/20'
+                        : 'bg-gray-800/20 border-gray-600/20 text-gray-500 cursor-not-allowed'
+                    }`}
+                  >
+                    Next
+                  </button>
+                </div>
               </div>
             )}
           </div>
