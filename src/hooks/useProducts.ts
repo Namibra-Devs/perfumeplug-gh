@@ -64,7 +64,7 @@ export function useProducts(options: UseProductsOptions = {}): UseProductsResult
       }
 
       const data = await apiFetch<{ products: Product[]; pagination: Pagination }>(
-        `/products?${params.toString()}`
+        `/api/v1/products?${params.toString()}`
       );
 
       console.log("Products:", data);
