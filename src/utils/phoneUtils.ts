@@ -11,7 +11,7 @@ export function sanitizeGhanaPhoneNumber(phoneNumber: string): string {
   if (!phoneNumber) return '';
   
   // Remove all spaces, dashes, and other non-digit characters except +
-  let cleaned = phoneNumber.replace(/[^\d+]/g, '');
+  const cleaned = phoneNumber.replace(/[^\d+]/g, '');
   
   // If it already has +233, return as is
   if (cleaned.startsWith('+233')) {

@@ -68,7 +68,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // Handle successful login
       if (response.success || response.data) {
-        const { token, customer } = response.data || response as any;
+        const data = response.data || (response as unknown as { token: string; customer: Customer });
+        const { token, customer } = data;
         setToken(token);
         setCustomer(customer);
         localStorage.setItem('customerToken', token);
@@ -82,22 +83,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return undefined;
       }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Login error:", error);
       
       // Extract error message from API response
       let errorMessage = "Something went wrong, please try again!";
       
-      if (error.message) {
-        errorMessage = error.message;
-      } else if (error.details?.message) {
-        errorMessage = error.details.message;
-      } else if (error.status === 401) {
-        errorMessage = "Invalid email or password";
-      } else if (error.status === 423) {
-        errorMessage = "Account is temporarily locked";
-      } else if (error.status === 400) {
-        errorMessage = "Please check your email and password";
+      if (error && typeof error === 'object') {
+        const apiError = error as { message?: string; details?: { message?: string }; status?: number };
+        if (apiError.message) {
+          errorMessage = apiError.message;
+        } else if (apiError.details?.message) {
+          errorMessage = apiError.details.message;
+        } else if (apiError.status === 401) {
+          errorMessage = "Invalid email or password";
+        } else if (apiError.status === 423) {
+          errorMessage = "Account is temporarily locked";
+        } else if (apiError.status === 400) {
+          errorMessage = "Please check your email and password";
+        }
       }
       
       toast.error(errorMessage);
@@ -129,7 +133,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // Handle successful registration
       if (response.success || response.data) {
-        const { token, customer } = response.data || response as any;
+        const data = response.data || (response as unknown as { token: string; customer: Customer });
+        const { token, customer } = data;
         setToken(token);
         setCustomer(customer);
         localStorage.setItem('customerToken', token);
@@ -144,21 +149,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return null;
       }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Registration error:", error);
       
       // Extract error message from API response
       let errorMessage = "Registration failed, please try again!";
       
-      // Check status codes first for specific error messages
-      if (error.status === 409) {
-        errorMessage = "An account with this email already exists";
-      } else if (error.status === 400) {
-        errorMessage = "Please check your information and try again";
-      } else if (error.details?.message) {
-        errorMessage = error.details.message;
-      } else if (error.message) {
-        errorMessage = error.message;
+      if (error && typeof error === 'object') {
+        const apiError = error as { message?: string; details?: { message?: string }; status?: number };
+        if (apiError.message) {
+          errorMessage = apiError.message;
+        } else if (apiError.details?.message) {
+          errorMessage = apiError.details.message;
+        } else if (apiError.status === 409) {
+          errorMessage = "An account with this email already exists";
+        } else if (apiError.status === 400) {
+          errorMessage = "Please check your information and try again";
+        }
       }
       
       toast.error(errorMessage);
