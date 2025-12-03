@@ -70,7 +70,7 @@ const CartPage: React.FC = () => {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="p-6"
+                    className="p-3 md:p-6"
                   >
                     <div className="flex space-x-4">
                       {/* Product Image */}
@@ -78,7 +78,7 @@ const CartPage: React.FC = () => {
                         <img
                           src={item.product.images[0]?.url}
                           alt={item.product.name}
-                          className="w-20 h-20 object-cover rounded-lg"
+                          className="w-16 md:w-20 h-16 md:h-20 object-cover rounded-lg"
                         />
                       </div>
 
@@ -94,7 +94,7 @@ const CartPage: React.FC = () => {
                         <p className="text-xs text-gray-300">{item.product.size}</p> */}
                         
                         {/* Quantity Controls */}
-                        <div className="flex items-center space-x-3 mt-1">
+                        <div className="flex items-center gap-2 md:gap-3 mt-1">
                           <span className="text-sm text-gray-300">Quantity:</span>
                           <div className="flex items-center space-x-2">
                             <button
@@ -105,7 +105,7 @@ const CartPage: React.FC = () => {
                             >
                               <Minus className="h-3 w-3" />
                             </button>
-                            <span className="w-8 text-center font-semibold text-yellow-400">{item.quantity}</span>
+                            <span className="w-4 text-center font-semibold text-yellow-400">{item.quantity}</span>
                             <button
                               title="Add"
                               onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
@@ -119,7 +119,7 @@ const CartPage: React.FC = () => {
 
                       {/* Price and Remove */}
                       <div className="flex flex-col items-end space-y-2">
-                        <span className="text-lg font-semibold text-gray-300">
+                        <span className="text-sm md:text-lg font-semibold text-gray-300">
                           ₵{(item.product.sellingPrice * item.quantity).toFixed(2)}
                         </span>
                         <button
@@ -161,7 +161,7 @@ const CartPage: React.FC = () => {
                     <span>Tax</span>
                     <span>₵{(getTotalPrice() * 0.05).toFixed(2)}</span>
                   </div>
-                  <div className="border-t pt-3">
+                  <div className="border-t border-yellow-600/20 pt-3">
                     <div className="flex justify-between font-semibold">
                       <span>Total</span>
                       <span>₵{(getTotalPrice() * 1.05).toFixed(2)}</span>
