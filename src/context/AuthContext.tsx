@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 // contexts/AuthContext.tsx
 import { useToast } from '../hooks/useToast';
-import { RegisterCustomerRequest, RegisterCustomerResponse } from '../types/auth';
+import { RegisterCustomerRequest } from '../types/auth';
 import { Customer } from '../types/customer';
 import { createContext, useState, useEffect, ReactNode } from 'react';
 import { apiFetch } from '../lib/api';

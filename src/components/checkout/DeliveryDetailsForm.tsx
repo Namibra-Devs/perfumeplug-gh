@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useState } from "react";
-import { isEmpty, isPhone } from "../../utils/validation";
-import { sanitizeGhanaPhoneNumber, isValidGhanaPhoneNumber, formatGhanaPhoneNumber } from "../../utils/phoneUtils";
+import { isEmpty } from "../../utils/validation";
+import { sanitizeGhanaPhoneNumber, isValidGhanaPhoneNumber } from "../../utils/phoneUtils";
 
 interface Props {
   data: any;
