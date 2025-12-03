@@ -17,12 +17,12 @@ const Header: React.FC<HeaderProps> = ({title="", descripton=""}) => {
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-1">
               <Phone className="h-3 w-3" />
-              <span className="text-xs">+233 12 345 6789</span>
+              <span className="text-xs">+233 50-666-2618</span>
             </div>
             <span className="text-xs">Free shipping on orders over ₵200</span>
           </div>
           <div className="hidden md:block">
-            <span className="text-xs">Mon-Fri: 8:00 AM - 8:00 PM</span>
+            <span className="text-xs">Shop hours: Mon-Fri: 8:00 AM - 8:00 PM</span>
           </div>
         </div>
       </div>
