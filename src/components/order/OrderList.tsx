@@ -88,8 +88,8 @@ export const OrderList = ({ token }: OrderListProps) => {
         >
           <div className="flex justify-between items-start mb-4">
             <div>
-              <div className="font-semibold text-purple-600">
-                Order #{order._id}
+              <div className="text-xs md:text-sm font-semibold text-purple-600">
+                Order # <span className="text-white font-medium">{order._id}</span>
               </div>
               <div className="text-sm text-gray-300">
                 Placed on {new Date(order.createdAt).toLocaleDateString()}
