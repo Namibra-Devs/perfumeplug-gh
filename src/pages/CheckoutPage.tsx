@@ -139,6 +139,11 @@ const CheckoutPage: React.FC = () => {
         return;
       }
 
+      if(!isAuthenticated){
+        setError("Please login to place an order.");
+        toast.error("Please login to place an order.");
+      }
+      
       // Map cart items to order items format
       const orderItems = items.map((item) => ({
         productId: item.product._id,
