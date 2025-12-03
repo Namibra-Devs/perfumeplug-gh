@@ -205,7 +205,7 @@ const LoginRegisterSection: React.FC = () => {
   -------------------------- */
   return (
     <div className="relative min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95 flex items-center justify-center">
-      <div className="max-w-md w-full pt-6 pb-20 relative z-50">
+      <div className="max-w-md w-full px-6 pt-6 pb-20 relative z-50">
         <div className="bg-black/10 backdrop-blur-lg border border-yellow-500/20 rounded-2xl shadow-xl px-4 py-6">
 
           <div className="text-center mb-6">
