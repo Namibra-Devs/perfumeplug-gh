@@ -45,17 +45,17 @@ const ContactPage: React.FC = () => {
     {
       icon: Phone,
       title: 'Call Us',
-      details: '+233 (0) 30 7123 4567',
+      details: '+233 (0) 50-666-2618',
       subtitle: 'Mon-Fri: 8:00 AM - 8:00 PM',
-      link: 'tel:+2333071234567',
+      link: 'tel:+233506662618',
       color: 'bg-green-100 text-green-600'
     },
     {
       icon: Mail,
       title: 'Email Us',
-      details: 'info@perfumepluggh.com',
+      details: 'info@perfumeplug-gh.com',
       subtitle: 'We reply within 24 hours',
-      link: 'mailto:info@perfumepluggh.com',
+      link: 'mailto:info@perfumeplug-gh.com',
       color: 'bg-blue-100 text-blue-600'
     },
     {
@@ -171,7 +171,7 @@ const ContactPage: React.FC = () => {
                 className="mt-8"
               >
                 <a
-                  href="https://wa.me/2335071234567?text=Hi%20PerfumePlug%20GH!%20I%20need%20help%20with..."
+                  href="https://wa.me/233506662618?text=Hi%20PerfumePlug%20GH!%20I%20need%20help%20with..."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center space-x-3 bg-green-600 text-white px-6 py-4 rounded-lg font-semibold hover:bg-green-700 transition-colors w-full"

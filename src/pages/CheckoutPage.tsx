@@ -123,6 +123,11 @@ const CheckoutPage: React.FC = () => {
     setLoading(true);
     setError("");
 
+    if(!isAuthenticated){
+      setError("Please login to place an order.");
+      toast.error("Please login to place an order.");
+    }
+
     try {
       // Validate required fields
       if (!deliveryDetails.firstName || !deliveryDetails.lastName || !deliveryDetails.phone) {
@@ -137,11 +142,6 @@ const CheckoutPage: React.FC = () => {
         toast.error("Please fill in all required address information.");
         setLoading(false);
         return;
-      }
-
-      if(!isAuthenticated){
-        setError("Please login to place an order.");
-        toast.error("Please login to place an order.");
       }
       
       // Map cart items to order items format
