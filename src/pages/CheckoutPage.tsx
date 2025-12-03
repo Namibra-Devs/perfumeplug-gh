@@ -58,7 +58,7 @@ const CheckoutPage: React.FC = () => {
     zipCode: "",
   });
 
-  const [notes, setNotes] = useState("");
+  // const [notes, setNotes] = useState("");
 
   // --------------------------
   // SHIPPING METHOD
@@ -68,34 +68,34 @@ const CheckoutPage: React.FC = () => {
   // --------------------------
   // REGION & COUNTRY SELECT
   // --------------------------
-  const regionSelect = [
-    { value: "Ahafo", label: "Ahafo" },
-    { value: "Ashanti", label: "Ashanti" },
-    { value: "Bono", label: "Bono" },
-    { value: "Bono East", label: "Bono East" },
-    { value: "Central", label: "Central" },
-    { value: "Eastern", label: "Eastern" },
-    { value: "Greater Accra", label: "Greater Accra" },
-    { value: "North East", label: "North East" },
-    { value: "Northern", label: "Northern" },
-    { value: "Oti", label: "Oti" },
-    { value: "Savannah", label: "Savannah" },
-    { value: "Upper East", label: "Upper East" },
-    { value: "Upper West", label: "Upper West" },
-    { value: "Volta", label: "Volta" },
-    { value: "Western", label: "Western" },
-    { value: "Western North", label: "Western North" },
-  ];
+  // const regionSelect = [
+  //   { value: "Ahafo", label: "Ahafo" },
+  //   { value: "Ashanti", label: "Ashanti" },
+  //   { value: "Bono", label: "Bono" },
+  //   { value: "Bono East", label: "Bono East" },
+  //   { value: "Central", label: "Central" },
+  //   { value: "Eastern", label: "Eastern" },
+  //   { value: "Greater Accra", label: "Greater Accra" },
+  //   { value: "North East", label: "North East" },
+  //   { value: "Northern", label: "Northern" },
+  //   { value: "Oti", label: "Oti" },
+  //   { value: "Savannah", label: "Savannah" },
+  //   { value: "Upper East", label: "Upper East" },
+  //   { value: "Upper West", label: "Upper West" },
+  //   { value: "Volta", label: "Volta" },
+  //   { value: "Western", label: "Western" },
+  //   { value: "Western North", label: "Western North" },
+  // ];
 
-  const countrySelect = [
-    { value: "Ghana", label: "Ghana" },
-    { value: "Nigeria", label: "Nigeria" },
-    { value: "Kenya", label: "Kenya" },
-    { value: "South Africa", label: "South Africa" },
-    { value: "United States", label: "United States" },
-    { value: "United Kingdom", label: "United Kingdom" },
-    { value: "Canada", label: "Canada" },
-  ];
+  // const countrySelect = [
+  //   { value: "Ghana", label: "Ghana" },
+  //   { value: "Nigeria", label: "Nigeria" },
+  //   { value: "Kenya", label: "Kenya" },
+  //   { value: "South Africa", label: "South Africa" },
+  //   { value: "United States", label: "United States" },
+  //   { value: "United Kingdom", label: "United Kingdom" },
+  //   { value: "Canada", label: "Canada" },
+  // ];
 
   // ------------------------------
   // AUTO-SKIP FOR GUEST CHECKOUT
@@ -150,7 +150,6 @@ const CheckoutPage: React.FC = () => {
         items: orderItems,
         shippingAddress: deliveryDetails,
         shippingMethod,
-        notes
       });
 
       // Store checkout data in localStorage for confirmation page
@@ -159,12 +158,11 @@ const CheckoutPage: React.FC = () => {
         customerDetails,
         deliveryDetails,
         shippingMethod,
-        notes,
         total: getTotalPrice()
       };
       localStorage.setItem('checkoutData', JSON.stringify(checkoutData));
 
-      await checkoutService.checkout(orderItems, deliveryDetails, shippingMethod, notes);
+      await checkoutService.checkout(orderItems, deliveryDetails, shippingMethod);
       toast.success("Order created successfully! Redirecting to payment...");
     } catch (err: any) {
       console.error('Checkout error:', err);
@@ -232,6 +230,7 @@ const CheckoutPage: React.FC = () => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                   >
+
                     {/* SHIPPING METHOD SELECTOR */}
                     <ShippingMethodSelector
                       value={shippingMethod}
@@ -242,12 +241,8 @@ const CheckoutPage: React.FC = () => {
                     <DeliveryDetailsForm
                       data={deliveryDetails}
                       setData={setDeliveryDetails}
-                      notes={notes}
-                      setNotes={setNotes}
                       onNext={goToPayment}
                       onBack={isAuthenticated ? goBackToCustomer : undefined}
-                      regions={regionSelect}
-                      countries={countrySelect}
                     />
                   </motion.div>
                 )}
