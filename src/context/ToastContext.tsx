@@ -73,7 +73,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
               )}
 
               {/* Message */}
-              <span>{toast.message}</span>
+              <span className="text-xs md:text-sm">{toast.message}</span>
             </motion.div>
           ))}
         </AnimatePresence>

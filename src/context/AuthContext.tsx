@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-refresh/only-export-components */
 // contexts/AuthContext.tsx
 import { useToast } from '../hooks/useToast';
@@ -149,14 +150,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Extract error message from API response
       let errorMessage = "Registration failed, please try again!";
       
-      if (error.message) {
-        errorMessage = error.message;
-      } else if (error.details?.message) {
-        errorMessage = error.details.message;
-      } else if (error.status === 409) {
+      // Check status codes first for specific error messages
+      if (error.status === 409) {
         errorMessage = "An account with this email already exists";
       } else if (error.status === 400) {
         errorMessage = "Please check your information and try again";
+      } else if (error.details?.message) {
+        errorMessage = error.details.message;
+      } else if (error.message) {
+        errorMessage = error.message;
       }
       
       toast.error(errorMessage);
