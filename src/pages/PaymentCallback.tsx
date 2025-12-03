@@ -51,36 +51,89 @@ const PaymentCallback = () => {
             }
           }
 
-          // Build confirmation page data from API response and stored data
+          // Try to get order details from API as fallback
+          let orderDetails = null;
+          try {
+            const orderResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/ecommerce/orders/${orderId}`, {
+              headers: {
+                'X-Frontend-Domain': import.meta.env.VITE_TENANT_DOMAIN || 'perfumeplug-gh.onrender.com',
+                'Authorization': localStorage.getItem('customerToken') ? `Bearer ${localStorage.getItem('customerToken')}` : '',
+                'Content-Type': 'application/json'
+              }
+            });
+            
+            if (orderResponse.ok) {
+              const orderData = await orderResponse.json();
+              orderDetails = orderData.data?.order;
+            }
+          } catch (error) {
+            console.error('Failed to fetch order details:', error);
+          }
+
+          // Build confirmation page data from API response, order details, and stored data
           const apiData = result as any;
+          
+          // Extract customer info from multiple sources with proper fallbacks
+          const getCustomerInfo = () => {
+            // Priority: orderDetails.customerInfo > checkoutData.deliveryDetails > checkoutData.customerDetails
+            if (orderDetails?.customerInfo) {
+              return {
+                fullName: `${orderDetails.customerInfo.firstName || ''} ${orderDetails.customerInfo.lastName || ''}`.trim() || 'Customer',
+                email: orderDetails.customerInfo.email || '',
+                phone: orderDetails.customerInfo.phone || '',
+                addressLine1: orderDetails.customerInfo.address?.street || '',
+                addressLine2: orderDetails.customerInfo.address?.addressLine2 || '',
+                city: orderDetails.customerInfo.address?.city || '',
+                state: orderDetails.customerInfo.address?.state || '',
+                zipCode: orderDetails.customerInfo.address?.zipCode || '',
+                country: orderDetails.customerInfo.address?.country || ''
+              };
+            }
+            
+            if (checkoutData?.deliveryDetails) {
+              return {
+                fullName: `${checkoutData.deliveryDetails.firstName || ''} ${checkoutData.deliveryDetails.lastName || ''}`.trim() || 'Customer',
+                email: checkoutData.deliveryDetails.email || checkoutData.customerDetails?.email || '',
+                phone: checkoutData.deliveryDetails.phone || checkoutData.customerDetails?.phone || '',
+                addressLine1: checkoutData.deliveryDetails.addressLine1 || '',
+                addressLine2: checkoutData.deliveryDetails.addressLine2 || '',
+                city: checkoutData.deliveryDetails.city || '',
+                state: checkoutData.deliveryDetails.state || '',
+                zipCode: checkoutData.deliveryDetails.zipCode || '',
+                country: checkoutData.deliveryDetails.country || ''
+              };
+            }
+            
+            // Final fallback
+            return {
+              fullName: 'Customer',
+              email: '',
+              phone: '',
+              addressLine1: '',
+              addressLine2: '',
+              city: '',
+              state: '',
+              zipCode: '',
+              country: ''
+            };
+          };
+
+          const customerInfo = getCustomerInfo();
+          
           const confirmationData = {
             orderId: orderId,
-            orderNumber: apiData.data?.order?.orderNumber || 'N/A',
-            total: apiData.data?.amount || checkoutData?.total || 0,
+            orderNumber: apiData.data?.order?.orderNumber || orderDetails?.orderNumber || 'N/A',
+            total: apiData.data?.amount || orderDetails?.grandTotal || checkoutData?.total || 0,
             paymentMethod: 'Paystack',
             reference: apiData.data?.reference || reference,
             paidAt: apiData.data?.paid_at,
-            shippingAddress: checkoutData ? {
-              fullName: `${checkoutData.deliveryDetails?.firstName || ''} ${checkoutData.deliveryDetails?.lastName || ''}`.trim(),
-              email: checkoutData.deliveryDetails?.email || checkoutData.customerDetails?.email || 'N/A',
-              phone: checkoutData.deliveryDetails?.phone || checkoutData.customerDetails?.phone || 'N/A',
-              addressLine1: checkoutData.deliveryDetails?.addressLine1 || 'N/A',
-              addressLine2: checkoutData.deliveryDetails?.addressLine2 || '',
-              city: checkoutData.deliveryDetails?.city || 'N/A',
-              state: checkoutData.deliveryDetails?.state || 'N/A',
-              zipCode: checkoutData.deliveryDetails?.zipCode || 'N/A',
-              country: checkoutData.deliveryDetails?.country || 'N/A'
-            } : {
-              fullName: 'Customer',
-              email: 'N/A',
-              phone: 'N/A',
-              addressLine1: 'N/A',
-              city: 'N/A',
-              state: 'N/A',
-              zipCode: 'N/A',
-              country: 'N/A'
-            },
-            items: checkoutData?.items?.map((item: any) => ({
+            shippingAddress: customerInfo,
+            items: orderDetails?.items?.map((item: any) => ({
+              productName: item.productName || 'Product',
+              quantity: item.quantity || 1,
+              price: item.unitPrice || 0,
+              subtotal: item.totalPrice || 0
+            })) || checkoutData?.items?.map((item: any) => ({
               productName: item.product?.name || 'Product',
               quantity: item.quantity || 1,
               price: item.price || 0,

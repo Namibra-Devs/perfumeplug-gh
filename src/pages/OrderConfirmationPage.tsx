@@ -122,32 +122,60 @@ const OrderConfirmationPage: React.FC = () => {
                 </div>
               </div>
 
-              {orderData.shippingAddress?.email && orderData.shippingAddress.email !== 'customer@example.com' && (
+              {orderData.shippingAddress?.email && 
+               orderData.shippingAddress.email !== 'customer@example.com' && 
+               orderData.shippingAddress.email !== 'N/A' && 
+               orderData.shippingAddress.email.trim() !== '' && (
                 <div className="flex items-center space-x-3">
                   <Mail className="h-4 w-4" /> 
                   <span>{orderData.shippingAddress.email}</span>
                 </div>
               )}
               
-              {orderData.shippingAddress?.phone && orderData.shippingAddress.phone !== 'N/A' && (
+              {orderData.shippingAddress?.phone && 
+               orderData.shippingAddress.phone !== 'N/A' && 
+               orderData.shippingAddress.phone.trim() !== '' && (
                 <div className="flex items-center space-x-3">
                   <Phone className="h-4 w-4" /> 
                   <span>{orderData.shippingAddress.phone}</span>
                 </div>
               )}
               
-              {orderData.shippingAddress?.addressLine1 && orderData.shippingAddress.addressLine1 !== 'N/A' && (
+              {orderData.shippingAddress?.addressLine1 && 
+               orderData.shippingAddress.addressLine1 !== 'N/A' && 
+               orderData.shippingAddress.addressLine1.trim() !== '' && (
                 <div className="flex items-start space-x-3">
                   <MapPin className="h-4 w-4 mt-0.5" />
                   <span>
-                    {orderData.shippingAddress.addressLine1}<br />
-                    {orderData.shippingAddress.city}, {orderData.shippingAddress.state} <br />
-                    {orderData.shippingAddress.country}
+                    {orderData.shippingAddress.addressLine1}
+                    {orderData.shippingAddress.addressLine2 && orderData.shippingAddress.addressLine2.trim() !== '' && (
+                      <><br />{orderData.shippingAddress.addressLine2}</>
+                    )}
+                    {(orderData.shippingAddress.city && orderData.shippingAddress.city.trim() !== '') || 
+                     (orderData.shippingAddress.state && orderData.shippingAddress.state.trim() !== '') ? (
+                      <><br />
+                        {orderData.shippingAddress.city && orderData.shippingAddress.city.trim() !== '' ? orderData.shippingAddress.city : ''}
+                        {orderData.shippingAddress.city && orderData.shippingAddress.city.trim() !== '' && 
+                         orderData.shippingAddress.state && orderData.shippingAddress.state.trim() !== '' ? ', ' : ''}
+                        {orderData.shippingAddress.state && orderData.shippingAddress.state.trim() !== '' ? orderData.shippingAddress.state : ''}
+                      </>
+                    ) : null}
+                    {orderData.shippingAddress.country && orderData.shippingAddress.country.trim() !== '' && (
+                      <><br />{orderData.shippingAddress.country}</>
+                    )}
                   </span>
                 </div>
               )}
 
-              {(!orderData.shippingAddress?.addressLine1 || orderData.shippingAddress.addressLine1 === 'N/A') && (
+              {(!orderData.shippingAddress?.addressLine1 || 
+                orderData.shippingAddress.addressLine1 === 'N/A' || 
+                orderData.shippingAddress.addressLine1.trim() === '') && 
+               (!orderData.shippingAddress?.email || 
+                orderData.shippingAddress.email === 'N/A' || 
+                orderData.shippingAddress.email.trim() === '') && 
+               (!orderData.shippingAddress?.phone || 
+                orderData.shippingAddress.phone === 'N/A' || 
+                orderData.shippingAddress.phone.trim() === '') && (
                 <div className="text-white/60 text-sm">
                   <p>Order confirmation details have been sent to your email.</p>
                   <p>Thank you for your purchase!</p>
