@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { useToast } from "../hooks/useToast";
+import { sanitizeGhanaPhoneNumber, isValidGhanaPhoneNumber, formatGhanaPhoneNumber } from "../utils/phoneUtils";
 
 /* -------------------------
    Reusable Input Component
@@ -33,6 +34,64 @@ const InputField: React.FC<InputProps> = ({ label, value, type = "text", onChang
 );
 
 /* -------------------------
+   Phone Input Component
+-------------------------- */
+interface PhoneInputProps {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  error?: string;
+}
+const PhoneInputField: React.FC<PhoneInputProps> = ({ label, value, onChange, error }) => {
+  const [displayValue, setDisplayValue] = useState(value);
+  
+  const handleChange = (inputValue: string) => {
+    setDisplayValue(inputValue);
+    onChange(inputValue);
+  };
+
+  const handleBlur = () => {
+    // On blur, show the formatted version if it's a valid number
+    if (value.trim() && isValidGhanaPhoneNumber(value)) {
+      const formatted = formatGhanaPhoneNumber(value);
+      setDisplayValue(formatted);
+    }
+  };
+
+  const handleFocus = () => {
+    // On focus, show the raw input for easier editing
+    setDisplayValue(value);
+  };
+
+  return (
+    <div>
+      <label className="block text-sm font-medium text-yellow-400 mb-1">{label}</label>
+      
+      <input
+        title={label}
+        type="tel"
+        value={displayValue}
+        onChange={(e) => handleChange(e.target.value)}
+        onBlur={handleBlur}
+        onFocus={handleFocus}
+        placeholder="e.g., 0242826513 or +233242826513"
+        className={`w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border ${
+          error ? "border-red-500" : "border-yellow-600/20"
+        } rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
+      />
+      
+      {value.trim() && isValidGhanaPhoneNumber(value) && (
+        <p className="text-green-400 text-xs mt-1">
+          ✓ Will be saved as: {sanitizeGhanaPhoneNumber(value)}
+        </p>
+      )}
+      
+      {error && <p className="text-red-400 text-xs mt-1">{error}</p>}
+    </div>
+  );
+};
+
+/* -------------------------
       Main Component
 -------------------------- */
 const LoginRegisterSection: React.FC = () => {
@@ -61,31 +120,43 @@ const LoginRegisterSection: React.FC = () => {
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-      newErrors.email = "Invalid email format";
+      newErrors.email = "Please enter a valid email address";
     }
 
     // Password validation
     if (!formData.password.trim()) {
       newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+      newErrors.password = "Password must be at least 6 characters long";
     }
 
     if (!isLogin) {
       // Register-specific validation
-      if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
-      if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
+      if (!formData.firstName.trim()) {
+        newErrors.firstName = "First name is required";
+      } else if (formData.firstName.trim().length < 2) {
+        newErrors.firstName = "First name must be at least 2 characters";
+      }
 
-      // Ghana phone number (optional, but if provided, must match)
+      if (!formData.lastName.trim()) {
+        newErrors.lastName = "Last name is required";
+      } else if (formData.lastName.trim().length < 2) {
+        newErrors.lastName = "Last name must be at least 2 characters";
+      }
+
+      // Ghana phone number (optional, but if provided, must be valid)
       if (formData.phone.trim()) {
-        const phone = formData.phone.replace(/\s+/g, "");
-        if (!/^(?:\+233|0)[2-9]\d{8}$/.test(phone)) {
-          newErrors.phone = "Enter a valid Ghana phone number";
+        if (!isValidGhanaPhoneNumber(formData.phone)) {
+          newErrors.phone = "Please enter a valid Ghana phone number (e.g., 0242826513)";
         }
       }
 
-      // Address required for checkout future use
-      if (!formData.address.trim()) newErrors.address = "Address is required";
+      // Address required for future checkout
+      if (!formData.address.trim()) {
+        newErrors.address = "Address is required for delivery purposes";
+      } else if (formData.address.trim().length < 10) {
+        newErrors.address = "Please provide a more detailed address";
+      }
     }
 
     setErrors(newErrors);
@@ -99,14 +170,33 @@ const LoginRegisterSection: React.FC = () => {
     e.preventDefault();
 
     if (!validate()) {
-      toast.error("Fix the errors above before submitting.");
+      toast.error("Please fix the errors above before submitting.");
       return;
     }
 
-    if (isLogin) {
-      await login(formData.email, formData.password);
-    } else {
-      await register({ ...formData });
+    try {
+      if (isLogin) {
+        const result = await login(formData.email, formData.password);
+        if (result) {
+          // Login successful - user will be redirected by the auth system
+          console.log("Login successful for:", result.email);
+        }
+      } else {
+        // Sanitize phone number before registration
+        const sanitizedData = {
+          ...formData,
+          phone: formData.phone.trim() ? sanitizeGhanaPhoneNumber(formData.phone) : ""
+        };
+        
+        const result = await register(sanitizedData);
+        if (result) {
+          // Registration successful - user will be redirected by the auth system
+          console.log("Registration successful for:", result.email);
+        }
+      }
+    } catch (error) {
+      // Error handling is now done in the AuthContext
+      console.error("Form submission error:", error);
     }
   };
 
@@ -165,7 +255,7 @@ const LoginRegisterSection: React.FC = () => {
 
             {!isLogin && (
               <>
-                <InputField
+                <PhoneInputField
                   label="Phone Number (Optional)"
                   value={formData.phone}
                   onChange={(v) => setFormData({ ...formData, phone: v })}

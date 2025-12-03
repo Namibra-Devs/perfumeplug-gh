@@ -48,11 +48,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async (email: string, password: string) => {
-
     setIsLoading(true);
 
     try {
-      const data = await apiFetch<{ token: string; customer: Customer }>(
+      const response = await apiFetch<{ 
+        success: boolean; 
+        message: string; 
+        data: { token: string; customer: Customer } 
+      }>(
         '/api/ecommerce/customers/login',
         {
           method: 'POST',
@@ -60,31 +63,60 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       );
 
-      console.log("Login Info:", data);
-      setToken(data.token);
-      setCustomer(data.customer);
-      toast.success("Login Successfull!"); 
-      // Store token
-      localStorage.setItem('customerToken', data.token);
+      console.log("Login Response:", response);
 
-      return data.customer;
+      // Handle successful login
+      if (response.success || response.data) {
+        const { token, customer } = response.data || response as any;
+        setToken(token);
+        setCustomer(customer);
+        localStorage.setItem('customerToken', token);
+        
+        // Show success message from API or default
+        toast.success(response.message || "Login successful!");
+        return customer;
+      } else {
+        // Handle API-level error
+        toast.error(response.message || "Login failed");
+        return undefined;
+      }
 
-    }catch(error){
-      console.log(error);
-      toast.error("Something went wrong, please try again!");
-      setIsLoading(false);
-    }finally{
+    } catch (error: any) {
+      console.error("Login error:", error);
+      
+      // Extract error message from API response
+      let errorMessage = "Something went wrong, please try again!";
+      
+      if (error.message) {
+        errorMessage = error.message;
+      } else if (error.details?.message) {
+        errorMessage = error.details.message;
+      } else if (error.status === 401) {
+        errorMessage = "Invalid email or password";
+      } else if (error.status === 423) {
+        errorMessage = "Account is temporarily locked";
+      } else if (error.status === 400) {
+        errorMessage = "Please check your email and password";
+      }
+      
+      toast.error(errorMessage);
+      return undefined;
+    } finally {
       setIsLoading(false);
     }
-    
   };
 
   const register = async (customerData: RegisterCustomerRequest) => {
-    
     setIsLoading(true);
     console.log("Sending Customer Data:", customerData);
-    try{
-      const response = await apiFetch<RegisterCustomerResponse>(
+    
+    try {
+      const response = await apiFetch<{
+        success: boolean;
+        message: string;
+        data: { token: string; customer: Customer };
+        error?: string;
+      }>(
         '/api/ecommerce/customers/register',
         {
           method: 'POST',
@@ -92,43 +124,59 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       );
 
-      // Handle backend-level error (success=false)
-      if (!response.success) {
+      console.log("Registration Response:", response);
+
+      // Handle successful registration
+      if (response.success || response.data) {
+        const { token, customer } = response.data || response as any;
+        setToken(token);
+        setCustomer(customer);
+        localStorage.setItem('customerToken', token);
+        
+        // Show success message from API or default
+        toast.success(response.message || "Registration successful!");
+        return customer;
+      } else {
+        // Handle API-level error (success=false)
         toast.error(response.message || "Registration failed");
         console.error("Registration error:", response.error);
         return null;
       }
 
-      setToken(response.data.token);
-      setCustomer(response.data.customer);
-      console.log("Register Info:", response);
-      toast.success("Registration Successfull!");
-
-      //Store Token
-      localStorage.setItem('customerToken', response.data.token);
-
-      return response.data.customer;
-
-    }catch(error){
-      console.log(error);
-      toast.error("Registration failed, please try again!");
-      setIsLoading(false);
-    }finally{
+    } catch (error: any) {
+      console.error("Registration error:", error);
+      
+      // Extract error message from API response
+      let errorMessage = "Registration failed, please try again!";
+      
+      if (error.message) {
+        errorMessage = error.message;
+      } else if (error.details?.message) {
+        errorMessage = error.details.message;
+      } else if (error.status === 409) {
+        errorMessage = "An account with this email already exists";
+      } else if (error.status === 400) {
+        errorMessage = "Please check your information and try again";
+      }
+      
+      toast.error(errorMessage);
+      return null;
+    } finally {
       setIsLoading(false);
     }
   };
 
   const logout = () => {
     setIsLoading(true);
-    try{
+    try {
       setToken(null);
       setCustomer(null);
       localStorage.removeItem('customerToken');
-      toast.success("Logout Successfull!");
-    }catch(error){
-      console.log(error);
-      toast.error("Fail to logout, try again!");
-    }finally{
+      toast.success("Logged out successfully!");
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast.error("Failed to logout, please try again!");
+    } finally {
       setIsLoading(false);
     }
   };

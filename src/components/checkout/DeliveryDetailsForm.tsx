@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useState } from "react";
 import { isEmpty, isPhone } from "../../utils/validation";
+import { sanitizeGhanaPhoneNumber, isValidGhanaPhoneNumber, formatGhanaPhoneNumber } from "../../utils/phoneUtils";
 
 interface Props {
   data: any;
@@ -24,7 +25,9 @@ const DeliveryDetailsForm: FC<Props> = ({
 
     if (isEmpty(data.firstName)) err.firstName = "Required";
     if (isEmpty(data.lastName)) err.lastName = "Required";
-    if (!isPhone(data.phone)) err.phone = "Invalid phone";
+    if (!isEmpty(data.phone) && !isValidGhanaPhoneNumber(data.phone)) {
+      err.phone = "Enter a valid Ghana phone number (e.g., 0242826513)";
+    }
     // if (!isEmail(data.email)) err.email = "Invalid Email";
 
     if (isEmpty(data.addressLine1)) err.addressLine1 = "Required";
@@ -39,7 +42,16 @@ const DeliveryDetailsForm: FC<Props> = ({
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    if (validate()) onNext();
+    if (validate()) {
+      // Sanitize phone number before proceeding
+      if (data.phone && data.phone.trim()) {
+        setData({ 
+          ...data, 
+          phone: sanitizeGhanaPhoneNumber(data.phone) 
+        });
+      }
+      onNext();
+    }
   };
 
   return (
@@ -77,11 +89,17 @@ const DeliveryDetailsForm: FC<Props> = ({
           {/* PHONE */}
           <div>
             <input
+              type="tel"
               className="input w-full px-3 py-2.5 outline-none bg-transparent text-white text-sm border border-yellow-600/20 focus:ring-2 focus:ring-yellow-500 rounded-lg"
-              placeholder="Phone"
+              placeholder="Phone (e.g., 0242826513)"
               value={data.phone}
               onChange={(e) => setData({ ...data, phone: e.target.value })}
             />
+            {data.phone && data.phone.trim() && isValidGhanaPhoneNumber(data.phone) && (
+              <p className="text-green-400 text-xs mt-1">
+                ✓ Will be saved as: {sanitizeGhanaPhoneNumber(data.phone)}
+              </p>
+            )}
             {errors.phone && <p className="text-red-400 text-xs">{errors.phone}</p>}
           </div>
 
