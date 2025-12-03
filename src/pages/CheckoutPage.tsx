@@ -132,7 +132,7 @@ const CheckoutPage: React.FC = () => {
         return;
       }
 
-      if (!deliveryDetails.addressLine1) {
+      if (currentStep === "delivery" && !deliveryDetails.addressLine1) {
         setError("Please fill in all required address information.");
         toast.error("Please fill in all required address information.");
         setLoading(false);
