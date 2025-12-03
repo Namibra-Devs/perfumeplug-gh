@@ -35,6 +35,9 @@ class EcommerceCheckout {
         }
       };
 
+      // Check if user is authenticated by looking for token
+      const isAuthenticated = typeof window !== 'undefined' && !!localStorage.getItem('customerToken');
+
       // Step 1: Create order
       const orderResponse = await apiFetch<{ order: Order }>(
         '/api/ecommerce/orders',
@@ -49,7 +52,7 @@ class EcommerceCheckout {
             notes: customerNotes
           })
         },
-        false // Don't require authentication for guest checkout
+        isAuthenticated // Include authentication if user is logged in
       );
 
       const order = orderResponse.order;
@@ -67,7 +70,7 @@ class EcommerceCheckout {
             callback_url: `${window.location.origin}/payment/callback?orderId=${order._id}`
           })
         },
-        false // Don't require authentication for guest checkout
+        isAuthenticated // Include authentication if user is logged in
       );
 
       // Step 3: Redirect to payment
