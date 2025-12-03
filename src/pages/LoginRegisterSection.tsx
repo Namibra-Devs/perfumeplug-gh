@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import React, { useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
