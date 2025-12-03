@@ -57,7 +57,7 @@ const OrderConfirmationPage: React.FC = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-          <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
+          <CheckCircle className="h-10 w-10 text-green-600 mx-auto mb-4" />
           <h1 className="text-3xl font-bold text-white mb-2">Order Confirmed!</h1>
           <p className="text-gray-300">Thank you for your purchase.</p>
           <div className="bg-green-600/20 border border-green-500 px-4 py-2 rounded-lg inline-block mt-4 text-white">

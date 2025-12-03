@@ -173,7 +173,7 @@ const PaymentCallback = () => {
 
         {status === "loading" && (
           <>
-            <Loader className="mx-auto h-16 w-16 animate-spin text-yellow-400 mb-4" />
+            <Loader size={24} className="mx-auto animate-spin text-yellow-400 mb-4" />
             <h2 className="text-xl text-white font-semibold">{message}</h2>
             <p className="text-gray-300 mt-2">Please wait…</p>
           </>
@@ -181,7 +181,7 @@ const PaymentCallback = () => {
 
         {status === "success" && (
           <>
-            <CheckCircle className="mx-auto h-16 w-16 text-green-500 mb-4" />
+            <CheckCircle size={24} className="mx-auto text-green-500 mb-4" />
             <h2 className="text-xl text-green-500 font-semibold">Payment Successful</h2>
             <p className="text-gray-300 mt-2">Redirecting...</p>
           </>
@@ -189,7 +189,7 @@ const PaymentCallback = () => {
 
         {status === "failed" && (
           <>
-            <XCircle className="mx-auto h-16 w-16 text-red-500 mb-4" />
+            <XCircle size={24} className="mx-auto text-red-500 mb-4" />
             <h2 className="text-xl text-red-500 font-semibold">Payment Failed</h2>
             <p className="text-gray-300 mt-2">{message}</p>
 
