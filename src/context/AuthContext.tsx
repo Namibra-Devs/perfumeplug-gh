@@ -86,22 +86,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error: unknown) {
       console.error("Login error:", error);
       
-      // Extract error message from API response
+      // apiFetch now properly extracts the API error message
       let errorMessage = "Something went wrong, please try again!";
       
-      if (error && typeof error === 'object') {
-        const apiError = error as { message?: string; details?: { message?: string }; status?: number };
-        if (apiError.message) {
-          errorMessage = apiError.message;
-        } else if (apiError.details?.message) {
-          errorMessage = apiError.details.message;
-        } else if (apiError.status === 401) {
-          errorMessage = "Invalid email or password";
-        } else if (apiError.status === 423) {
-          errorMessage = "Account is temporarily locked";
-        } else if (apiError.status === 400) {
-          errorMessage = "Please check your email and password";
-        }
+      if (error instanceof Error) {
+        errorMessage = error.message;
       }
       
       toast.error(errorMessage);
@@ -152,20 +141,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error: unknown) {
       console.error("Registration error:", error);
       
-      // Extract error message from API response
+      // apiFetch now properly extracts the API error message
       let errorMessage = "Registration failed, please try again!";
       
-      if (error && typeof error === 'object') {
-        const apiError = error as { message?: string; details?: { message?: string }; status?: number };
-        if (apiError.message) {
-          errorMessage = apiError.message;
-        } else if (apiError.details?.message) {
-          errorMessage = apiError.details.message;
-        } else if (apiError.status === 409) {
-          errorMessage = "An account with this email already exists";
-        } else if (apiError.status === 400) {
-          errorMessage = "Please check your information and try again";
-        }
+      if (error instanceof Error) {
+        errorMessage = error.message;
       }
       
       toast.error(errorMessage);

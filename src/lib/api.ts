@@ -43,8 +43,23 @@ export async function apiFetch<T = Record<string, unknown>>(
   const body = await res.json().catch(() => null);
 
   if (!res.ok) {
-    // API uses structured error
-    const msg = body?.error?.message || `Request failed with status ${res.status}`;
+    // Extract error message from API response
+    // Backend returns: { success: false, message: "Error message", error?: "details" }
+    let msg = `Request failed with status ${res.status}`;
+    
+    if (body) {
+      // Try different possible error message locations
+      if (body.message) {
+        msg = body.message;
+      } else if (body.error?.message) {
+        msg = body.error.message;
+      } else if (typeof body.error === 'string') {
+        msg = body.error;
+      } else if (body.data?.message) {
+        msg = body.data.message;
+      }
+    }
+
     type ApiError = Error & {
       status?: number;
       code?: string;
@@ -54,12 +69,15 @@ export async function apiFetch<T = Record<string, unknown>>(
         remaining: string | null;
         reset: string | null;
       };
+      response?: unknown;
     };
+    
     const err = new Error(msg) as ApiError;
     err.status = res.status;
-    err.code = body?.error?.code;
-    err.details = body?.error?.details;
+    err.code = body?.code || body?.error?.code;
+    err.details = body?.error?.details || body?.details;
     err.rateLimit = rateLimit;
+    err.response = body; // Include full response for debugging
     throw err;
   }
 
