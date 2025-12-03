@@ -346,7 +346,7 @@ const ShopPage: React.FC = () => {
                       <>
                         <button
                           onClick={() => handlePageChange(1)}
-                          className="w-5 md:w-10 h-5 md:h-10 text-xs md:text-sm rounded-lg bg-black/20 border border-yellow-600/20 text-yellow-400 hover:bg-yellow-700/20 transition-colors"
+                          className="w-7 md:w-10 h-7 md:h-10 text-xs md:text-sm rounded-lg bg-black/20 border border-yellow-600/20 text-yellow-400 hover:bg-yellow-700/20 transition-colors"
                         >
                           1
                         </button>
@@ -375,7 +375,7 @@ const ShopPage: React.FC = () => {
                         <button
                           key={pageNum}
                           onClick={() => handlePageChange(pageNum)}
-                          className={`w-5 md:w-10 h-5 md:h-10 text-xs md:text-sm rounded-lg border transition-colors ${
+                          className={`w-7 md:w-10 h-7 md:h-10 text-xs md:text-sm rounded-lg border transition-colors ${
                             pageNum === pagination.currentPage
                               ? 'bg-yellow-600/30 border-yellow-400 text-yellow-400'
                               : 'bg-black/20 border-yellow-600/20 text-yellow-400 hover:bg-yellow-700/20'
@@ -394,7 +394,7 @@ const ShopPage: React.FC = () => {
                         )}
                         <button
                           onClick={() => handlePageChange(pagination.totalPages)}
-                          className="w-5 md:w-10 h-5 md:h-10 text-xs md:text-sm rounded-lg bg-black/20 border border-yellow-600/20 text-yellow-400 hover:bg-yellow-700/20 transition-colors"
+                          className="w-7 md:w-10 h-7 md:h-10 text-xs md:text-sm rounded-lg bg-black/20 border border-yellow-600/20 text-yellow-400 hover:bg-yellow-700/20 transition-colors"
                         >
                           {pagination.totalPages}
                         </button>
