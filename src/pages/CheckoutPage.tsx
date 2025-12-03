@@ -125,14 +125,14 @@ const CheckoutPage: React.FC = () => {
 
     try {
       // Validate required fields
-      if (!deliveryDetails.firstName || !deliveryDetails.lastName || !deliveryDetails.email) {
+      if (!deliveryDetails.firstName || !deliveryDetails.lastName || !deliveryDetails.phone) {
         setError("Please fill in all required customer information.");
         toast.error("Please fill in all required customer information.");
         setLoading(false);
         return;
       }
 
-      if (!deliveryDetails.addressLine1 || !deliveryDetails.city || !deliveryDetails.state) {
+      if (!deliveryDetails.addressLine1) {
         setError("Please fill in all required address information.");
         toast.error("Please fill in all required address information.");
         setLoading(false);
@@ -243,6 +243,7 @@ const CheckoutPage: React.FC = () => {
                       setData={setDeliveryDetails}
                       onNext={goToPayment}
                       onBack={isAuthenticated ? goBackToCustomer : undefined}
+                      value={shippingMethod}
                     />
                   </motion.div>
                 )}

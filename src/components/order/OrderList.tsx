@@ -6,7 +6,6 @@ interface OrderListProps {
   token: string | null;
 }
 
-
 export const OrderList = ({ token }: OrderListProps) => {
   const { orders, loading, error } = useCustomerOrders(token);
 

@@ -7,6 +7,7 @@ interface Props {
   setData: (v: any) => void;
   onNext: () => void;
   onBack?: () => void;
+  value: string;
 }
 
 const DeliveryDetailsForm: FC<Props> = ({
@@ -14,6 +15,7 @@ const DeliveryDetailsForm: FC<Props> = ({
   setData,
   onNext,
   onBack,
+  value
 }) => {
   const [errors, setErrors] = useState<any>({});
 
@@ -84,15 +86,21 @@ const DeliveryDetailsForm: FC<Props> = ({
           </div>
 
           {/* ADDRESS LINE 1 */}
-          <div>
-            <input
-              className="input w-full px-3 py-2.5 outline-none bg-transparent text-white text-sm border border-yellow-600/20 focus:ring-2 focus:ring-yellow-500 rounded-lg"
-              placeholder="Address (Location)"
-              value={data.addressLine1}
-              onChange={(e) => setData({ ...data, addressLine1: e.target.value })}
-            />
-            {errors.addressLine1 && <p className="text-red-400 text-xs">{errors.addressLine1}</p>}
-          </div>
+          {value === "delivery" ? (
+            <div>
+              <input
+                className="input w-full px-3 py-2.5 outline-none bg-transparent text-white text-sm border border-yellow-600/20 focus:ring-2 focus:ring-yellow-500 rounded-lg"
+                placeholder="Address (Location)"
+                value={data.addressLine1}
+                onChange={(e) => setData({ ...data, addressLine1: e.target.value })}
+              />
+              {errors.addressLine1 && <p className="text-red-400 text-xs">{errors.addressLine1}</p>}
+            </div>
+          ) : (
+            <>              
+            </>
+          )}
+          
         </div>
       </div>
 
