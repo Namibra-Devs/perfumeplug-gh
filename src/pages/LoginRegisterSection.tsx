@@ -74,7 +74,7 @@ const PhoneInputField: React.FC<PhoneInputProps> = ({ label, value, onChange, er
         onChange={(e) => handleChange(e.target.value)}
         onBlur={handleBlur}
         onFocus={handleFocus}
-        placeholder="e.g., 0242826513 or +233242826513"
+        placeholder="e.g., 0240000000 or +233200000000"
         className={`w-full px-3 py-2.5 bg-transparent text-white text-sm placeholder:text-gray-300 border ${
           error ? "border-red-500" : "border-yellow-600/20"
         } rounded-lg outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
@@ -147,7 +147,7 @@ const LoginRegisterSection: React.FC = () => {
       // Ghana phone number (optional, but if provided, must be valid)
       if (formData.phone.trim()) {
         if (!isValidGhanaPhoneNumber(formData.phone)) {
-          newErrors.phone = "Please enter a valid Ghana phone number (e.g., 0242826513)";
+          newErrors.phone = "Please enter a valid Ghana phone number (e.g., 020800314)";
         }
       }
 
