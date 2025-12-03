@@ -81,6 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = async (customerData: RegisterCustomerRequest) => {
     setIsLoading(true);
+    console.log("Sending Customer Data:", customerData);
     try{
       const response = await apiFetch<RegisterCustomerResponse>(
         '/api/ecommerce/customers/register',
@@ -96,7 +97,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.error("Registration error:", response.error);
         return null;
       }
-
 
       setToken(response.data.token);
       setCustomer(response.data.customer);
