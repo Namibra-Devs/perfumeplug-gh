@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Filter, Grid, List, RotateCcw } from "lucide-react";
+import { ArrowLeft, ArrowRight, Filter, Grid, List, RotateCcw } from "lucide-react";
 
 import ProductCard from "../components/product/ProductCard";
 import Header from "../components/layout/Header";
@@ -327,15 +327,16 @@ const ShopPage: React.FC = () => {
                 <div className="flex items-center space-x-2">
                   {/* Previous Button */}
                   <button
+                    title="Previous"
                     onClick={handlePrevPage}
                     disabled={!pagination.hasPrevPage}
-                    className={`px-4 py-2 rounded-lg border transition-colors ${
+                    className={`px-3 py-2 rounded-lg border transition-colors ${
                       pagination.hasPrevPage
                         ? 'bg-black/20 border-yellow-600/20 text-yellow-400 hover:bg-yellow-700/20'
                         : 'bg-gray-800/20 border-gray-600/20 text-gray-500 cursor-not-allowed'
                     }`}
                   >
-                    Previous
+                   <ArrowLeft/>
                   </button>
 
                   {/* Page Numbers */}
@@ -345,7 +346,7 @@ const ShopPage: React.FC = () => {
                       <>
                         <button
                           onClick={() => handlePageChange(1)}
-                          className="w-10 h-10 rounded-lg bg-black/20 border border-yellow-600/20 text-yellow-400 hover:bg-yellow-700/20 transition-colors"
+                          className="w-5 md:w-10 h-5 md:h-10 text-xs md:text-sm rounded-lg bg-black/20 border border-yellow-600/20 text-yellow-400 hover:bg-yellow-700/20 transition-colors"
                         >
                           1
                         </button>
@@ -374,7 +375,7 @@ const ShopPage: React.FC = () => {
                         <button
                           key={pageNum}
                           onClick={() => handlePageChange(pageNum)}
-                          className={`w-10 h-10 rounded-lg border transition-colors ${
+                          className={`w-5 md:w-10 h-5 md:h-10 text-xs md:text-sm rounded-lg border transition-colors ${
                             pageNum === pagination.currentPage
                               ? 'bg-yellow-600/30 border-yellow-400 text-yellow-400'
                               : 'bg-black/20 border-yellow-600/20 text-yellow-400 hover:bg-yellow-700/20'
@@ -393,7 +394,7 @@ const ShopPage: React.FC = () => {
                         )}
                         <button
                           onClick={() => handlePageChange(pagination.totalPages)}
-                          className="w-10 h-10 rounded-lg bg-black/20 border border-yellow-600/20 text-yellow-400 hover:bg-yellow-700/20 transition-colors"
+                          className="w-5 md:w-10 h-5 md:h-10 text-xs md:text-sm rounded-lg bg-black/20 border border-yellow-600/20 text-yellow-400 hover:bg-yellow-700/20 transition-colors"
                         >
                           {pagination.totalPages}
                         </button>
@@ -403,15 +404,16 @@ const ShopPage: React.FC = () => {
 
                   {/* Next Button */}
                   <button
+                    title="Next"
                     onClick={handleNextPage}
                     disabled={!pagination.hasNextPage}
-                    className={`px-4 py-2 rounded-lg border transition-colors ${
+                    className={`px-3 py-2 rounded-lg border transition-colors ${
                       pagination.hasNextPage
                         ? 'bg-black/20 border-yellow-600/20 text-yellow-400 hover:bg-yellow-700/20'
                         : 'bg-gray-800/20 border-gray-600/20 text-gray-500 cursor-not-allowed'
                     }`}
                   >
-                    Next
+                    <ArrowRight/>
                   </button>
                 </div>
               </div>
