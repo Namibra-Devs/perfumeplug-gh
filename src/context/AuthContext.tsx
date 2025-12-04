@@ -52,11 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
 
     try {
-      const response = await apiFetch<{ 
-        success: boolean; 
-        message: string; 
-        data: { token: string; customer: Customer } 
-      }>(
+      const data = await apiFetch<{ token: string; customer: Customer }>(
         '/api/ecommerce/customers/login',
         {
           method: 'POST',
@@ -64,29 +60,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       );
 
-      console.log("Login Response:", response);
+      console.log("Login Response:", data);
 
-      // Handle successful login
-      if (response.success || response.data) {
-        const data = response.data || (response as unknown as { token: string; customer: Customer });
-        const { token, customer } = data;
-        setToken(token);
-        setCustomer(customer);
-        localStorage.setItem('customerToken', token);
+      if (data && data.token && data.customer) {
+        setToken(data.token);
+        setCustomer(data.customer);
+        localStorage.setItem('customerToken', data.token);
         
-        // Show success message from API or default
-        toast.success(response.message || "Login successful!");
-        return customer;
-      } else {
-        // Handle API-level error
-        toast.error(response.message || "Login failed");
-        return undefined;
+        toast.success("Login successful!");
+        return data.customer;
       }
+      
+      console.error("Unexpected response structure:", data);
+      toast.error("Login failed - unexpected response format");
+      return undefined;
 
     } catch (error: unknown) {
       console.error("Login error:", error);
       
-      // apiFetch now properly extracts the API error message
       let errorMessage = "Something went wrong, please try again!";
       
       if (error instanceof Error) {
@@ -105,12 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     console.log("Sending Customer Data:", customerData);
     
     try {
-      const response = await apiFetch<{
-        success: boolean;
-        message: string;
-        data: { token: string; customer: Customer };
-        error?: string;
-      }>(
+      const data = await apiFetch<{ token: string; customer: Customer }>(
         '/api/ecommerce/customers/register',
         {
           method: 'POST',
@@ -118,30 +104,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       );
 
-      console.log("Registration Response:", response);
+      console.log("Registration Response:", data);
 
-      // Handle successful registration
-      if (response.success || response.data) {
-        const data = response.data || (response as unknown as { token: string; customer: Customer });
-        const { token, customer } = data;
-        setToken(token);
-        setCustomer(customer);
-        localStorage.setItem('customerToken', token);
+      if (data && data.token && data.customer) {
+        setToken(data.token);
+        setCustomer(data.customer);
+        localStorage.setItem('customerToken', data.token);
         
-        // Show success message from API or default
-        toast.success(response.message || "Registration successful!");
-        return customer;
-      } else {
-        // Handle API-level error (success=false)
-        toast.error(response.message || "Registration failed");
-        console.error("Registration error:", response.error);
-        return null;
+        toast.success("Registration successful!");
+        return data.customer;
       }
+      
+      console.error("Unexpected response structure:", data);
+      toast.error("Registration failed - unexpected response format");
+      return null;
 
     } catch (error: unknown) {
       console.error("Registration error:", error);
       
-      // apiFetch now properly extracts the API error message
       let errorMessage = "Registration failed, please try again!";
       
       if (error instanceof Error) {
