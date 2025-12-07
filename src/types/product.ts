@@ -12,6 +12,23 @@ export interface Inventory {
   lowStockThreshold?: number;
 }
 
+export interface EcommerceImage {
+  url: string;
+  publicId?: string;
+  isPrimary: boolean;
+  altText?: string;
+  _id?: string;
+}
+
+export interface EcommerceData {
+  enabled?: boolean;
+  images: EcommerceImage[];
+  seoTitle?: string;
+  seoDescription?: string;
+  tags: string[];
+  displayOrder?: number;
+}
+
 export interface Product {
   _id: string;
   name: string;
@@ -24,10 +41,12 @@ export interface Product {
   sellingPrice: number;
   originalPrice?: number;
   wholesalePrice?: number;
-  images: Image[];
-  seo?: { title?: string; description?: string; tags?: string[]; };
-  ecommerce?: { visible?: boolean; displayOrder?: number };
+  images: Image[]; // Legacy images field
+  ecommerceData?: EcommerceData; // New ecommerce data structure
+  seo?: { title?: string; description?: string; tags?: string[]; }; // Legacy SEO field
+  ecommerce?: { visible?: boolean; displayOrder?: number }; // Legacy ecommerce field
   inventory?: Inventory;
+  trackInventory?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }

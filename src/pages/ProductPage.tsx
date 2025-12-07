@@ -142,10 +142,30 @@ const ProductPage: React.FC = () => {
     setZoomPosition({ x, y });
   };
 
-  // Get product images with fallback
-  const productImages = product.images && product.images.length > 0 
-    ? product.images 
-    : [{ url: '/placeholder-product.svg', altText: product.name }];
+  // Get product images with fallback - prioritize ecommerce data
+  const productImages = (() => {
+    // First try ecommerce data images
+    if (product.ecommerceData?.images && product.ecommerceData.images.length > 0) {
+      const images = product.ecommerceData.images.map(img => ({
+        url: img.url,
+        altText: img.altText || product.name,
+        isPrimary: img.isPrimary
+      }));
+      
+      // Sort images to show primary image first
+      return images.sort((a, b) => {
+        if (a.isPrimary && !b.isPrimary) return -1;
+        if (!a.isPrimary && b.isPrimary) return 1;
+        return 0;
+      });
+    }
+    // Fallback to legacy images field
+    if (product.images && product.images.length > 0) {
+      return product.images;
+    }
+    // Final fallback
+    return [{ url: '/placeholder-product.svg', altText: product.name }];
+  })();
 
   //Handle Next image preview product
   const nextImage = () => {
@@ -189,7 +209,10 @@ const ProductPage: React.FC = () => {
 
   return (
     <>
-      <Header title={product.name} descripton={product.description}/>
+      <Header 
+        title={product.ecommerceData?.seoTitle || product.name} 
+        descripton={product.ecommerceData?.seoDescription || product.description}
+      />
 
       <div className="min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95">
         <div className="mx-auto px-6 sm:px-6 lg:px-32 py-20">
@@ -304,7 +327,16 @@ const ProductPage: React.FC = () => {
                     {product.brand || product.category}
                   </span>
                 )}
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-50 mt-2">{product.name}</h1>
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-50 mt-2">
+                  {product.ecommerceData?.seoTitle || product.name}
+                </h1>
+                
+                {/* SEO Description */}
+                {product.ecommerceData?.seoDescription && (
+                  <p className="text-gray-300 mt-3 text-sm leading-relaxed">
+                    {product.ecommerceData.seoDescription}
+                  </p>
+                )}
                 
                 {/* Rating */}
                 {/* <div className="flex items-center space-x-2 mt-3">
@@ -404,6 +436,28 @@ const ProductPage: React.FC = () => {
                 </button>
               </div>
 
+              {/* Product Tags */}
+              {product.ecommerceData?.tags && product.ecommerceData.tags.length > 0 && (
+                <div className="pt-4">
+                  <h3 className="font-semibold text-gray-300 mb-3">Tags:</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {product.ecommerceData.tags.slice(0, 8).map((tag, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-black/20 backdrop-blur-lg border border-yellow-600/20 text-yellow-400 rounded-full text-xs hover:bg-yellow-700/20 transition-colors"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                    {product.ecommerceData.tags.length > 8 && (
+                      <span className="px-3 py-1 text-gray-400 text-xs">
+                        +{product.ecommerceData.tags.length - 8} more
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Features */}
               <div className="grid grid-cols-3 gap-4 pt-6">
                 <div className="text-center">
@@ -443,7 +497,36 @@ const ProductPage: React.FC = () => {
               {/* Description */}
               <div className="prose max-w-none">
                 <h3 className="text-lg font-semibold mb-4">Product Description</h3>
+                
+                {/* Enhanced description from image alt text if available */}
+                {product.ecommerceData?.images?.find(img => img.isPrimary)?.altText && (
+                  <div className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                    <h4 className="text-yellow-400 font-semibold mb-2">Detailed Description</h4>
+                    <p className="text-gray-300 leading-relaxed text-sm">
+                      {product.ecommerceData.images.find(img => img.isPrimary)?.altText}
+                    </p>
+                  </div>
+                )}
+                
+                {/* Basic description */}
                 <p className="text-gray-300 leading-relaxed text-sm">{product.description}</p>
+                
+                {/* Product Tags as searchable keywords */}
+                {product.ecommerceData?.tags && product.ecommerceData.tags.length > 0 && (
+                  <div className="mt-6">
+                    <h4 className="text-yellow-400 font-semibold mb-3">Keywords & Features</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {product.ecommerceData.tags.map((tag, index) => (
+                        <span
+                          key={index}
+                          className="px-2 py-1 bg-gray-700/50 text-gray-300 rounded text-xs border border-gray-600/30"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Fragrance Notes */}
