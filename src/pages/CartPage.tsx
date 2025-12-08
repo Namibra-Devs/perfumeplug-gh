@@ -157,10 +157,6 @@ const CartPage: React.FC = () => {
                     <span>Shipping</span>
                     <span className="text-green-600">Free</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Tax</span>
-                    <span>₵{(getTotalPrice() * 0.05).toFixed(2)}</span>
-                  </div>
                   <div className="border-t border-yellow-600/20 pt-3">
                     <div className="flex justify-between font-semibold">
                       <span>Total</span>
