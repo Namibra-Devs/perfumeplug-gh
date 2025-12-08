@@ -26,7 +26,7 @@ const DeliveryDetailsForm: FC<Props> = ({
     if (isEmpty(data.firstName)) err.firstName = "Required";
     if (isEmpty(data.lastName)) err.lastName = "Required";
     if (!isEmpty(data.phone) && !isValidGhanaPhoneNumber(data.phone)) {
-      err.phone = "Enter a valid Ghana phone number (e.g., 0242826513)";
+      err.phone = "Enter a valid Ghana phone number (e.g., 0201113330)";
     }
     // if (!isEmail(data.email)) err.email = "Invalid Email";
 
