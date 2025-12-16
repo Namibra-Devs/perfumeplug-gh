@@ -1,7 +1,7 @@
 import { getCache, setCache } from "./cache";
 
 // src/lib/api.ts
-export const BASE = import.meta.env.VITE_API_URL || 'https://pos-api-pm1f.onrender.com';
+export const BASE = import.meta.env.VITE_API_URL || 'https://pos-api-wwyf.onrender.com';
 export const TENANT = import.meta.env.VITE_TENANT_DOMAIN || 'perfumeplug-gh.onrender.com';
 
 export async function apiFetch<T = Record<string, unknown>>(
