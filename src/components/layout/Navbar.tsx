@@ -6,6 +6,7 @@ import { useCart } from '../../hooks/useCart';
 import { Product } from '../../types/product';
 import { Navigation } from '../../constants/navLinks';
 import { useProducts } from '../../hooks/useProducts';
+import { useSearchHistory } from '../../hooks/useSearchHistory';
 import { matchCategory, debounce, formatCategoryName, validateSearchQuery } from '../../utils/searchUtils';
 
 export const Navbar: React.FC = () => {
@@ -19,6 +20,16 @@ export const Navbar: React.FC = () => {
     const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const { getTotalItems } = useCart();
+    
+    // Search history management
+    const { 
+        addSearchTerm, 
+        removeSearchTerm, 
+        clearSearchHistory, 
+        getPopularSearches, 
+        getRecentSearches,
+        hasHistory 
+    } = useSearchHistory();
 
     // Fetch all products to extract categories and enable frontend search
     const { products: allProducts, loading: allLoading } = useProducts({
@@ -110,6 +121,10 @@ export const Navbar: React.FC = () => {
         }
 
         const trimmedQuery = searchQuery.trim();
+        
+        // Add to search history
+        addSearchTerm(trimmedQuery);
+        
         closeAll();
         
         // Check if it matches a known category using the utility function
@@ -423,8 +438,7 @@ export const Navbar: React.FC = () => {
 
                                 {/* Search Suggestions */}
                                 <div className="mt-12 md:mt-4">
-
-                                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                                    <div className='grid grid-cols-1 gap-4'>
                                         <div>
                                             <h4 className="font-semibold text-yellow-400 mb-2">Categories</h4>
                                             <div className="space-y-1">
@@ -455,10 +469,95 @@ export const Navbar: React.FC = () => {
                                             </div>
                                         </div>
                                         
-                                        {/* Popular Search Terms */}
-                                        {!allLoading && filteredProducts.length > 0 && (
+                                        {/* Search History */}
+                                        {hasHistory && (
+                                            <div className="mt-6">
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <h4 className="font-semibold text-yellow-400">Recent Searches</h4>
+                                                    <button
+                                                        onClick={clearSearchHistory}
+                                                        className="text-xs text-gray-400 hover:text-red-400 transition-colors"
+                                                        title="Clear all search history"
+                                                    >
+                                                        Clear all
+                                                    </button>
+                                                </div>
+                                                <div className="space-y-1">
+                                                    {getRecentSearches(6).map((item) => (
+                                                        <div
+                                                            key={item.id}
+                                                            className="flex items-center justify-between group hover:bg-yellow-600/20 rounded transition-colors"
+                                                        >
+                                                            <button
+                                                                onClick={() => {
+                                                                    setSearchQuery(item.query);
+                                                                    searchInputRef.current?.focus();
+                                                                }}
+                                                                className="flex-1 text-left text-sm py-1 pl-2 text-gray-300 hover:text-yellow-600 transition-colors"
+                                                            >
+                                                                <div className="flex items-center gap-2">
+                                                                    <span>{item.query}</span>
+                                                                    {item.count > 1 && (
+                                                                        <span className="text-xs text-gray-500 bg-gray-700/50 px-1.5 py-0.5 rounded-full">
+                                                                            {item.count}
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                            </button>
+                                                            <button
+                                                                onClick={() => removeSearchTerm(item.id)}
+                                                                className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-red-400 transition-all"
+                                                                title="Remove from history"
+                                                            >
+                                                                <X className="h-3 w-3" />
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Popular Searches from History */}
+                                        {hasHistory && getPopularSearches(4).length > 0 && (
                                             <div className="mt-6">
                                                 <h4 className="font-semibold text-yellow-400 mb-2">Popular Searches</h4>
+                                                <div className="space-y-1">
+                                                    {getPopularSearches(4).map((item) => (
+                                                        <div
+                                                            key={item.id}
+                                                            className="flex items-center justify-between group hover:bg-yellow-600/20 rounded transition-colors"
+                                                        >
+                                                            <button
+                                                                onClick={() => {
+                                                                    setSearchQuery(item.query);
+                                                                    searchInputRef.current?.focus();
+                                                                }}
+                                                                className="flex-1 text-left text-sm py-1 pl-2 text-gray-300 hover:text-yellow-600 transition-colors"
+                                                            >
+                                                                <div className="flex items-center gap-2">
+                                                                    <span>{item.query}</span>
+                                                                    <span className="text-xs text-blue-400 bg-blue-600/20 px-1.5 py-0.5 rounded-full">
+                                                                        {item.count} searches
+                                                                    </span>
+                                                                </div>
+                                                            </button>
+                                                            <button
+                                                                onClick={() => removeSearchTerm(item.id)}
+                                                                className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-red-400 transition-all"
+                                                                title="Remove from history"
+                                                            >
+                                                                <X className="h-3 w-3" />
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Default Search Suggestions (when no history) */}
+                                        {!hasHistory && !allLoading && filteredProducts.length > 0 && (
+                                            <div className="mt-6">
+                                                <h4 className="font-semibold text-yellow-400 mb-2">Try Searching For</h4>
                                                 <div className="space-y-1">
                                                     {['perfume', 'fragrance', 'cologne', 'scent', 'luxury', 'gift'].map((term) => (
                                                         <button
