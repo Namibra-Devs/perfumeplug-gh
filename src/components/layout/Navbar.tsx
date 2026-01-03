@@ -67,19 +67,6 @@ export const Navbar: React.FC = () => {
         return { categories, brands };
     }, [allProducts]);
 
-    // Helper function to format category names (moved to utils)
-    // const formatCategoryName = (categoryId: string): string => {
-    //     const categoryNames: Record<string, string> = {
-    //         'men': "Men's Perfumes",
-    //         'women': "Women's Perfumes",
-    //         'unisex': 'Unisex',
-    //         'luxury': 'Luxury Collection',
-    //         'body-sprays': 'Body Sprays',
-    //         'gift-sets': 'Gift Sets'
-    //     };
-    //     return categoryNames[categoryId] || categoryId.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
-    // };
-
     // Toggle handlers with mutual exclusion
     const handleSearchToggle = () => {
         setOpenSearchBar(prev => !prev);
