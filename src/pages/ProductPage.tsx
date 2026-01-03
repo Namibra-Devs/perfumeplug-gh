@@ -12,7 +12,6 @@ import type { Product } from '../types/product';
 const ProductPage: React.FC = () => {
   const { id } = useParams();
   const { addToCart, updateQuantity, addToWishlist, removeFromWishlist, isInWishlist } = useCart();
-  const [selectedSize, setSelectedSize] = useState<string>('100ml');
   const [selectedImage, setSelectedImage] = useState<number>(0);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
   const [showZoom, setShowZoom] = useState(false);
@@ -97,15 +96,6 @@ const ProductPage: React.FC = () => {
   const relatedProducts = products
     .filter(p => p.category === product.category && p._id !== product._id)
     .slice(0, 4);
-
-  // Size options
-  const sizeOptions = [
-    { value: '50ml', price: product.sellingPrice * 0.6 },
-    { value: '100ml', price: product.sellingPrice },
-    { value: '150ml', price: product.sellingPrice * 1.4 }
-  ];
-
-  const selectedPrice = sizeOptions.find(size => size.value === selectedSize)?.price || product.sellingPrice;
 
   // Mock reviews data
   const reviews = [
@@ -323,9 +313,16 @@ const ProductPage: React.FC = () => {
             <div className="space-y-6 text-white">
               <div>
                 {(product?.brand || product?.category) && (
-                  <span className="text-yellow-400 font-semibold">
-                    {product.brand || product.category}
-                  </span>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-yellow-400 font-semibold text-sm uppercase tracking-wide">
+                      {product.brand || product.category}
+                    </span>
+                    {product.ecommerceData?.displayOrder !== undefined && (
+                      <span className="bg-yellow-600/20 text-yellow-400 px-2 py-1 rounded-full text-xs">
+                        Featured #{product.ecommerceData.displayOrder}
+                      </span>
+                    )}
+                  </div>
                 )}
                 <h1 className="text-3xl md:text-4xl font-bold text-gray-50 mt-2">
                   {product.ecommerceData?.seoTitle || product.name}
@@ -337,6 +334,17 @@ const ProductPage: React.FC = () => {
                     {product.ecommerceData.seoDescription}
                   </p>
                 )}
+
+                {/* Product ID and timestamps */}
+                <div className="flex items-center gap-4 mt-3 text-xs text-gray-400">
+                  <span>ID: {product._id.slice(-8)}</span>
+                  {product.createdAt && (
+                    <span>Added: {new Date(product.createdAt).toLocaleDateString()}</span>
+                  )}
+                  {product.sku && (
+                    <span>SKU: {product.sku}</span>
+                  )}
+                </div>
                 
                 {/* Rating */}
                 {/* <div className="flex items-center space-x-2 mt-3">
@@ -358,37 +366,53 @@ const ProductPage: React.FC = () => {
 
               {/* Price */}
               <div className="flex items-center space-x-4">
-                <span className="text-lg font-bold text-green-500">₵{selectedPrice.toFixed(2)}</span>
-                {product.sellingPrice && selectedPrice < product.sellingPrice && (
-                  <span className="text-sm text-gray-300 line-through">₵{product.sellingPrice.toFixed(2)}</span>
+                <span className="text-2xl font-bold text-green-500">₵{product.sellingPrice.toFixed(2)}</span>
+                {product.originalPrice && product.sellingPrice < product.originalPrice && (
+                  <span className="text-lg text-gray-300 line-through">₵{product.originalPrice.toFixed(2)}</span>
                 )}
-                {product.sellingPrice && selectedPrice < product.sellingPrice && (
+                {product.originalPrice && product.sellingPrice < product.originalPrice && (
                   <span className="bg-red-100 text-red-600 px-2 py-1 rounded text-xs font-semibold">
-                    Save ₵{(product.sellingPrice - selectedPrice).toFixed(2)}
+                    Save ₵{(product.originalPrice - product.sellingPrice).toFixed(2)}
                   </span>
                 )}
               </div>
 
-              {/* Size Options */}
-              <div>
-                <h3 className="font-semibold text-gray-300 mb-3">Select Size:</h3>
-                <div className="flex gap-3">
-                  {sizeOptions.map((size) => (
-                    <button
-                      key={size.value}
-                      onClick={() => setSelectedSize(size.value)}
-                      className={`px-4 md:px-6 py-3 border-2 rounded-lg transition-all ${
-                        selectedSize === size.value
-                          ? 'bg-black/20 backdrop-blur-lg border-2 border-yellow-400 text-white'
-                          : 'border border-yellow-600/20 text-yellow-400 hover:border-yellow-700'
-                      }`}
-                    >
-                      <div className="text-center">
-                        <div className="font-semibold">{size.value}</div>
-                        <div className="text-sm">₵{size.price.toFixed(2)}</div>
-                      </div>
-                    </button>
-                  ))}
+              {/* Product Details */}
+              <div className="bg-black/10 backdrop-blur-lg border border-yellow-600/20 rounded-xl p-4 space-y-3">
+                <h3 className="font-semibold text-yellow-400 mb-3">Product Details</h3>
+                <div className="grid grid-cols-1 gap-2 text-sm">
+                  {product.category && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">Category:</span>
+                      <span className="text-white font-medium capitalize">{product.category}</span>
+                    </div>
+                  )}
+                  {product.brand && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">Brand:</span>
+                      <span className="text-white font-medium">{product.brand}</span>
+                    </div>
+                  )}
+                  {product.sku && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">SKU:</span>
+                      <span className="text-white font-medium">{product.sku}</span>
+                    </div>
+                  )}
+                  {product.createdAt && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">Added:</span>
+                      <span className="text-white font-medium">
+                        {new Date(product.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  )}
+                  {product.ecommerceData?.displayOrder !== undefined && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">Priority:</span>
+                      <span className="text-white font-medium">#{product.ecommerceData.displayOrder}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -459,18 +483,26 @@ const ProductPage: React.FC = () => {
               )}
 
               {/* Features */}
-              <div className="grid grid-cols-3 gap-4 pt-6">
-                <div className="text-center">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6">
+                <div className="text-center p-3 bg-black/10 backdrop-blur-lg border border-yellow-600/20 rounded-lg">
                   <Truck className="h-6 w-6 text-blue-600 mx-auto mb-2" />
-                  <div className="text-sm text-gray-50">Free Shipping</div>
+                  <div className="text-xs text-gray-50">Free Shipping</div>
+                  <div className="text-xs text-gray-400">Orders over ₵100</div>
                 </div>
-                <div className="text-center">
-                  <Shield className="h-6 w-6 text-blue-600 mx-auto mb-2" />
-                  <div className="text-sm text-gray-50">Authentic Guarantee</div>
+                <div className="text-center p-3 bg-black/10 backdrop-blur-lg border border-yellow-600/20 rounded-lg">
+                  <Shield className="h-6 w-6 text-green-600 mx-auto mb-2" />
+                  <div className="text-xs text-gray-50">100% Authentic</div>
+                  <div className="text-xs text-gray-400">Guaranteed Original</div>
                 </div>
-                <div className="text-center">
+                <div className="text-center p-3 bg-black/10 backdrop-blur-lg border border-yellow-600/20 rounded-lg">
                   <span className="text-lg">📦</span>
-                  <div className="text-sm text-gray-50">Easy Returns</div>
+                  <div className="text-xs text-gray-50 mt-1">Easy Returns</div>
+                  <div className="text-xs text-gray-400">30-day policy</div>
+                </div>
+                <div className="text-center p-3 bg-black/10 backdrop-blur-lg border border-yellow-600/20 rounded-lg">
+                  <span className="text-lg">🎁</span>
+                  <div className="text-xs text-gray-50 mt-1">Gift Wrapping</div>
+                  <div className="text-xs text-gray-400">Available</div>
                 </div>
               </div>
             </div>
@@ -496,12 +528,93 @@ const ProductPage: React.FC = () => {
             <div className="p-6 text-white">
               {/* Description */}
               <div className="prose max-w-none">
-                <h3 className="text-lg font-semibold mb-4">Product Description</h3>
+                <h3 className="text-lg font-semibold mb-4">Product Information</h3>
                 
+                {/* Product Overview */}
+                <div className="grid md:grid-cols-2 gap-6 mb-6">
+                  <div className="bg-black/20 backdrop-blur-lg border border-yellow-600/20 rounded-lg p-4">
+                    <h4 className="text-yellow-400 font-semibold mb-3">Product Details</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Product Name:</span>
+                        <span className="text-white font-medium">{product.name}</span>
+                      </div>
+                      {product.category && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-300">Category:</span>
+                          <span className="text-white font-medium capitalize">{product.category}</span>
+                        </div>
+                      )}
+                      {product.brand && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-300">Brand:</span>
+                          <span className="text-white font-medium">{product.brand}</span>
+                        </div>
+                      )}
+                      {product.sku && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-300">SKU:</span>
+                          <span className="text-white font-medium">{product.sku}</span>
+                        </div>
+                      )}
+                      {product.barcode && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-300">Barcode:</span>
+                          <span className="text-white font-medium">{product.barcode}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="bg-black/20 backdrop-blur-lg border border-yellow-600/20 rounded-lg p-4">
+                    <h4 className="text-yellow-400 font-semibold mb-3">Pricing Information</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Selling Price:</span>
+                        <span className="text-green-400 font-bold">₵{product.sellingPrice.toFixed(2)}</span>
+                      </div>
+                      {product.originalPrice && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-300">Original Price:</span>
+                          <span className="text-gray-400 line-through">₵{product.originalPrice.toFixed(2)}</span>
+                        </div>
+                      )}
+                      {product.purchasePrice && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-300">Purchase Price:</span>
+                          <span className="text-white font-medium">₵{product.purchasePrice.toFixed(2)}</span>
+                        </div>
+                      )}
+                      {product.wholesalePrice && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-300">Wholesale Price:</span>
+                          <span className="text-white font-medium">₵{product.wholesalePrice.toFixed(2)}</span>
+                        </div>
+                      )}
+                      {product.originalPrice && product.sellingPrice < product.originalPrice && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-300">You Save:</span>
+                          <span className="text-red-400 font-bold">₵{(product.originalPrice - product.sellingPrice).toFixed(2)}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Enhanced description from SEO data */}
+                {product.ecommerceData?.seoDescription && (
+                  <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                    <h4 className="text-blue-400 font-semibold mb-2">Product Description</h4>
+                    <p className="text-gray-300 leading-relaxed text-sm">
+                      {product.ecommerceData.seoDescription}
+                    </p>
+                  </div>
+                )}
+
                 {/* Enhanced description from image alt text if available */}
                 {product.ecommerceData?.images?.find(img => img.isPrimary)?.altText && (
                   <div className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-                    <h4 className="text-yellow-400 font-semibold mb-2">Detailed Description</h4>
+                    <h4 className="text-yellow-400 font-semibold mb-2">Detailed Features</h4>
                     <p className="text-gray-300 leading-relaxed text-sm">
                       {product.ecommerceData.images.find(img => img.isPrimary)?.altText}
                     </p>
@@ -509,7 +622,35 @@ const ProductPage: React.FC = () => {
                 )}
                 
                 {/* Basic description */}
-                <p className="text-gray-300 leading-relaxed text-sm">{product.description}</p>
+                {product.description && (
+                  <div className="mb-6">
+                    <h4 className="text-white font-semibold mb-2">Description</h4>
+                    <p className="text-gray-300 leading-relaxed text-sm">{product.description}</p>
+                  </div>
+                )}
+
+                {/* Inventory Information */}
+                {product.inventory && (
+                  <div className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+                    <h4 className="text-green-400 font-semibold mb-3">Inventory Status</h4>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Stock Quantity:</span>
+                        <span className="text-white font-medium">{product.inventory.quantity} units</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Track Inventory:</span>
+                        <span className="text-white font-medium">{product.inventory.trackInventory ? 'Yes' : 'No'}</span>
+                      </div>
+                      {product.inventory.lowStockThreshold && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-300">Low Stock Alert:</span>
+                          <span className="text-white font-medium">{product.inventory.lowStockThreshold} units</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
                 
                 {/* Product Tags as searchable keywords */}
                 {product.ecommerceData?.tags && product.ecommerceData.tags.length > 0 && (
@@ -519,14 +660,45 @@ const ProductPage: React.FC = () => {
                       {product.ecommerceData.tags.map((tag, index) => (
                         <span
                           key={index}
-                          className="px-2 py-1 bg-gray-700/50 text-gray-300 rounded text-xs border border-gray-600/30"
+                          className="px-3 py-1 bg-gray-700/50 text-gray-300 rounded-full text-xs border border-gray-600/30 hover:bg-yellow-600/20 transition-colors"
                         >
-                          {tag}
+                          #{tag}
                         </span>
                       ))}
                     </div>
                   </div>
                 )}
+
+                {/* Product Timestamps */}
+                <div className="mt-6 p-4 bg-gray-500/10 border border-gray-500/20 rounded-lg">
+                  <h4 className="text-gray-400 font-semibold mb-3">Product History</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    {product.createdAt && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Added on:</span>
+                        <span className="text-white font-medium">
+                          {new Date(product.createdAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </span>
+                      </div>
+                    )}
+                    {product.updatedAt && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Last updated:</span>
+                        <span className="text-white font-medium">
+                          {new Date(product.updatedAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* Fragrance Notes */}

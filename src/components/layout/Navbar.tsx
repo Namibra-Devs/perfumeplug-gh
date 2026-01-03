@@ -52,6 +52,15 @@ export const Navbar: React.FC = () => {
         }
     }, [openSearchBar]);
 
+    // Cleanup timeout on unmount
+    useEffect(() => {
+        return () => {
+            if (searchTimeout.current) {
+                clearTimeout(searchTimeout.current);
+            }
+        };
+    }, []);
+
     // Close search on Escape key
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
@@ -94,19 +103,20 @@ export const Navbar: React.FC = () => {
 
         if (!value.trim()) {
             setResults([]);
+            setIsSearching(false);
             return;
         }
 
+        setIsSearching(true);
         searchTimeout.current = setTimeout(async () => {
             try {
-            setIsSearching(true);
-
-            const data = await searchProducts(value.trim());
-            setResults(data);
+                const data = await searchProducts(value.trim());
+                setResults(data);
             } catch (error) {
-            console.error("Search failed:", error);
+                console.error("Search failed:", error);
+                setResults([]);
             } finally {
-            setIsSearching(false);
+                setIsSearching(false);
             }
         }, 400); // debounce 400ms
     };
@@ -247,14 +257,22 @@ export const Navbar: React.FC = () => {
                                             className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-yellow-600/20 transition"
                                             >
                                             <img
-                                                src={p.images?.[0]?.url}
+                                                src={p.ecommerceData?.images?.[0]?.url || p.images?.[0]?.url || '/placeholder-product.svg'}
                                                 className="w-10 h-10 rounded object-cover"
                                                 alt={p.name}
+                                                onError={(e) => {
+                                                    (e.target as HTMLImageElement).src = '/placeholder-product.svg';
+                                                }}
                                             />
 
                                             <div className="text-left">
                                                 <p className="text-white text-sm font-medium">{p.name}</p>
-                                                <p className="text-yellow-400 text-xs">₵{p.sellingPrice}</p>
+                                                <div className="flex items-center gap-2">
+                                                    <p className="text-yellow-400 text-xs">₵{p.sellingPrice?.toFixed(2) || '0.00'}</p>
+                                                    {p.category && (
+                                                        <span className="text-gray-400 text-xs">• {p.category}</span>
+                                                    )}
+                                                </div>
                                             </div>
                                             </button>
                                         </li>
@@ -270,7 +288,7 @@ export const Navbar: React.FC = () => {
                                     <div>
                                         <h4 className="font-semibold text-yellow-400 mb-2">Popular Brands</h4>
                                         <div className="space-y-1">
-                                            {['Chanel', 'Dior', 'Tom Ford', 'Creed', 'Versace', 'Gucci'].map((brand) => (
+                                            {['EMIR', 'Chanel', 'Dior', 'Tom Ford', 'Creed', 'Versace'].map((brand) => (
                                                 <button
                                                     key={brand}
                                                     onClick={() => {

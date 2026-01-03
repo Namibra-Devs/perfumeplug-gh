@@ -63,7 +63,23 @@ export async function fetchProducts(opts: FetchProductsOptions = {}) {
       description: product.description || '',
       category: product.category || '',
       sellingPrice: product.sellingPrice,
-      images: product.ecommerceData?.images || [],
+      images: product.ecommerceData?.images?.map(img => ({
+        url: img.url,
+        altText: img.altText,
+        isPrimary: img.isPrimary
+      })) || [],
+      ecommerceData: product.ecommerceData ? {
+        enabled: true,
+        images: product.ecommerceData.images?.map(img => ({
+          url: img.url,
+          altText: img.altText,
+          isPrimary: img.isPrimary ?? false
+        })) || [],
+        seoTitle: product.ecommerceData.seoTitle,
+        seoDescription: product.ecommerceData.seoDescription,
+        tags: product.ecommerceData.tags || [],
+        displayOrder: product.ecommerceData.displayOrder
+      } : undefined,
       seo: {
         title: product.ecommerceData?.seoTitle || '',
         description: product.ecommerceData?.seoDescription || '',
@@ -123,7 +139,23 @@ export async function getProduct(productId: string) {
       description: apiResponse.product.description || '',
       category: apiResponse.product.category || '',
       sellingPrice: apiResponse.product.sellingPrice,
-      images: apiResponse.product.ecommerceData?.images || [],
+      images: apiResponse.product.ecommerceData?.images?.map(img => ({
+        url: img.url,
+        altText: img.altText,
+        isPrimary: img.isPrimary
+      })) || [],
+      ecommerceData: apiResponse.product.ecommerceData ? {
+        enabled: true,
+        images: apiResponse.product.ecommerceData.images?.map(img => ({
+          url: img.url,
+          altText: img.altText,
+          isPrimary: img.isPrimary ?? false
+        })) || [],
+        seoTitle: apiResponse.product.ecommerceData.seoTitle,
+        seoDescription: apiResponse.product.ecommerceData.seoDescription,
+        tags: apiResponse.product.ecommerceData.tags || [],
+        displayOrder: apiResponse.product.ecommerceData.displayOrder
+      } : undefined,
       seo: {
         title: apiResponse.product.ecommerceData?.seoTitle || '',
         description: apiResponse.product.ecommerceData?.seoDescription || '',
@@ -144,10 +176,67 @@ export async function getProduct(productId: string) {
 }
 
 export async function searchProducts(query: string, limit = 50) {
-   try {
+  try {
     const params = new URLSearchParams({ search: query, limit: String(limit) });
-    const data = await apiFetch<{ products: Product[] }>(`/api/ecommerce/products?${params.toString()}`);
-    return data.products;
+    
+    // Use the same structure as fetchProducts since it's the same endpoint
+    const apiResponse = await apiFetch<{
+      products: Array<{
+        _id: string;
+        name: string;
+        description?: string;
+        category?: string;
+        sellingPrice: number;
+        createdAt?: string;
+        updatedAt?: string;
+        ecommerceData?: {
+          images?: Array<{ url: string; altText?: string; isPrimary?: boolean }>;
+          seoTitle?: string;
+          seoDescription?: string;
+          tags?: string[];
+          displayOrder?: number;
+        };
+      }>;
+    }>(`/api/ecommerce/products?${params.toString()}`);
+
+    // Transform API response to match frontend expectations
+    const transformedProducts: Product[] = apiResponse.products.map(product => ({
+      _id: product._id,
+      name: product.name,
+      description: product.description || '',
+      category: product.category || '',
+      sellingPrice: product.sellingPrice,
+      images: product.ecommerceData?.images?.map(img => ({
+        url: img.url,
+        altText: img.altText,
+        isPrimary: img.isPrimary
+      })) || [],
+      ecommerceData: product.ecommerceData ? {
+        enabled: true,
+        images: product.ecommerceData.images?.map(img => ({
+          url: img.url,
+          altText: img.altText,
+          isPrimary: img.isPrimary ?? false
+        })) || [],
+        seoTitle: product.ecommerceData.seoTitle,
+        seoDescription: product.ecommerceData.seoDescription,
+        tags: product.ecommerceData.tags || [],
+        displayOrder: product.ecommerceData.displayOrder
+      } : undefined,
+      seo: {
+        title: product.ecommerceData?.seoTitle || '',
+        description: product.ecommerceData?.seoDescription || '',
+        tags: product.ecommerceData?.tags || []
+      },
+      ecommerce: {
+        visible: true,
+        displayOrder: product.ecommerceData?.displayOrder || 0
+      },
+      createdAt: product.createdAt,
+      updatedAt: product.updatedAt
+    }));
+
+    return transformedProducts;
   } catch (err) {
     throw parseApiError(err);
   }
