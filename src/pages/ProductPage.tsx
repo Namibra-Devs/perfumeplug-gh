@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 // import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Heart, ShoppingCart, Truck, Shield, ZoomIn, ChevronLeft, ChevronRight, User2, HeartOff } from 'lucide-react';
+import { Star, Heart, ShoppingCart, ZoomIn, ChevronLeft, ChevronRight, User2, HeartOff } from 'lucide-react';
 import ProductCard from '../components/product/ProductCard';
 import Header from '../components/layout/Header';
 import { useCart } from '../hooks/useCart';
@@ -465,30 +465,6 @@ const ProductPage: React.FC = () => {
                   </div>
                 </div>
               )}
-
-              {/* Features */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6">
-                <div className="text-center p-3 bg-black/10 backdrop-blur-lg border border-yellow-600/20 rounded-lg">
-                  <Truck className="h-6 w-6 text-blue-600 mx-auto mb-2" />
-                  <div className="text-xs text-gray-50">Free Shipping</div>
-                  <div className="text-xs text-gray-400">Orders over ₵100</div>
-                </div>
-                <div className="text-center p-3 bg-black/10 backdrop-blur-lg border border-yellow-600/20 rounded-lg">
-                  <Shield className="h-6 w-6 text-green-600 mx-auto mb-2" />
-                  <div className="text-xs text-gray-50">100% Authentic</div>
-                  <div className="text-xs text-gray-400">Guaranteed Original</div>
-                </div>
-                <div className="text-center p-3 bg-black/10 backdrop-blur-lg border border-yellow-600/20 rounded-lg">
-                  <span className="text-lg">📦</span>
-                  <div className="text-xs text-gray-50 mt-1">Easy Returns</div>
-                  <div className="text-xs text-gray-400">30-day policy</div>
-                </div>
-                <div className="text-center p-3 bg-black/10 backdrop-blur-lg border border-yellow-600/20 rounded-lg">
-                  <span className="text-lg">🎁</span>
-                  <div className="text-xs text-gray-50 mt-1">Gift Wrapping</div>
-                  <div className="text-xs text-gray-400">Available</div>
-                </div>
-              </div>
             </div>
           </div>
 
