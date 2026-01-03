@@ -15,7 +15,7 @@ const ShopPage: React.FC = () => {
 
   // Read query params
   const query = new URLSearchParams(location.search);
-  const initialCategory = query.get("category") || "all";
+  const initialCategory = query.get("category") || query.get("product") || "all"; // Support both category and product params
   const searchQuery = query.get("q") || "";
 
   // UI states

@@ -12,43 +12,55 @@ const HomePage: React.FC = () => {
       slug: "men", 
       name: "Men's Collection", 
       image: '/categories/men.jpg', 
-      color: "blue-600",
+      colorClass: "bg-blue-500",
+      gradientClass: "from-blue-500/20",
+      barClass: "from-blue-500 via-blue-400 to-blue-500",
       description: "Masculine fragrances for the modern man"
     },
     { 
       slug: "women", 
       name: "Women's Collection", 
       image: '/categories/women.jpg', 
-      color: "pink-500",
+      colorClass: "bg-pink-500",
+      gradientClass: "from-pink-500/20",
+      barClass: "from-pink-500 via-pink-400 to-pink-500",
       description: "Elegant scents for sophisticated women"
     },
     { 
       slug: "unisex", 
       name: "Unisex Collection", 
       image: '/categories/unisex.jpg', 
-      color: "purple-500",
+      colorClass: "bg-purple-500",
+      gradientClass: "from-purple-500/20",
+      barClass: "from-purple-500 via-purple-400 to-purple-500",
       description: "Versatile fragrances for everyone"
     },
     { 
       slug: "luxury", 
       name: "Luxury Collection", 
-      image: '/categories/luxury.jpeg', 
-      color: "yellow-500",
+      image: '/categories/luxury.jpg', 
+      colorClass: "bg-yellow-500",
+      gradientClass: "from-yellow-500/20",
+      barClass: "from-yellow-500 via-amber-400 to-yellow-500",
       description: "Premium and exclusive fragrances"
-    },
-    { 
-      slug: "emir", 
-      name: "EMIR Collection", 
-      image: '/categories/unisex.jpg', 
-      color: "green-500",
-      description: "Signature EMIR fragrance collection"
     },
     { 
       slug: "body-sprays", 
       name: "Body Sprays", 
-      image: '/categories/women.jpg', 
-      color: "red-500",
+      image: '/categories/unisex.jpg', // Using available image
+      colorClass: "bg-green-500",
+      gradientClass: "from-green-500/20",
+      barClass: "from-green-500 via-green-400 to-green-500",
       description: "Fresh and light daily fragrances"
+    },
+    { 
+      slug: "gift-sets", 
+      name: "Gift Sets", 
+      image: '/categories/gift-set.jpg', // Using available image
+      colorClass: "bg-red-500",
+      gradientClass: "from-red-500/20",
+      barClass: "from-red-500 via-red-400 to-red-500",
+      description: "Perfect gift combinations for loved ones"
     }
   ];
 
@@ -134,12 +146,19 @@ const HomePage: React.FC = () => {
                       alt={collection.name}
                       className="w-full h-64 object-cover inset-0 bg-black/40 rounded-2xl transition-transform duration-500 group-hover:scale-110"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/placeholder-product.svg';
+                        const target = e.target as HTMLImageElement;
+                        // Try fallback images in order
+                        if (target.src.includes('/categories/')) {
+                          target.src = '/placeholder-product.svg';
+                        }
+                      }}
+                      onLoad={() => {
+                        // Image loaded successfully - could add analytics here if needed
                       }}
                     />
                     
                     {/* Gradient Overlay */}
-                    <div className={`absolute inset-0 bg-gradient-to-b from-${collection.color}/20 to-black/60 rounded-2xl`}></div>
+                    <div className={`absolute inset-0 bg-gradient-to-b ${collection.gradientClass} to-black/60 rounded-2xl`}></div>
                     
                     {/* Collection Icon */}
                     <div className="absolute font-semibold top-4 left-4 w-12 h-12 bg-white/20 text-white backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30 transition-all duration-300 group-hover:bg-white/30">
@@ -173,11 +192,11 @@ const HomePage: React.FC = () => {
 
                 {/* Hover Indicator */}
                 <div className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110 border border-white/30">
-                  <div className={`w-3 h-3 bg-${collection.color} rounded-full transition-all duration-300 group-hover:scale-125`}></div>
+                  <div className={`w-3 h-3 ${collection.colorClass} rounded-full transition-all duration-300 group-hover:scale-125`}></div>
                 </div>
 
                 {/* Bottom Gradient Bar */}
-                <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-${collection.color} via-amber-400 to-${collection.color} opacity-70 group-hover:opacity-100 transition-opacity duration-300`}></div>
+                <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${collection.barClass} opacity-70 group-hover:opacity-100 transition-opacity duration-300`}></div>
               </motion.div>
             ))}
           </div>
