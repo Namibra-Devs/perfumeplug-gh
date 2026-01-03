@@ -66,9 +66,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       console.log("Login Response:", response);
 
-      // Handle successful login - check both success flag and data presence
-      if (response.success && response.data) {
-        const { token, customer } = response.data;
+      // Check if response has the expected structure
+      // Handle both nested data structure and flat structure
+      if (response.success) {
+        let token: string;
+        let customer: Customer;
+
+        // Check if data is nested or flat
+        if (response.data && response.data.token && response.data.customer) {
+          // Nested structure: { success: true, data: { token, customer } }
+          token = response.data.token;
+          customer = response.data.customer;
+        } else if ((response as any).token && (response as any).customer) {
+          // Flat structure: { success: true, token, customer }
+          token = (response as any).token;
+          customer = (response as any).customer;
+        } else {
+          console.error("Unexpected response structure:", response);
+          toast.error("Login failed: Invalid response structure");
+          return undefined;
+        }
+
         setToken(token);
         setCustomer(customer);
         localStorage.setItem('customerToken', token);
@@ -118,8 +136,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log("Registration Response:", response);
 
       // Handle successful registration
-      if (response.success && response.data) {
-        const { token, customer } = response.data;
+      if (response.success) {
+        let token: string;
+        let customer: Customer;
+
+        // Check if data is nested or flat
+        if (response.data && response.data.token && response.data.customer) {
+          // Nested structure: { success: true, data: { token, customer } }
+          token = response.data.token;
+          customer = response.data.customer;
+        } else if ((response as any).token && (response as any).customer) {
+          // Flat structure: { success: true, token, customer }
+          token = (response as any).token;
+          customer = (response as any).customer;
+        } else {
+          console.error("Unexpected response structure:", response);
+          toast.error("Registration failed: Invalid response structure");
+          return null;
+        }
+
         setToken(token);
         setCustomer(customer);
         localStorage.setItem('customerToken', token);

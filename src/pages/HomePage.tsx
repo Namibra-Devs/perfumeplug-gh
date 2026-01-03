@@ -4,6 +4,7 @@ import { Star, Clock, ArrowRight, Mail, Shield, Lock, X} from 'lucide-react';
 import { Navbar } from '../components/layout/Navbar';
 import { Badge } from '../components/ui/Badge';
 import ProductGrid from '../components/product/ProductGrid';
+import CategoriesCarousel from '../components/ui/CategoriesCarousel';
 
 const HomePage: React.FC = () => {
   // Static collections based on actual product properties
@@ -103,104 +104,8 @@ const HomePage: React.FC = () => {
     <div className="">
       <Navbar/>
 
-      {/* 2. Shop by Collection */}
-      {/* <section className="bg-gradient-to-r from-black to-yellow-700 mx-auto pt-10 pb-20 px-4 sm:px-6 lg:px-32 relative overflow-hidden">
-        <div className="glow"></div>
-        <div className="mist"></div>
-        <div className="mist2"></div>
-        <div className="mist3"></div>
-
-        <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-        >
-          <div className="flex flex-col md:flex-row justify-between items-start gap-4 md:items-center mb-8">
-            <div>
-              <Badge delay={0.1}>
-                Shop by Collection
-              </Badge>
-              <p className="text-white/70 mt-2">Discover our curated collections tailored for every preference</p>
-            </div>
-            <Link to="/shop" className="text-white hover:text-yellow-300 font-medium flex items-center transition-colors">
-              View All Products <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </div>
-
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {shopCollections.map((collection, index) => (
-              <motion.div
-                key={collection.slug}
-                initial={{ scale: 0.9, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="relative group overflow-hidden border border-yellow-800/40 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300"
-              >
-                <Link to={`/shop?category=${collection.slug}`}>
-                  <div className="relative">
-                    <img
-                      src={collection.image}
-                      alt={collection.name}
-                      className="w-full h-64 object-cover inset-0 bg-black/40 rounded-2xl transition-transform duration-500 group-hover:scale-110"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        // Try fallback images in order
-                        if (target.src.includes('/categories/')) {
-                          target.src = '/placeholder-product.svg';
-                        }
-                      }}
-                      onLoad={() => {
-                        // Image loaded successfully - could add analytics here if needed
-                      }}
-                    />
-                    
-                   
-                    <div className={`absolute inset-0 bg-gradient-to-b ${collection.gradientClass} to-black/60 rounded-2xl`}></div>
-                    
-                  
-                    <div className="absolute font-semibold top-4 left-4 w-12 h-12 bg-white/20 text-white backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30 transition-all duration-300 group-hover:bg-white/30">
-                      <span className="text-lg">{collection.name[0]}</span>
-                    </div>
-                    
-                 
-                    <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-6">
-                      <h3 className="text-2xl font-bold text-white mb-2 transition-transform duration-300 group-hover:scale-105">
-                        {collection.name}
-                      </h3>
-                      <p className="text-white/80 text-sm mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        {collection.description}
-                      </p>
-                    </div>
-                   
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: index * 0.2 + 0.5 }}
-                      className="absolute bottom-6 left-6 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0"
-                    >
-                      <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full border border-white/30 hover:bg-white/30 transition-colors">
-                        <span className='text-sm font-medium'>Explore Collection</span>
-                        <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300"/>
-                      </div>
-                    </motion.div>
-                  </div>
-                </Link>
-
-             
-                <div className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110 border border-white/30">
-                  <div className={`w-3 h-3 ${collection.colorClass} rounded-full transition-all duration-300 group-hover:scale-125`}></div>
-                </div>
-
-
-                <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${collection.barClass} opacity-70 group-hover:opacity-100 transition-opacity duration-300`}></div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </section> */}
+      {/* 2. Categories Carousel */}
+      <CategoriesCarousel />
 
       {/* 3. Featured Products Carousel */}
       <section className="bg-gradient-to-r from-black/95 to-yellow-700/95 py-16">
