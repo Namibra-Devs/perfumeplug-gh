@@ -1,9 +1,8 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { useToast } from "../hooks/useToast";
-import { useNavigate, useLocation } from "react-router-dom";
 import { sanitizeGhanaPhoneNumber, isValidGhanaPhoneNumber, formatGhanaPhoneNumber } from "../utils/phoneUtils";
 
 /* -------------------------
@@ -97,10 +96,8 @@ const PhoneInputField: React.FC<PhoneInputProps> = ({ label, value, onChange, er
 -------------------------- */
 const LoginRegisterSection: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const { login, register, isLoading, isAuthenticated } = useAuth();
+  const { login, register, isLoading } = useAuth();
   const toast = useToast();
-  const navigate = useNavigate();
-  const location = useLocation();
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -112,15 +109,6 @@ const LoginRegisterSection: React.FC = () => {
     phone: "",
     address: "",
   });
-
-  // Redirect if already authenticated
-  useEffect(() => {
-    if (isAuthenticated) {
-      // Get the intended destination from location state, or default to account page
-      const from = (location.state as any)?.from?.pathname || '/account';
-      navigate(from, { replace: true });
-    }
-  }, [isAuthenticated, navigate, location.state]);
 
   /* -------------------------
         Validation Logic
@@ -190,12 +178,8 @@ const LoginRegisterSection: React.FC = () => {
       if (isLogin) {
         const result = await login(formData.email, formData.password);
         if (result) {
-          // Login successful - navigation will be handled by useEffect
+          // Login successful - user will be redirected by the auth system
           console.log("Login successful for:", result.email);
-          // The useEffect will handle navigation when isAuthenticated becomes true
-        } else {
-          // Login failed - error message already shown by AuthContext
-          console.log("Login failed - no result returned");
         }
       } else {
         // Sanitize phone number before registration
@@ -206,12 +190,8 @@ const LoginRegisterSection: React.FC = () => {
         
         const result = await register(sanitizedData);
         if (result) {
-          // Registration successful - navigation will be handled by useEffect
+          // Registration successful - user will be redirected by the auth system
           console.log("Registration successful for:", result.email);
-          // The useEffect will handle navigation when isAuthenticated becomes true
-        } else {
-          // Registration failed - error message already shown by AuthContext
-          console.log("Registration failed - no result returned");
         }
       }
     } catch (error) {

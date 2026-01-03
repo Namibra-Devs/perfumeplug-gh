@@ -16,6 +16,7 @@ interface AuthContextType {
   logout: () => void;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isInitialized: boolean; // Add this to track initialization
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -25,6 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false); // Track if we've loaded from localStorage
   const toast = useToast();
 
   useEffect(() => {
@@ -34,10 +36,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setToken(savedToken);
       // Optionally fetch customer profile
       fetchProfile();
-    }else{
+      console.log("Token loaded from localStorage:", savedToken.substring(0, 20) + "...");
+    } else {
       console.log("No Token Found!");
     }
+    setIsInitialized(true); // Mark as initialized regardless of token presence
   }, []);
+
+  // Helper function to check authentication more reliably
+  const getIsAuthenticated = () => {
+    // Check both state and localStorage for more reliability
+    const stateToken = token;
+    const storageToken = localStorage.getItem('customerToken');
+    return !!(stateToken || storageToken);
+  };
 
   const fetchProfile = async () => {
     try {
@@ -69,30 +81,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Check if response has the expected structure
       // Handle both nested data structure and flat structure
       if (response.success) {
-        let token: string;
-        let customer: Customer;
+        let tokenValue: string;
+        let customerData: Customer;
 
         // Check if data is nested or flat
         if (response.data && response.data.token && response.data.customer) {
           // Nested structure: { success: true, data: { token, customer } }
-          token = response.data.token;
-          customer = response.data.customer;
+          tokenValue = response.data.token;
+          customerData = response.data.customer;
         } else if ((response as any).token && (response as any).customer) {
           // Flat structure: { success: true, token, customer }
-          token = (response as any).token;
-          customer = (response as any).customer;
+          tokenValue = (response as any).token;
+          customerData = (response as any).customer;
         } else {
           console.error("Unexpected response structure:", response);
           toast.error("Login failed: Invalid response structure");
           return undefined;
         }
 
-        setToken(token);
-        setCustomer(customer);
-        localStorage.setItem('customerToken', token);
+        // Store token in localStorage FIRST, then update state
+        localStorage.setItem('customerToken', tokenValue);
+        console.log("Token stored in localStorage:", tokenValue.substring(0, 20) + "...");
+        
+        // Then update state
+        setToken(tokenValue);
+        setCustomer(customerData);
         
         toast.success(response.message || "Login successful!");
-        return customer;
+        
+        // Double-check authentication status
+        console.log("Authentication status after login:", getIsAuthenticated());
+        
+        return customerData;
       } else {
         // Handle API-level error
         toast.error(response.message || "Login failed");
@@ -137,30 +157,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // Handle successful registration
       if (response.success) {
-        let token: string;
-        let customer: Customer;
+        let tokenValue: string;
+        let customerData: Customer;
 
         // Check if data is nested or flat
         if (response.data && response.data.token && response.data.customer) {
           // Nested structure: { success: true, data: { token, customer } }
-          token = response.data.token;
-          customer = response.data.customer;
+          tokenValue = response.data.token;
+          customerData = response.data.customer;
         } else if ((response as any).token && (response as any).customer) {
           // Flat structure: { success: true, token, customer }
-          token = (response as any).token;
-          customer = (response as any).customer;
+          tokenValue = (response as any).token;
+          customerData = (response as any).customer;
         } else {
           console.error("Unexpected response structure:", response);
           toast.error("Registration failed: Invalid response structure");
           return null;
         }
 
-        setToken(token);
-        setCustomer(customer);
-        localStorage.setItem('customerToken', token);
+        // Store token in localStorage FIRST, then update state
+        localStorage.setItem('customerToken', tokenValue);
+        console.log("Token stored in localStorage:", tokenValue.substring(0, 20) + "...");
+        
+        // Then update state
+        setToken(tokenValue);
+        setCustomer(customerData);
         
         toast.success(response.message || "Registration successful!");
-        return customer;
+        
+        // Double-check authentication status
+        console.log("Authentication status after registration:", getIsAuthenticated());
+        
+        return customerData;
       } else {
         // Handle API-level error (success=false)
         toast.error(response.message || "Registration failed");
@@ -207,8 +235,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         register,
         logout,
-        isAuthenticated: !!token,
+        isAuthenticated: getIsAuthenticated(), // Use the helper function for more reliable check
         isLoading,
+        isInitialized,
         setIsLoading
       }}
     >
