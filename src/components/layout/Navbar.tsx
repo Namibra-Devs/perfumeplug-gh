@@ -3,7 +3,6 @@ import { Search, ShoppingCart, User, Menu, X } from 'lucide-react';
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../../hooks/useCart';
-import { searchProducts } from '../../services/productService';
 import { Product } from '../../types/product';
 import { Navigation } from '../../constants/navLinks';
 import { useProducts } from '../../hooks/useProducts';
@@ -21,32 +20,26 @@ export const Navbar: React.FC = () => {
 
     const { getTotalItems } = useCart();
 
-    // Fetch all products to extract categories and brands
+    // Fetch all products to extract categories and enable frontend search
     const { products: allProducts, loading: allLoading } = useProducts({
         page: 1,
-        limit: 1000, // Get all products to extract categories and brands
+        limit: 500, // Reduced limit since we're doing frontend search - adjust based on your needs
     });
 
-    // Extract unique categories and brands from all products
-    const { categories, brands } = useMemo(() => {
+    // Extract unique categories from all products (removed brands since they don't exist)
+    const { categories, filteredProducts } = useMemo(() => {
         if (!allProducts || allProducts.length === 0) {
-            return { categories: [], brands: [] };
+            return { categories: [], filteredProducts: [] };
         }
 
         // Get unique categories with counts
         const categoryMap = new Map<string, number>();
-        const brandMap = new Map<string, number>();
 
         allProducts.forEach(product => {
             // Categories
             if (product.category) {
                 const cat = product.category.toLowerCase();
                 categoryMap.set(cat, (categoryMap.get(cat) || 0) + 1);
-            }
-
-            // Brands
-            if (product.brand) {
-                brandMap.set(product.brand, (brandMap.get(product.brand) || 0) + 1);
             }
         });
 
@@ -59,12 +52,7 @@ export const Navbar: React.FC = () => {
             }))
             .sort((a, b) => b.count - a.count); // Sort by count descending
 
-        const brands = Array.from(brandMap.entries())
-            .map(([name, count]) => ({ name, count }))
-            .sort((a, b) => b.count - a.count)
-            .slice(0, 10); // Limit to top 10 brands
-
-        return { categories, brands };
+        return { categories, filteredProducts: allProducts };
     }, [allProducts]);
 
     // Toggle handlers with mutual exclusion
@@ -136,7 +124,38 @@ export const Navbar: React.FC = () => {
         }
     };
 
-    // Debounced search function
+    // Frontend search function - more efficient than API calls
+    const performFrontendSearch = useMemo(() => {
+        return (query: string): Product[] => {
+            if (!query.trim() || !filteredProducts.length) return [];
+
+            const searchTerm = query.toLowerCase().trim();
+            
+            return filteredProducts.filter(product => {
+                // Search in product name
+                if (product.name.toLowerCase().includes(searchTerm)) return true;
+                
+                // Search in description
+                if (product.description?.toLowerCase().includes(searchTerm)) return true;
+                
+                // Search in category
+                if (product.category?.toLowerCase().includes(searchTerm)) return true;
+                
+                // Search in SEO title and description
+                if (product.ecommerceData?.seoTitle?.toLowerCase().includes(searchTerm)) return true;
+                if (product.ecommerceData?.seoDescription?.toLowerCase().includes(searchTerm)) return true;
+                
+                // Search in tags
+                if (product.ecommerceData?.tags?.some(tag => 
+                    tag.toLowerCase().includes(searchTerm)
+                )) return true;
+                
+                return false;
+            }).slice(0, 20); // Limit results for performance
+        };
+    }, [filteredProducts]);
+
+    // Debounced search function - now uses frontend search
     const debouncedSearch = useMemo(
         () => debounce(async (query: string) => {
             if (!query.trim()) {
@@ -153,16 +172,17 @@ export const Navbar: React.FC = () => {
             }
 
             try {
-                const data = await searchProducts(query.trim());
-                setResults(data);
+                // Use frontend search instead of API call
+                const searchResults = performFrontendSearch(query.trim());
+                setResults(searchResults);
             } catch (error) {
                 console.error("Search failed:", error);
                 setResults([]);
             } finally {
                 setIsSearching(false);
             }
-        }, 400),
-        []
+        }, 300), // Reduced debounce time since it's frontend search
+        [performFrontendSearch]
     );
 
     const handleSearchChange = (value: string) => {
@@ -402,38 +422,7 @@ export const Navbar: React.FC = () => {
                                 )}
 
                                 {/* Search Suggestions */}
-                                <div className="mt-12 md:mt-4 grid grid-cols-2 gap-4">
-                                    <div>
-                                        <h4 className="font-semibold text-yellow-400 mb-2">Popular Brands</h4>
-                                        <div className="space-y-1">
-                                            {allLoading ? (
-                                                Array.from({ length: 4 }).map((_, idx) => (
-                                                    <div
-                                                        key={idx}
-                                                        className="h-6 bg-yellow-900/20 animate-pulse rounded-md"
-                                                    />
-                                                ))
-                                            ) : brands.length > 0 ? (
-                                                brands.slice(0, 6).map((brand) => (
-                                                    <button
-                                                        key={brand.name}
-                                                        onClick={() => {
-                                                            setSearchQuery(brand.name);
-                                                            searchInputRef.current?.focus();
-                                                        }}
-                                                        className="block text-sm w-full text-left py-1 text-gray-300 hover:pl-2 duration-300 ease-out hover:text-yellow-600 hover:bg-yellow-600/20 rounded transition-colors"
-                                                    >
-                                                        <div className="flex justify-between items-center">
-                                                            <span>{brand.name}</span>
-                                                            <span className="text-gray-200 text-xs">({brand.count})</span>
-                                                        </div>
-                                                    </button>
-                                                ))
-                                            ) : (
-                                                <p className="text-gray-500 text-sm">No brands available</p>
-                                            )}
-                                        </div>
-                                    </div>
+                                <div className="mt-12 md:mt-4">
                                     <div>
                                         <h4 className="font-semibold text-yellow-400 mb-2">Categories</h4>
                                         <div className="space-y-1">
@@ -463,6 +452,27 @@ export const Navbar: React.FC = () => {
                                             )}
                                         </div>
                                     </div>
+                                    
+                                    {/* Popular Search Terms */}
+                                    {!allLoading && filteredProducts.length > 0 && (
+                                        <div className="mt-6">
+                                            <h4 className="font-semibold text-yellow-400 mb-2">Popular Searches</h4>
+                                            <div className="space-y-1">
+                                                {['perfume', 'fragrance', 'cologne', 'scent', 'luxury', 'gift'].map((term) => (
+                                                    <button
+                                                        key={term}
+                                                        onClick={() => {
+                                                            setSearchQuery(term);
+                                                            searchInputRef.current?.focus();
+                                                        }}
+                                                        className="block text-sm w-full text-left py-1 text-gray-300 hover:pl-2 duration-300 ease-out hover:text-yellow-600 hover:bg-yellow-600/20 rounded transition-colors"
+                                                    >
+                                                        {term}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </motion.div>
