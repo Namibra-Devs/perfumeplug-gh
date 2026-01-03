@@ -310,7 +310,7 @@ export const Navbar: React.FC = () => {
                             transition={{ duration: 0.3 }}
                             className="search-container block absolute top-full left-0 right-0 bg-gradient-to-r from-black/100 to-yellow-700/95 shadow-xl z-40"
                         >
-                            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 pb-6">
                                 <form onSubmit={handleSearchSubmit} className="relative">
                                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-300 h-5 w-5" />
                                     <input
@@ -476,7 +476,7 @@ export const Navbar: React.FC = () => {
                                                     <h4 className="font-semibold text-yellow-400">Recent Searches</h4>
                                                     <button
                                                         onClick={clearSearchHistory}
-                                                        className="text-xs text-gray-400 hover:text-red-400 transition-colors"
+                                                        className="text-xs text-gray-200 hover:text-red-400 transition-colors"
                                                         title="Clear all search history"
                                                     >
                                                         Clear all
@@ -543,7 +543,7 @@ export const Navbar: React.FC = () => {
                                                             </button>
                                                             <button
                                                                 onClick={() => removeSearchTerm(item.id)}
-                                                                className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-red-400 transition-all"
+                                                                className="p-1 text-gray-200 hover:text-red-400 transition-all"
                                                                 title="Remove from history"
                                                             >
                                                                 <X className="h-3 w-3" />
@@ -591,7 +591,7 @@ export const Navbar: React.FC = () => {
                             transition={{ duration: 0.3 }}
                             className="lg:hidden border-b-4 border-yellow-400 block absolute top-full left-0 right-0  bg-gradient-to-r from-black/100 to-yellow-700/95"
                         >
-                            <div className="py-4">
+                            <div className="py-4 pb-6">
                                 <div className="flex flex-col space-y-4">
                                     {Navigation.map((item) => (
                                         <Link
