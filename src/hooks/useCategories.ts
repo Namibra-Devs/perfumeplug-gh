@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { apiFetch } from "../lib/api";
 import { Category } from "../types/categories";
-import { MockCategories } from "../constants/mockData";
 
 
 export function useCategories() {
@@ -20,12 +19,10 @@ export function useCategories() {
 
         setCategories(data.categories.map(name => ({ name, productCount: 0 })));
       } catch (err: any) {
-        console.error("Category fetch failed → using fallback categories:", err);
+        console.error("Category fetch failed - using fallback categories:", err);
 
         setError(err.message);
 
-        // Apply fallback categories on failure
-        setCategories(MockCategories);
       } finally {
         setLoading(false);
       }
