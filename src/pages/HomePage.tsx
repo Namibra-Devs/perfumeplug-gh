@@ -1,14 +1,124 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Star, Clock, ArrowRight, Mail, Shield, Lock, X } from 'lucide-react';
+import { Star, Clock, ArrowRight, Mail, Shield, Lock, X, Tag, TrendingUp } from 'lucide-react';
 import { Navbar } from '../components/layout/Navbar';
 import { Badge } from '../components/ui/Badge';
-// import { useProducts } from '../hooks/useProducts';
+import { useProducts } from '../hooks/useProducts';
 import ProductGrid from '../components/product/ProductGrid';
+import { useMemo } from 'react';
 
 const HomePage: React.FC = () => {
-  // const { products, loading, error, pagination, fetchProducts } = useProducts();
-  // const featuredProducts = products.filter(product => product.category).slice(0, 8);
+  // Fetch all products to extract categories
+  const { products: allProducts, loading: categoriesLoading } = useProducts({
+    page: 1,
+    limit: 1000, // Get all products to extract categories
+  });
+
+  // Extract categories with counts and create category data
+  const categoryData = useMemo(() => {
+    if (!allProducts || allProducts.length === 0) {
+      // Fallback categories while loading or if no products
+      return [
+        { 
+          name: "Men's Perfumes", 
+          slug: "men", 
+          image: '/categories/men.jpg', 
+          count: 0, 
+          color: "blue-600",
+          description: "Masculine fragrances for the modern man"
+        },
+        { 
+          name: "Women's Perfumes", 
+          slug: "women", 
+          image: '/categories/women.jpg', 
+          count: 0, 
+          color: "pink-500",
+          description: "Elegant scents for sophisticated women"
+        },
+        { 
+          name: "Unisex Collection", 
+          slug: "unisex", 
+          image: '/categories/unisex.jpg', 
+          count: 0, 
+          color: "purple-500",
+          description: "Versatile fragrances for everyone"
+        }
+      ];
+    }
+
+    // Count products by category
+    const categoryMap = new Map<string, number>();
+    allProducts.forEach(product => {
+      if (product.category) {
+        const cat = product.category.toLowerCase();
+        categoryMap.set(cat, (categoryMap.get(cat) || 0) + 1);
+      }
+    });
+
+    // Define category mappings with enhanced data
+    const categoryMappings = [
+      { 
+        name: "Men's Perfumes", 
+        slug: "men", 
+        image: '/categories/men.jpg', 
+        color: "blue-600",
+        description: "Masculine fragrances for the modern man",
+        keywords: ["men", "male", "masculine", "homme"]
+      },
+      { 
+        name: "Women's Perfumes", 
+        slug: "women", 
+        image: '/categories/women.jpg', 
+        color: "pink-500",
+        description: "Elegant scents for sophisticated women",
+        keywords: ["women", "female", "feminine", "femme", "lady"]
+      },
+      { 
+        name: "Unisex Collection", 
+        slug: "unisex", 
+        image: '/categories/unisex.jpg', 
+        color: "purple-500",
+        description: "Versatile fragrances for everyone",
+        keywords: ["unisex", "neutral", "shared"]
+      },
+      { 
+        name: "Luxury Collection", 
+        slug: "luxury", 
+        image: '/categories/luxury.jpeg', 
+        color: "yellow-500",
+        description: "Premium and exclusive fragrances",
+        keywords: ["luxury", "premium", "exclusive", "high-end"]
+      },
+      { 
+        name: "EMIR Collection", 
+        slug: "emir", 
+        image: '/categories/unisex.jpg', 
+        color: "green-500",
+        description: "Signature EMIR fragrance collection",
+        keywords: ["emir"]
+      }
+    ];
+
+    // Create categories with actual counts
+    const categories = categoryMappings
+      .map(mapping => {
+        // Find count for this category (check all possible keywords)
+        let count = 0;
+        mapping.keywords.forEach(keyword => {
+          count += categoryMap.get(keyword) || 0;
+        });
+        
+        return {
+          ...mapping,
+          count
+        };
+      })
+      .filter(cat => cat.count > 0) // Only show categories with products
+      .sort((a, b) => b.count - a.count) // Sort by count descending
+      .slice(0, 6); // Limit to top 6 categories
+
+    return categories;
+  }, [allProducts]);
 
   // Testimonials
   const testimonials = [
@@ -38,18 +148,14 @@ const HomePage: React.FC = () => {
     }
   ];
 
-  const shopCategories = [
-    { name: "Men's Perfumes", image: '/categories/men.jpg', link: "/shop?category=men", color: "blue-600" },
-    { name: "Women's Perfumes", image: '/categories/women.jpg', link: "/shop?category=women", color: "yellow-500" },
-    { name: "Unisex Collection", image: '/categories/unisex.jpg', link: "/shop?category=unisex", color: "red-400" }
-  ]
+  const shopCategories = categoryData;
 
   const countDown = [
     { value: '02', label: 'Days' },
     { value: '12', label: 'Hours' },
     { value: '45', label: 'Minutes' },
     { value: '30', label: 'Seconds' }
-  ]
+  ];
 
   return (
     <div className="">
@@ -69,58 +175,123 @@ const HomePage: React.FC = () => {
           viewport={{ once: true }}
         >
           <div className="flex flex-col md:flex-row justify-between items-start gap-4 md:items-center mb-8">
-            <Badge delay={0.1}>
-              Shop by Category
-            </Badge>
-            <p className="text-white/70 mt-2">Shop right-away based on our most popular categories</p>
+            <div>
+              <Badge delay={0.1}>
+                <Tag className="w-4 h-4 mr-2" />
+                Shop by 
+              </Badge>
+              <p className="text-white/70 mt-2">Discover our curated collections tailored for every preference</p>
+            </div>
+            <Link to="/shop" className="text-white hover:text-yellow-300 font-medium flex items-center transition-colors">
+              View All Products <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {shopCategories.map((category, index) => (
-              <motion.div
-                key={category.name}
-                initial={{ scale: 0.9, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="relative group overflow-hidden border border-yellow-800/40 rounded-2xl shadow-lg"
-              >
-                <Link to={category.link}>
-                  <img
-                    src={category.image}
-                    alt={category.name}
-                    className="w-full h-64 object-cover bg-black/40 inset-0 rounded-2xl"
-                  />
-                  
-                  <div className={`absolute inset-0 bg-gradient-to-b from-${category.color} opacity-70`}></div>
-                  <div className="absolute font-semibold top-4 left-4 w-10 h-10 bg-white/20 text-white backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30">
-                    {category.name[0]}
-                  </div>
+
+          {/* Loading State */}
+          {categoriesLoading && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="relative group overflow-hidden border border-yellow-800/40 rounded-2xl shadow-lg">
+                  <div className="w-full h-64 bg-gray-800/50 animate-pulse rounded-2xl"></div>
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                    <h3 className="text-xl font-normal uppercase text-white text-center">{category.name}</h3>
+                    <div className="w-32 h-6 bg-gray-700/50 animate-pulse rounded"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Categories Grid */}
+          {!categoriesLoading && (
+            <div className={`grid grid-cols-1 ${shopCategories.length === 2 ? 'md:grid-cols-2' : shopCategories.length >= 3 ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:grid-cols-1'} gap-6`}>
+              {shopCategories.map((category, index) => (
+                <motion.div
+                  key={category.slug}
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  whileInView={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="relative group overflow-hidden border border-yellow-800/40 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300"
+                >
+                  <Link to={`/shop?category=${category.slug}`}>
+                    <div className="relative">
+                      <img
+                        src={category.image}
+                        alt={category.name}
+                        className="w-full h-64 object-cover bg-black/40 rounded-2xl transition-transform duration-500 group-hover:scale-110"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = '/placeholder-product.svg';
+                        }}
+                      />
+                      
+                      {/* Gradient Overlay */}
+                      <div className={`absolute inset-0 bg-gradient-to-b from-${category.color}/20 to-black/60 rounded-2xl`}></div>
+                      
+                      {/* Category Icon */}
+                      <div className="absolute font-semibold top-4 left-4 w-12 h-12 bg-white/20 text-white backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30 transition-all duration-300 group-hover:bg-white/30">
+                        <span className="text-lg">{category.name[0]}</span>
+                      </div>
+
+                      {/* Product Count Badge */}
+                      <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm border border-white/20">
+                        <div className="flex items-center gap-1">
+                          <TrendingUp className="w-3 h-3" />
+                          {category.count} products
+                        </div>
+                      </div>
+                      
+                      {/* Category Content */}
+                      <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-6">
+                        <h3 className="text-2xl font-bold text-white mb-2 transition-transform duration-300 group-hover:scale-105">
+                          {category.name}
+                        </h3>
+                        <p className="text-white/80 text-sm mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          {category.description}
+                        </p>
+                      </div>
+
+                      {/* Explore Button */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: index * 0.2 + 0.5 }}
+                        className="absolute bottom-6 left-6 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0"
+                      >
+                        <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full border border-white/30 hover:bg-white/30 transition-colors">
+                          <span className='text-sm font-medium'>Explore Collection</span>
+                          <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300"/>
+                        </div>
+                      </motion.div>
+                    </div>
+                  </Link>
+
+                  {/* Hover Indicator */}
+                  <div className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110 border border-white/30">
+                    <div className={`w-3 h-3 bg-${category.color} rounded-full transition-all duration-300 group-hover:scale-125`}></div>
                   </div>
 
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.2 + 0.5 }}
-                    className="absolute inset-0 bottom-4 left-4 flex items-end justify-start opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  >
-                    <div className="inline-flex items-center gap-2 font-semibold text-white">
-                      <span className='text-xs '>Explore</span>
-                      <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300"/>
-                    </div>
-                  </motion.div>
-                </Link>
-                {/* Hover Indicator */}
-                <div className="absolute bottom-4 right-4 w-8 h-8 rounded-full  bg-white flex items-center justify-center transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 opacity-0 translate-x-2">
-                  <div className="w-2 h-2 bg-indigo-600 rounded-full"></div>
-                </div>
+                  {/* Bottom Gradient Bar */}
+                  <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-${category.color} via-amber-400 to-${category.color} opacity-70 group-hover:opacity-100 transition-opacity duration-300`}></div>
+                </motion.div>
+              ))}
+            </div>
+          )}
 
-                {/* Bottom Gradient Bar */}
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400"></div>
-              </motion.div>
-            ))}
-          </div>
+          {/* No Categories State */}
+          {!categoriesLoading && shopCategories.length === 0 && (
+            <div className="text-center py-12">
+              <Tag className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-white mb-2">No Categories Available</h3>
+              <p className="text-white/70 mb-6">Categories will appear here once products are added</p>
+              <Link 
+                to="/shop" 
+                className="inline-flex items-center gap-2 bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+              >
+                Browse All Products
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          )}
         </motion.div>
       </section>
 
