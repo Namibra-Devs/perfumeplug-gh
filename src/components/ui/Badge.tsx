@@ -1,6 +1,7 @@
 // src/components/ui/Badge.tsx
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Sparkles } from 'lucide-react';
 
 interface BadgeProps {
   children: React.ReactNode;
@@ -21,11 +22,11 @@ export const Badge: React.FC<BadgeProps> = ({
       whileInView={{ scale: 1, opacity: 1 }}
       transition={{ duration: 0.5, delay }}
       viewport={{ once: true }}
-      className={`inline-flex items-center gap-2 px-4 py-2 text-sm bg-yellow-700/10 rounded-xl border border-yellow-700 ${className}`}
+      className={`inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500 to-amber-600 text-black px-4 py-2 rounded-xl font-semibold mb-4 shadow-lg ${className}`}
     >
 
-      <div className={`w-2 h-2 rounded-full animate-pulse bg-gradient-to-r from-yellow-500 to-yellow-700`} />
-      <span className={`font-semibold uppercase tracking-wide bg-gradient-to-r from-yellow-500 to-orange-600 text-transparent bg-clip-text `}>
+      <Sparkles className="h-4 w-4" />
+      <span className={`text-sm uppercase tracking-wide `}>
         {children}
       </span>
     </motion.div>
