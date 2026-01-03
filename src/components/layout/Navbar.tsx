@@ -438,7 +438,7 @@ export const Navbar: React.FC = () => {
 
                                 {/* Search Suggestions */}
                                 <div className="mt-12 md:mt-4">
-                                    <div className='grid grid-cols-1 gap-4'>
+                                    <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
                                         <div>
                                             <h4 className="font-semibold text-yellow-400 mb-2">Categories</h4>
                                             <div className="space-y-1">
