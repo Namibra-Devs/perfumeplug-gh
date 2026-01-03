@@ -67,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response = await apiFetch<{ 
         success: boolean; 
         message: string; 
-        data: { token: string; customer: Customer } 
+        data: { token: string; customer: Customer; expiresIn?: string } 
       }>(
         '/api/ecommerce/customers/login',
         {
@@ -77,24 +77,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       );
 
       console.log("Login Response:", response);
+      console.log("Response success:", response.success);
+      console.log("Response data:", response.data);
+      console.log("Has token:", !!response.data?.token);
+      console.log("Has customer:", !!response.data?.customer);
 
       // Check if response has the expected structure
-      // Handle both nested data structure and flat structure
       if (response.success) {
         let tokenValue: string;
         let customerData: Customer;
 
-        // Check if data is nested or flat
-        if (response.data && response.data.token && response.data.customer) {
-          // Nested structure: { success: true, data: { token, customer } }
-          tokenValue = response.data.token;
-          customerData = response.data.customer;
+        // Check if data is nested (which it should be based on your API response)
+        if (response.data) {
+          console.log("Data object exists");
+          
+          if (response.data.token && response.data.customer) {
+            // Nested structure: { success: true, data: { token, customer } }
+            console.log("Using nested structure");
+            tokenValue = response.data.token;
+            customerData = response.data.customer;
+          } else {
+            console.log("Token or customer missing in data object");
+            console.log("Token exists:", !!response.data.token);
+            console.log("Customer exists:", !!response.data.customer);
+            toast.error("Login failed: Missing token or customer data");
+            return undefined;
+          }
         } else if ((response as any).token && (response as any).customer) {
           // Flat structure: { success: true, token, customer }
+          console.log("Using flat structure");
           tokenValue = (response as any).token;
           customerData = (response as any).customer;
         } else {
           console.error("Unexpected response structure:", response);
+          console.log("No data object and no flat token/customer");
           toast.error("Login failed: Invalid response structure");
           return undefined;
         }
@@ -115,6 +131,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return customerData;
       } else {
         // Handle API-level error
+        console.log("API returned success: false");
         toast.error(response.message || "Login failed");
         return undefined;
       }
