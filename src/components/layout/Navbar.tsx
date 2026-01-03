@@ -213,9 +213,13 @@ export const Navbar: React.FC = () => {
                         <button
                             onClick={handleSearchToggle}
                             title='Search'
-                            className="lg:hidden p-2 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            className="lg:hidden p-2 hover:text-white bg-yellow-600/30 hover:bg-yellow-600/20 rounded-lg transition-colors"
                         >
-                            <Search className="h-5 w-5" />
+                            {openSearchBar ? (
+                                <X className="h-4 w-4" />   // shows close icon when search is open
+                            ) : (
+                                <Search className="h-4 w-4" /> // shows search icon when closed
+                            )}
                         </button>
 
                         {/* Desktop Search Button */}
@@ -397,7 +401,6 @@ export const Navbar: React.FC = () => {
                                 </div>
                                 )}
 
-
                                 {/* Search Suggestions */}
                                 <div className="mt-12 md:mt-4 grid grid-cols-2 gap-4">
                                     <div>
@@ -422,7 +425,7 @@ export const Navbar: React.FC = () => {
                                                     >
                                                         <div className="flex justify-between items-center">
                                                             <span>{brand.name}</span>
-                                                            <span className="text-gray-500 text-xs">({brand.count})</span>
+                                                            <span className="text-gray-200 text-xs">({brand.count})</span>
                                                         </div>
                                                     </button>
                                                 ))
@@ -451,7 +454,7 @@ export const Navbar: React.FC = () => {
                                                     >
                                                         <div className="flex justify-between items-center">
                                                             <span>{category.name}</span>
-                                                            <span className="text-gray-500 text-xs">({category.count})</span>
+                                                            <span className="text-gray-200 text-xs">({category.count})</span>
                                                         </div>
                                                     </Link>
                                                 ))
@@ -510,7 +513,7 @@ export const Navbar: React.FC = () => {
                                                     >
                                                         <div className="flex justify-between items-center">
                                                             <span>{category.name}</span>
-                                                            <span className="text-gray-500 text-xs">({category.count})</span>
+                                                            <span className="text-gray-200 text-xs">({category.count})</span>
                                                         </div>
                                                     </Link>
                                                 ))

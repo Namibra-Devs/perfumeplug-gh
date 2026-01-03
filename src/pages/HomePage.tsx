@@ -7,62 +7,62 @@ import ProductGrid from '../components/product/ProductGrid';
 
 const HomePage: React.FC = () => {
   // Static collections based on actual product properties
-  const shopCollections = [
-    { 
-      slug: "men", 
-      name: "Men's Collection", 
-      image: '/categories/men.jpg', 
-      colorClass: "bg-blue-500",
-      gradientClass: "from-blue-500/20",
-      barClass: "from-blue-500 via-blue-400 to-blue-500",
-      description: "Masculine fragrances for the modern man"
-    },
-    { 
-      slug: "women", 
-      name: "Women's Collection", 
-      image: '/categories/women.jpg', 
-      colorClass: "bg-pink-500",
-      gradientClass: "from-pink-500/20",
-      barClass: "from-pink-500 via-pink-400 to-pink-500",
-      description: "Elegant scents for sophisticated women"
-    },
-    { 
-      slug: "unisex", 
-      name: "Unisex Collection", 
-      image: '/categories/unisex.jpg', 
-      colorClass: "bg-purple-500",
-      gradientClass: "from-purple-500/20",
-      barClass: "from-purple-500 via-purple-400 to-purple-500",
-      description: "Versatile fragrances for everyone"
-    },
-    { 
-      slug: "luxury", 
-      name: "Luxury Collection", 
-      image: '/categories/luxury.jpg', 
-      colorClass: "bg-yellow-500",
-      gradientClass: "from-yellow-500/20",
-      barClass: "from-yellow-500 via-amber-400 to-yellow-500",
-      description: "Premium and exclusive fragrances"
-    },
-    { 
-      slug: "body-sprays", 
-      name: "Body Sprays", 
-      image: '/categories/unisex.jpg', // Using available image
-      colorClass: "bg-green-500",
-      gradientClass: "from-green-500/20",
-      barClass: "from-green-500 via-green-400 to-green-500",
-      description: "Fresh and light daily fragrances"
-    },
-    { 
-      slug: "gift-sets", 
-      name: "Gift Sets", 
-      image: '/categories/gift-set.jpg', // Using available image
-      colorClass: "bg-red-500",
-      gradientClass: "from-red-500/20",
-      barClass: "from-red-500 via-red-400 to-red-500",
-      description: "Perfect gift combinations for loved ones"
-    }
-  ];
+  // const shopCollections = [
+  //   { 
+  //     slug: "men", 
+  //     name: "Men's Collection", 
+  //     image: '/categories/men.jpg', 
+  //     colorClass: "bg-blue-500",
+  //     gradientClass: "from-blue-500/20",
+  //     barClass: "from-blue-500 via-blue-400 to-blue-500",
+  //     description: "Masculine fragrances for the modern man"
+  //   },
+  //   { 
+  //     slug: "women", 
+  //     name: "Women's Collection", 
+  //     image: '/categories/women.jpg', 
+  //     colorClass: "bg-pink-500",
+  //     gradientClass: "from-pink-500/20",
+  //     barClass: "from-pink-500 via-pink-400 to-pink-500",
+  //     description: "Elegant scents for sophisticated women"
+  //   },
+  //   { 
+  //     slug: "unisex", 
+  //     name: "Unisex Collection", 
+  //     image: '/categories/unisex.jpg', 
+  //     colorClass: "bg-purple-500",
+  //     gradientClass: "from-purple-500/20",
+  //     barClass: "from-purple-500 via-purple-400 to-purple-500",
+  //     description: "Versatile fragrances for everyone"
+  //   },
+  //   { 
+  //     slug: "luxury", 
+  //     name: "Luxury Collection", 
+  //     image: '/categories/luxury.jpg', 
+  //     colorClass: "bg-yellow-500",
+  //     gradientClass: "from-yellow-500/20",
+  //     barClass: "from-yellow-500 via-amber-400 to-yellow-500",
+  //     description: "Premium and exclusive fragrances"
+  //   },
+  //   { 
+  //     slug: "body-sprays", 
+  //     name: "Body Sprays", 
+  //     image: '/categories/unisex.jpg', // Using available image
+  //     colorClass: "bg-green-500",
+  //     gradientClass: "from-green-500/20",
+  //     barClass: "from-green-500 via-green-400 to-green-500",
+  //     description: "Fresh and light daily fragrances"
+  //   },
+  //   { 
+  //     slug: "gift-sets", 
+  //     name: "Gift Sets", 
+  //     image: '/categories/gift-set.jpg', // Using available image
+  //     colorClass: "bg-red-500",
+  //     gradientClass: "from-red-500/20",
+  //     barClass: "from-red-500 via-red-400 to-red-500",
+  //     description: "Perfect gift combinations for loved ones"
+  //   }
+  // ];
 
   // Testimonials
   const testimonials = [
@@ -104,7 +104,7 @@ const HomePage: React.FC = () => {
       <Navbar/>
 
       {/* 2. Shop by Collection */}
-      <section className="bg-gradient-to-r from-black to-yellow-700 mx-auto pt-10 pb-20 px-4 sm:px-6 lg:px-32 relative overflow-hidden">
+      {/* <section className="bg-gradient-to-r from-black to-yellow-700 mx-auto pt-10 pb-20 px-4 sm:px-6 lg:px-32 relative overflow-hidden">
         <div className="glow"></div>
         <div className="mist"></div>
         <div className="mist2"></div>
@@ -128,7 +128,7 @@ const HomePage: React.FC = () => {
             </Link>
           </div>
 
-          {/* Collections Grid */}
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {shopCollections.map((collection, index) => (
               <motion.div
@@ -157,15 +157,15 @@ const HomePage: React.FC = () => {
                       }}
                     />
                     
-                    {/* Gradient Overlay */}
+                   
                     <div className={`absolute inset-0 bg-gradient-to-b ${collection.gradientClass} to-black/60 rounded-2xl`}></div>
                     
-                    {/* Collection Icon */}
+                  
                     <div className="absolute font-semibold top-4 left-4 w-12 h-12 bg-white/20 text-white backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30 transition-all duration-300 group-hover:bg-white/30">
                       <span className="text-lg">{collection.name[0]}</span>
                     </div>
                     
-                    {/* Collection Content */}
+                 
                     <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-6">
                       <h3 className="text-2xl font-bold text-white mb-2 transition-transform duration-300 group-hover:scale-105">
                         {collection.name}
@@ -174,8 +174,7 @@ const HomePage: React.FC = () => {
                         {collection.description}
                       </p>
                     </div>
-
-                    {/* Explore Button */}
+                   
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       whileInView={{ opacity: 1, y: 0 }}
@@ -190,18 +189,18 @@ const HomePage: React.FC = () => {
                   </div>
                 </Link>
 
-                {/* Hover Indicator */}
+             
                 <div className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110 border border-white/30">
                   <div className={`w-3 h-3 ${collection.colorClass} rounded-full transition-all duration-300 group-hover:scale-125`}></div>
                 </div>
 
-                {/* Bottom Gradient Bar */}
+
                 <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${collection.barClass} opacity-70 group-hover:opacity-100 transition-opacity duration-300`}></div>
               </motion.div>
             ))}
           </div>
         </motion.div>
-      </section>
+      </section> */}
 
       {/* 3. Featured Products Carousel */}
       <section className="bg-gradient-to-r from-black/95 to-yellow-700/95 py-16">

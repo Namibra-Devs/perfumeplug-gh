@@ -12,6 +12,14 @@ export interface Inventory {
   lowStockThreshold?: number;
 }
 
+// New inventory structure from API response
+export interface InventoryStatus {
+  available: number;
+  inStock: boolean;
+  lowStock: boolean;
+  criticalStock: boolean;
+}
+
 export interface EcommerceImage {
   url: string;
   publicId?: string;
@@ -45,7 +53,7 @@ export interface Product {
   ecommerceData?: EcommerceData; // New ecommerce data structure
   seo?: { title?: string; description?: string; tags?: string[]; }; // Legacy SEO field
   ecommerce?: { visible?: boolean; displayOrder?: number }; // Legacy ecommerce field
-  inventory?: Inventory;
+  inventory?: InventoryStatus;
   trackInventory?: boolean;
   createdAt?: string;
   updatedAt?: string;

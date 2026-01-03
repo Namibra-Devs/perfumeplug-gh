@@ -5,7 +5,7 @@ import { Star, Heart, ShoppingCart, Truck, Shield, ZoomIn, ChevronLeft, ChevronR
 import ProductCard from '../components/product/ProductCard';
 import Header from '../components/layout/Header';
 import { useCart } from '../hooks/useCart';
-import { useProducts } from '../hooks/useProducts';
+import { useRelatedProducts } from '../hooks/useRelatedProducts';
 import { getProduct } from '../services/productService';
 import type { Product } from '../types/product';
 
@@ -20,7 +20,17 @@ const ProductPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { products } = useProducts();
+
+  // Fetch related products using the dedicated hook
+  const { 
+    relatedProducts, 
+    loading: relatedLoading, 
+    error: relatedError 
+  } = useRelatedProducts({
+    productId: id || '',
+    category: product?.category,
+    limit: 8
+  });
 
   // Fetch single product
   useEffect(() => {
@@ -35,20 +45,13 @@ const ProductPage: React.FC = () => {
       } catch (err: any) {
         console.error('Failed to fetch product:', err);
         setError(err.message || 'Failed to load product');
-        
-        // Fallback: try to find in products list
-        const fallbackProduct = products.find(p => p._id === id);
-        if (fallbackProduct) {
-          setProduct(fallbackProduct);
-          setError(null);
-        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchProduct();
-  }, [id, products]);
+  }, [id]);
 
   // Loading state
   if (loading) {
@@ -92,10 +95,7 @@ const ProductPage: React.FC = () => {
     );
   }
 
-  // Related products (same category, excluding current product)
-  const relatedProducts = products
-    .filter(p => p.category === product.category && p._id !== product._id)
-    .slice(0, 4);
+
 
   // Mock reviews data
   const reviews = [
@@ -345,23 +345,6 @@ const ProductPage: React.FC = () => {
                     <span>SKU: {product.sku}</span>
                   )}
                 </div>
-                
-                {/* Rating */}
-                {/* <div className="flex items-center space-x-2 mt-3">
-                  <div className="flex items-center space-x-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`h-5 w-5 ${
-                          i < Math.floor(product.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-gray-200 text-sm">
-                    {product.rating} ({product.reviewCount} reviews)
-                  </span>
-                </div> */}
               </div>
 
               {/* Price */}
@@ -375,6 +358,7 @@ const ProductPage: React.FC = () => {
                     Save ₵{(product.originalPrice - product.sellingPrice).toFixed(2)}
                   </span>
                 )}
+
               </div>
 
               {/* Product Details */}
@@ -513,14 +497,11 @@ const ProductPage: React.FC = () => {
             {/* Tabs */}
             <div className="border-b border-yellow-600/20 text-white">
               <nav className="flex flex-wrap gap-x-3 md:gap-x-8 px-3 md:px-6">
-                {['Description', 'Fragrance Notes', 'Reviews', 'Shipping'].map((tab) => (
                   <button
-                    key={tab}
                     className="py-2 md:py-4 px-2 text-sm md:text-lg border-b-2 border-transparent hover:text-blue-600 transition-colors font-medium"
                   >
-                    {tab}
+                    Description
                   </button>
-                ))}
               </nav>
             </div>
 
@@ -633,19 +614,20 @@ const ProductPage: React.FC = () => {
                 {product.inventory && (
                   <div className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
                     <h4 className="text-green-400 font-semibold mb-3">Inventory Status</h4>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                      <div><span className={`px-3 py-1 rounded-full ${product.inventory.inStock === true ? 'bg-green-500/20' : 'bg-red-500/20'}`}>{product.inventory.inStock}</span></div>
                       <div className="flex justify-between">
                         <span className="text-gray-300">Stock Quantity:</span>
-                        <span className="text-white font-medium">{product.inventory.quantity} units</span>
+                        <span className="text-white font-medium">{product.inventory.available} units</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-300">Track Inventory:</span>
-                        <span className="text-white font-medium">{product.inventory.trackInventory ? 'Yes' : 'No'}</span>
+                        <span className="text-white font-medium">{product.trackInventory ? 'Yes' : 'No'}</span>
                       </div>
-                      {product.inventory.lowStockThreshold && (
+                      {product.inventory.lowStock && (
                         <div className="flex justify-between">
                           <span className="text-gray-300">Low Stock Alert:</span>
-                          <span className="text-white font-medium">{product.inventory.lowStockThreshold} units</span>
+                          <span className="text-white font-medium">{product.inventory.lowStock} units</span>
                         </div>
                       )}
                     </div>
@@ -699,32 +681,7 @@ const ProductPage: React.FC = () => {
                     )}
                   </div>
                 </div>
-              </div>
-
-              {/* Fragrance Notes */}
-              {/* <div className="mt-8">
-                <h3 className="text-lg text-yellow-400 font-semibold mb-6">Fragrance Notes</h3>
-                <div className="grid md:grid-cols-3 gap-6">
-                  <div className="text-center p-4 bg-blue-50 rounded-lg">
-                    <div className="text-blue-600 font-semibold mb-2">Top Notes</div>
-                    <div className="text-sm text-gray-600">
-                      {product.fragranceNotes.top.join(', ')}
-                    </div>
-                  </div>
-                  <div className="text-center p-4 bg-green-50 rounded-lg">
-                    <div className="text-green-600 font-semibold mb-2">Middle Notes</div>
-                    <div className="text-sm text-gray-600">
-                      {product.fragranceNotes.middle.join(', ')}
-                    </div>
-                  </div>
-                  <div className="text-center p-4 bg-purple-50 rounded-lg">
-                    <div className="text-purple-600 font-semibold mb-2">Base Notes</div>
-                    <div className="text-sm text-gray-600">
-                      {product.fragranceNotes.base.join(', ')}
-                    </div>
-                  </div>
-                </div>
-              </div> */}
+              </div>   
 
               {/* Reviews */}
               <div className="mt-8">
@@ -763,16 +720,55 @@ const ProductPage: React.FC = () => {
           </div>
 
           {/* Related Products */}
-          {relatedProducts.length > 0 && (
-            <div className="mt-16">
-              <h2 className="text-2xl font-bold text-gray-300 mb-8">Related Products</h2>
+          <div className="mt-16">
+            <h2 className="text-2xl font-bold text-gray-300 mb-8">
+              Related Products
+              {product?.category && (
+                <span className="text-lg text-gray-400 font-normal ml-2">
+                  in {product.category.replace('-', ' ')}
+                </span>
+              )}
+            </h2>
+            
+            {relatedLoading ? (
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                {Array.from({ length: 4 }).map((_, idx) => (
+                  <div key={idx} className="bg-black/20 backdrop-blur-lg border border-yellow-600/20 rounded-xl p-4 animate-pulse">
+                    <div className="aspect-square bg-yellow-900/20 rounded-lg mb-4"></div>
+                    <div className="h-4 bg-yellow-900/20 rounded mb-2"></div>
+                    <div className="h-3 bg-yellow-900/20 rounded w-2/3"></div>
+                  </div>
+                ))}
+              </div>
+            ) : relatedError ? (
+              <div className="text-center py-8">
+                <p className="text-gray-400 mb-4">Unable to load related products</p>
+                <p className="text-gray-500 text-sm">{relatedError}</p>
+              </div>
+            ) : relatedProducts.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 {relatedProducts.map((relatedProduct) => (
                   <ProductCard key={relatedProduct._id} product={relatedProduct} />
                 ))}
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-400 mb-2">No related products found</p>
+                <p className="text-gray-500 text-sm">
+                  {product?.category 
+                    ? `No other products in the ${product.category.replace('-', ' ')} category`
+                    : 'Try browsing our shop for more products'
+                  }
+                </p>
+                <Link 
+                  to="/shop" 
+                  className="inline-block mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Browse All Products
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>
