@@ -233,11 +233,11 @@ export const Navbar: React.FC = () => {
                             <Link
                                 key={item.name}
                                 to={item.href}
-                                className="text-yellow-500/70 hover:text-white/20 font-normal text-sm transition-colors relative group duration-300"
+                                className="text-yellow-500/70 hover:text-white/20 font-normal transition-colors relative group duration-300"
                                 onClick={closeAll}
                             >
                                 {item.name}
-                                <span className="absolute -bottom-2 left-0 w-0 h-0.5 rounded-full bg-white/20 transition-all duration-300 group-hover:w-full"></span>
+                                <span className="absolute -bottom-2 left-0 w-1 h-1 rounded-full bg-white/20 transition-all duration-300 group-hover:w-full"></span>
                             </Link>
                         ))}
                     </nav>

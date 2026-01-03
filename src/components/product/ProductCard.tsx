@@ -59,7 +59,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
         key={cardKey}
         whileHover={{ x: 5 }}
         transition={{ duration: 0.2 }}
-        className="rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer"
+        className="rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer"
         onClick={handleCardClick}
       >
         <div className="flex bg-white">
@@ -196,7 +196,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
       key={cardKey}
       whileHover={{ y: -5 }}
       transition={{ duration: 0.3 }}
-      className="max-h-[480px] group rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer bg-white"
+      className="max-h-[480px] group rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer bg-white"
       onClick={handleCardClick}
     >
       <div className="h-full flex flex-col">

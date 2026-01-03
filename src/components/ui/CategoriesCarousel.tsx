@@ -192,7 +192,7 @@ const CategoriesCarousel: React.FC = () => {
             {/* Navigation Buttons */}
             <button
               onClick={goToPrev}
-              className="absolute left-0 top-0 -translate-y-0 z-10 bg-black/50 backdrop-blur-sm hover:bg-black/70 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+              className="absolute left-0 -bottom-3 -translate-y-0 z-10 bg-black/50 backdrop-blur-sm hover:bg-black/70 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
               aria-label="Previous categories"
             >
               <ChevronLeft className="h-5 w-5" />
@@ -200,7 +200,7 @@ const CategoriesCarousel: React.FC = () => {
 
             <button
               onClick={goToNext}
-              className="absolute right-0 top-0 -translate-y-0 z-10 bg-black/50 backdrop-blur-sm hover:bg-black/70 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+              className="absolute right-0 -bottom-3 -translate-y-0 z-10 bg-black/50 backdrop-blur-sm hover:bg-black/70 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
               aria-label="Next categories"
             >
               <ChevronRight className="h-5 w-5" />
@@ -239,7 +239,7 @@ const CategoriesCarousel: React.FC = () => {
                         
                         {/* Icon */}
                         <div className="absolute top-4 right-4">
-                          <div className={`w-8 md:w-12 h-8 md:h-12 bg-gradient-to-r ${category.color} rounded-xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                          <div className={`w-10 md:w-12 h-10 md:h-12 bg-gradient-to-r ${category.color} rounded-xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                             {category.icon}
                           </div>
                         </div>

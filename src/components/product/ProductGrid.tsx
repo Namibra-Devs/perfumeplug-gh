@@ -33,7 +33,7 @@ const ProductGrid = () => {
         <p className="text-red-500">Error loading products: {String(error)}</p>
         <button
           onClick={() => refetch()}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white mt-4 px-8 py-2 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
         >
           Retry
         </button>
