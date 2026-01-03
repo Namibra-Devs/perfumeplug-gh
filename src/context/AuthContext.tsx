@@ -65,17 +65,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       );
 
       console.log("Login Response:", response);
+      console.log("🔍 Detailed Analysis:");
+      console.log("  - response.success:", response.success, typeof response.success);
+      console.log("  - response.data:", response.data);
+      console.log("  - response.data exists:", !!response.data);
+      console.log("  - Full response keys:", Object.keys(response));
 
       // Handle successful login - check both success flag and data presence
       if (response.success && response.data) {
+        console.log("✅ Both success and data are truthy");
         const { token, customer } = response.data;
+        console.log("✅ Extracted token:", token?.substring(0, 30) + "...");
+        console.log("✅ Extracted customer:", customer?.email);
+        
+        console.log("💾 Storing token in localStorage...");
+        localStorage.setItem('customerToken', token);
+        console.log("✅ Token stored, verifying:", localStorage.getItem('customerToken')?.substring(0, 30) + "...");
+        
         setToken(token);
         setCustomer(customer);
-        localStorage.setItem('customerToken', token);
         
         toast.success(response.message || "Login successful!");
         return customer;
       } else {
+        console.error("❌ Login failed - condition not met:");
+        console.log("  - response.success:", response.success);
+        console.log("  - response.data:", response.data);
+        console.log("  - response.data truthy:", !!response.data);
+        
         // Handle API-level error
         toast.error(response.message || "Login failed");
         return undefined;
