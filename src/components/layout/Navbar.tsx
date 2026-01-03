@@ -423,56 +423,59 @@ export const Navbar: React.FC = () => {
 
                                 {/* Search Suggestions */}
                                 <div className="mt-12 md:mt-4">
-                                    <div>
-                                        <h4 className="font-semibold text-yellow-400 mb-2">Categories</h4>
-                                        <div className="space-y-1">
-                                            {allLoading ? (
-                                                Array.from({ length: 4 }).map((_, idx) => (
-                                                    <div
-                                                        key={idx}
-                                                        className="h-6 bg-yellow-900/20 animate-pulse rounded-md"
-                                                    />
-                                                ))
-                                            ) : categories.length > 0 ? (
-                                                categories.map((category) => (
-                                                    <Link
-                                                        key={category.id}
-                                                        to={category.href}
-                                                        onClick={closeAll}
-                                                        className="block text-sm py-1 text-gray-300 hover:pl-2 duration-300 hover:text-yellow-600 hover:bg-yellow-600/20 rounded transition-colors"
-                                                    >
-                                                        <div className="flex justify-between items-center">
-                                                            <span>{category.name}</span>
-                                                            <span className="text-gray-200 text-xs">({category.count})</span>
-                                                        </div>
-                                                    </Link>
-                                                ))
-                                            ) : (
-                                                <p className="text-gray-500 text-sm">No categories available</p>
-                                            )}
-                                        </div>
-                                    </div>
-                                    
-                                    {/* Popular Search Terms */}
-                                    {!allLoading && filteredProducts.length > 0 && (
-                                        <div className="mt-6">
-                                            <h4 className="font-semibold text-yellow-400 mb-2">Popular Searches</h4>
+
+                                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                                        <div>
+                                            <h4 className="font-semibold text-yellow-400 mb-2">Categories</h4>
                                             <div className="space-y-1">
-                                                {['perfume', 'fragrance', 'cologne', 'scent', 'luxury', 'gift'].map((term) => (
-                                                    <button
-                                                        key={term}
-                                                        onClick={() => {
-                                                            setSearchQuery(term);
-                                                            searchInputRef.current?.focus();
-                                                        }}
-                                                        className="block text-sm w-full text-left py-1 text-gray-300 hover:pl-2 duration-300 ease-out hover:text-yellow-600 hover:bg-yellow-600/20 rounded transition-colors"
-                                                    >
-                                                        {term}
-                                                    </button>
-                                                ))}
+                                                {allLoading ? (
+                                                    Array.from({ length: 4 }).map((_, idx) => (
+                                                        <div
+                                                            key={idx}
+                                                            className="h-6 bg-yellow-900/20 animate-pulse rounded-md"
+                                                        />
+                                                    ))
+                                                ) : categories.length > 0 ? (
+                                                    categories.map((category) => (
+                                                        <Link
+                                                            key={category.id}
+                                                            to={category.href}
+                                                            onClick={closeAll}
+                                                            className="block text-sm py-1 text-gray-300 hover:pl-2 duration-300 hover:text-yellow-600 hover:bg-yellow-600/20 rounded transition-colors"
+                                                        >
+                                                            <div className="flex justify-between items-center">
+                                                                <span>{category.name}</span>
+                                                                <span className="text-gray-200 text-xs">({category.count})</span>
+                                                            </div>
+                                                        </Link>
+                                                    ))
+                                                ) : (
+                                                    <p className="text-gray-500 text-sm">No categories available</p>
+                                                )}
                                             </div>
                                         </div>
-                                    )}
+                                        
+                                        {/* Popular Search Terms */}
+                                        {!allLoading && filteredProducts.length > 0 && (
+                                            <div className="mt-6">
+                                                <h4 className="font-semibold text-yellow-400 mb-2">Popular Searches</h4>
+                                                <div className="space-y-1">
+                                                    {['perfume', 'fragrance', 'cologne', 'scent', 'luxury', 'gift'].map((term) => (
+                                                        <button
+                                                            key={term}
+                                                            onClick={() => {
+                                                                setSearchQuery(term);
+                                                                searchInputRef.current?.focus();
+                                                            }}
+                                                            className="block text-sm w-full text-left py-1 text-gray-300 hover:pl-2 duration-300 ease-out hover:text-yellow-600 hover:bg-yellow-600/20 rounded transition-colors"
+                                                        >
+                                                            {term}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </motion.div>
