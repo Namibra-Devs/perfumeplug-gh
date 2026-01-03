@@ -65,22 +65,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       );
 
       console.log("Login Response:", response);
-      console.log("🔍 Detailed Analysis:");
+      console.log("Detailed Analysis:");
       console.log("  - response.success:", response.success, typeof response.success);
       console.log("  - response.data:", response.data);
       console.log("  - response.data exists:", !!response.data);
       console.log("  - Full response keys:", Object.keys(response));
 
-      // Handle successful login - check both success flag and data presence
-      if (response.success && response.data) {
-        console.log("✅ Both success and data are truthy");
-        const { token, customer } = response.data;
-        console.log("✅ Extracted token:", token?.substring(0, 30) + "...");
-        console.log("✅ Extracted customer:", customer?.email);
+      // The API is returning a flat structure, not nested
+      // Check if we have token and customer directly in response
+      if ((response as any).token && (response as any).customer) {
+        console.log("Found token and customer in flat structure");
+        const token = (response as any).token;
+        const customer = (response as any).customer;
         
-        console.log("💾 Storing token in localStorage...");
+        console.log("Extracted token:", token?.substring(0, 30) + "...");
+        console.log("Extracted customer:", customer?.email);
+        
+        console.log("Storing token in localStorage...");
         localStorage.setItem('customerToken', token);
-        console.log("✅ Token stored, verifying:", localStorage.getItem('customerToken')?.substring(0, 30) + "...");
+        console.log("Token stored, verifying:", localStorage.getItem('customerToken')?.substring(0, 30) + "...");
+        
+        setToken(token);
+        setCustomer(customer);
+        
+        toast.success("Login successful!");
+        return customer;
+      } 
+      // Fallback: check for nested structure (original expectation)
+      else if (response.success && response.data) {
+        console.log("Found nested structure");
+        const { token, customer } = response.data;
+        console.log("Extracted token:", token?.substring(0, 30) + "...");
+        console.log("Extracted customer:", customer?.email);
+        
+        console.log("Storing token in localStorage...");
+        localStorage.setItem('customerToken', token);
+        console.log("Token stored, verifying:", localStorage.getItem('customerToken')?.substring(0, 30) + "...");
         
         setToken(token);
         setCustomer(customer);
@@ -88,13 +108,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         toast.success(response.message || "Login successful!");
         return customer;
       } else {
-        console.error("❌ Login failed - condition not met:");
-        console.log("  - response.success:", response.success);
-        console.log("  - response.data:", response.data);
-        console.log("  - response.data truthy:", !!response.data);
+        console.error("Login failed - no valid structure found:");
+        console.log("  - Has flat token:", !!(response as any).token);
+        console.log("  - Has flat customer:", !!(response as any).customer);
+        console.log("  - Has nested success:", !!response.success);
+        console.log("  - Has nested data:", !!response.data);
         
         // Handle API-level error
-        toast.error(response.message || "Login failed");
+        toast.error("Login failed - invalid response structure");
         return undefined;
       }
 
