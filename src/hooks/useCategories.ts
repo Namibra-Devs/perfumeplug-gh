@@ -24,7 +24,7 @@ export function useCategories() {
 
         setError(err.message);
 
-        // 🔥 Apply fallback categories on failure
+        // Apply fallback categories on failure
         setCategories(MockCategories);
       } finally {
         setLoading(false);

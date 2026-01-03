@@ -1,11 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, ShoppingCart, User, Menu, X } from 'lucide-react';
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../../hooks/useCart';
 import { searchProducts } from '../../services/productService';
 import { Product } from '../../types/product';
 import { Navigation } from '../../constants/navLinks';
+import { useProducts } from '../../hooks/useProducts';
+import { matchCategory, debounce, formatCategoryName, validateSearchQuery } from '../../utils/searchUtils';
 
 export const Navbar: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,14 +21,64 @@ export const Navbar: React.FC = () => {
 
     const { getTotalItems } = useCart();
 
-    const categories = [
-        { name: "Men's Perfumes", href: '/shop?category=men' },
-        { name: "Women's Perfumes", href: '/shop?category=women' },
-        { name: 'Unisex', href: '/shop?category=unisex' },
-        { name: 'Luxury Collection', href: '/shop?category=luxury' },
-        { name: 'Body Sprays', href: '/shop?category=body-sprays' },
-        { name: 'Gift Sets', href: '/shop?category=gift-sets' },
-    ];
+    // Fetch all products to extract categories and brands
+    const { products: allProducts, loading: allLoading } = useProducts({
+        page: 1,
+        limit: 1000, // Get all products to extract categories and brands
+    });
+
+    // Extract unique categories and brands from all products
+    const { categories, brands } = useMemo(() => {
+        if (!allProducts || allProducts.length === 0) {
+            return { categories: [], brands: [] };
+        }
+
+        // Get unique categories with counts
+        const categoryMap = new Map<string, number>();
+        const brandMap = new Map<string, number>();
+
+        allProducts.forEach(product => {
+            // Categories
+            if (product.category) {
+                const cat = product.category.toLowerCase();
+                categoryMap.set(cat, (categoryMap.get(cat) || 0) + 1);
+            }
+
+            // Brands
+            if (product.brand) {
+                brandMap.set(product.brand, (brandMap.get(product.brand) || 0) + 1);
+            }
+        });
+
+        const categories = Array.from(categoryMap.entries())
+            .map(([id, count]) => ({
+                id,
+                name: formatCategoryName(id),
+                href: `/shop?category=${id}`,
+                count
+            }))
+            .sort((a, b) => b.count - a.count); // Sort by count descending
+
+        const brands = Array.from(brandMap.entries())
+            .map(([name, count]) => ({ name, count }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 10); // Limit to top 10 brands
+
+        return { categories, brands };
+    }, [allProducts]);
+
+    // Helper function to format category names (moved to utils)
+    // const formatCategoryName = (categoryId: string): string => {
+    //     const categoryNames: Record<string, string> = {
+    //         'men': "Men's Perfumes",
+    //         'women': "Women's Perfumes",
+    //         'unisex': 'Unisex',
+    //         'luxury': 'Luxury Collection',
+    //         'body-sprays': 'Body Sprays',
+    //         'gift-sets': 'Gift Sets'
+    //     };
+    //     return categoryNames[categoryId] || categoryId.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+    // };
 
     // Toggle handlers with mutual exclusion
     const handleSearchToggle = () => {
@@ -76,23 +128,55 @@ export const Navbar: React.FC = () => {
     const handleSearchSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (searchQuery.trim()) {
-            const formatted = searchQuery.trim().toLowerCase();
-            closeAll();
-            // Check if it matches a known category (e.g., "women", "men")
-            const matchedCategory = categories.find(
-            (c) => c.name.toLowerCase().includes(formatted)
-            );
+        const validation = validateSearchQuery(searchQuery);
+        if (!validation.isValid) {
+            console.warn('Invalid search query:', validation.message);
+            return;
+        }
 
-            if (matchedCategory) {
+        const trimmedQuery = searchQuery.trim();
+        closeAll();
+        
+        // Check if it matches a known category using the utility function
+        const matchedCategory = matchCategory(trimmedQuery, categories);
+
+        if (matchedCategory) {
             // Navigate to shop with category filter
-            navigate(`/shop?category=${formatted}`);
-            } else {
+            navigate(`/shop?category=${matchedCategory.id}`);
+        } else {
             // Navigate to shop with search query filter
-            navigate(`/shop?q=${encodeURIComponent(searchQuery)}`);
-            }
+            navigate(`/shop?q=${encodeURIComponent(trimmedQuery)}`);
         }
     };
+
+    // Debounced search function
+    const debouncedSearch = useMemo(
+        () => debounce(async (query: string) => {
+            if (!query.trim()) {
+                setResults([]);
+                setIsSearching(false);
+                return;
+            }
+
+            const validation = validateSearchQuery(query);
+            if (!validation.isValid) {
+                setResults([]);
+                setIsSearching(false);
+                return;
+            }
+
+            try {
+                const data = await searchProducts(query.trim());
+                setResults(data);
+            } catch (error) {
+                console.error("Search failed:", error);
+                setResults([]);
+            } finally {
+                setIsSearching(false);
+            }
+        }, 400),
+        []
+    );
 
     const handleSearchChange = (value: string) => {
         setSearchQuery(value);
@@ -108,17 +192,7 @@ export const Navbar: React.FC = () => {
         }
 
         setIsSearching(true);
-        searchTimeout.current = setTimeout(async () => {
-            try {
-                const data = await searchProducts(value.trim());
-                setResults(data);
-            } catch (error) {
-                console.error("Search failed:", error);
-                setResults([]);
-            } finally {
-                setIsSearching(false);
-            }
-        }, 400); // debounce 400ms
+        debouncedSearch(value);
     };
 
 
@@ -235,49 +309,103 @@ export const Navbar: React.FC = () => {
 
                                 {/* LIVE SEARCH RESULTS */}
                                 {searchQuery && (
-                                <div className="mt-4 bg-black/40 border border-yellow-600/20 backdrop-blur-lg rounded-xl p-3 max-h-72 overflow-y-auto">
+                                <div className="mt-4 bg-black/40 border border-yellow-600/20 backdrop-blur-lg rounded-xl p-3 max-h-80 overflow-y-auto">
 
                                     {isSearching && (
-                                    <p className="text-gray-300 text-sm px-2">Searching...</p>
+                                    <div className="flex items-center justify-center py-4">
+                                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-yellow-400"></div>
+                                        <p className="text-gray-300 text-sm ml-3">Searching...</p>
+                                    </div>
                                     )}
 
                                     {!isSearching && results.length === 0 && (
-                                    <p className="text-gray-400 text-sm px-2">No results found</p>
+                                    <div className="text-center py-4">
+                                        <p className="text-gray-400 text-sm">No products found for "{searchQuery}"</p>
+                                        <p className="text-gray-500 text-xs mt-1">Try different keywords or browse categories below</p>
+                                    </div>
                                     )}
 
                                     {!isSearching && results.length > 0 && (
-                                    <ul className="space-y-2">
-                                        {results.map((p) => (
-                                        <li key={p._id}>
+                                    <div>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <p className="text-yellow-400 text-sm font-medium">
+                                                {results.length} product{results.length !== 1 ? 's' : ''} found
+                                            </p>
                                             <button
-                                            onClick={() => {
-                                                closeAll();
-                                                navigate(`/product/${p._id}`);
-                                            }}
-                                            className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-yellow-600/20 transition"
-                                            >
-                                            <img
-                                                src={p.ecommerceData?.images?.[0]?.url || p.images?.[0]?.url || '/placeholder-product.svg'}
-                                                className="w-10 h-10 rounded object-cover"
-                                                alt={p.name}
-                                                onError={(e) => {
-                                                    (e.target as HTMLImageElement).src = '/placeholder-product.svg';
+                                                onClick={() => {
+                                                    closeAll();
+                                                    navigate(`/shop?q=${encodeURIComponent(searchQuery.trim())}`);
                                                 }}
-                                            />
+                                                className="text-blue-400 hover:text-blue-300 text-xs underline"
+                                            >
+                                                View all results
+                                            </button>
+                                        </div>
+                                        <ul className="space-y-2">
+                                            {results.slice(0, 8).map((p) => (
+                                            <li key={p._id}>
+                                                <button
+                                                onClick={() => {
+                                                    closeAll();
+                                                    navigate(`/product/${p._id}`);
+                                                }}
+                                                className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-600/20 transition-all duration-200 group"
+                                                >
+                                                <div className="relative">
+                                                    <img
+                                                        src={p.ecommerceData?.images?.[0]?.url || p.images?.[0]?.url || '/placeholder-product.svg'}
+                                                        className="w-12 h-12 rounded-lg object-cover border border-yellow-600/20"
+                                                        alt={p.name}
+                                                        onError={(e) => {
+                                                            (e.target as HTMLImageElement).src = '/placeholder-product.svg';
+                                                        }}
+                                                    />
+                                                </div>
 
-                                            <div className="text-left">
-                                                <p className="text-white text-sm font-medium">{p.name}</p>
-                                                <div className="flex items-center gap-2">
-                                                    <p className="text-yellow-400 text-xs">₵{p.sellingPrice?.toFixed(2) || '0.00'}</p>
-                                                    {p.category && (
-                                                        <span className="text-gray-400 text-xs">• {p.category}</span>
+                                                <div className="flex-1 text-left min-w-0">
+                                                    <p className="text-white text-sm font-medium truncate group-hover:text-yellow-300 transition-colors">
+                                                        {p.name}
+                                                    </p>
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <p className="text-yellow-400 text-sm font-semibold">
+                                                            ₵{p.sellingPrice?.toFixed(2) || '0.00'}
+                                                        </p>
+                                                        {p.category && (
+                                                            <span className="text-gray-400 text-xs px-2 py-0.5 bg-gray-700/30 rounded-full">
+                                                                {p.category.replace('-', ' ')}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    {p.description && (
+                                                        <p className="text-gray-400 text-xs mt-1 truncate">
+                                                            {p.description}
+                                                        </p>
                                                     )}
                                                 </div>
+
+                                                <div className="text-gray-400 group-hover:text-yellow-400 transition-colors">
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                    </svg>
+                                                </div>
+                                                </button>
+                                            </li>
+                                            ))}
+                                        </ul>
+                                        {results.length > 8 && (
+                                            <div className="mt-3 pt-3 border-t border-yellow-600/20">
+                                                <button
+                                                    onClick={() => {
+                                                        closeAll();
+                                                        navigate(`/shop?q=${encodeURIComponent(searchQuery.trim())}`);
+                                                    }}
+                                                    className="w-full text-center py-2 text-blue-400 hover:text-blue-300 text-sm font-medium hover:bg-blue-600/10 rounded-lg transition-colors"
+                                                >
+                                                    View all {results.length} results →
+                                                </button>
                                             </div>
-                                            </button>
-                                        </li>
-                                        ))}
-                                    </ul>
+                                        )}
+                                    </div>
                                     )}
                                 </div>
                                 )}
@@ -288,33 +416,61 @@ export const Navbar: React.FC = () => {
                                     <div>
                                         <h4 className="font-semibold text-yellow-400 mb-2">Popular Brands</h4>
                                         <div className="space-y-1">
-                                            {['EMIR', 'Chanel', 'Dior', 'Tom Ford', 'Creed', 'Versace'].map((brand) => (
-                                                <button
-                                                    key={brand}
-                                                    onClick={() => {
-                                                        setSearchQuery(brand);
-                                                        searchInputRef.current?.focus();
-                                                    }}
-                                                    className="block text-sm w-full text-left py-1 text-gray-300 hover:pl-2 duration-300 ease-out hover:text-yellow-600 hover:bg-yellow-600/20 rounded transition-colors"
-                                                >
-                                                    {brand}
-                                                </button>
-                                            ))}
+                                            {allLoading ? (
+                                                Array.from({ length: 4 }).map((_, idx) => (
+                                                    <div
+                                                        key={idx}
+                                                        className="h-6 bg-yellow-900/20 animate-pulse rounded-md"
+                                                    />
+                                                ))
+                                            ) : brands.length > 0 ? (
+                                                brands.slice(0, 6).map((brand) => (
+                                                    <button
+                                                        key={brand.name}
+                                                        onClick={() => {
+                                                            setSearchQuery(brand.name);
+                                                            searchInputRef.current?.focus();
+                                                        }}
+                                                        className="block text-sm w-full text-left py-1 text-gray-300 hover:pl-2 duration-300 ease-out hover:text-yellow-600 hover:bg-yellow-600/20 rounded transition-colors"
+                                                    >
+                                                        <div className="flex justify-between items-center">
+                                                            <span>{brand.name}</span>
+                                                            <span className="text-gray-500 text-xs">({brand.count})</span>
+                                                        </div>
+                                                    </button>
+                                                ))
+                                            ) : (
+                                                <p className="text-gray-500 text-sm">No brands available</p>
+                                            )}
                                         </div>
                                     </div>
                                     <div>
                                         <h4 className="font-semibold text-yellow-400 mb-2">Categories</h4>
                                         <div className="space-y-1">
-                                            {categories.map((category) => (
-                                                <Link
-                                                    key={category.name}
-                                                    to={category.href}
-                                                    onClick={closeAll}
-                                                    className="block text-sm py-1 text-gray-300 hover:pl-2 duration-300 hover:text-yellow-600 hover:bg-yellow-600/20 rounded transition-colors"
-                                                >
-                                                    {category.name}
-                                                </Link>
-                                            ))}
+                                            {allLoading ? (
+                                                Array.from({ length: 4 }).map((_, idx) => (
+                                                    <div
+                                                        key={idx}
+                                                        className="h-6 bg-yellow-900/20 animate-pulse rounded-md"
+                                                    />
+                                                ))
+                                            ) : categories.length > 0 ? (
+                                                categories.map((category) => (
+                                                    <Link
+                                                        key={category.id}
+                                                        to={category.href}
+                                                        onClick={closeAll}
+                                                        className="block text-sm py-1 text-gray-300 hover:pl-2 duration-300 hover:text-yellow-600 hover:bg-yellow-600/20 rounded transition-colors"
+                                                    >
+                                                        <div className="flex justify-between items-center">
+                                                            <span>{category.name}</span>
+                                                            <span className="text-gray-500 text-xs">({category.count})</span>
+                                                        </div>
+                                                    </Link>
+                                                ))
+                                            ) : (
+                                                <p className="text-gray-500 text-sm">No categories available</p>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -350,16 +506,30 @@ export const Navbar: React.FC = () => {
                                     <div className="p-4 border-t border border-yellow-600/20">
                                         <h4 className="font-semibold text-yellow-400 mb-3">Categories</h4>
                                         <div className="grid grid-cols-2 gap-2">
-                                            {categories.map((category) => (
-                                                <Link
-                                                    key={category.name}
-                                                    to={category.href}
-                                                    className="text-sm text-gray-300 hover:text-blue-600 py-1 hover:bg-blue-50 rounded-lg transition-colors"
-                                                    onClick={closeAll}
-                                                >
-                                                    {category.name}
-                                                </Link>
-                                            ))}
+                                            {allLoading ? (
+                                                Array.from({ length: 4 }).map((_, idx) => (
+                                                    <div
+                                                        key={idx}
+                                                        className="h-8 bg-yellow-900/20 animate-pulse rounded-md"
+                                                    />
+                                                ))
+                                            ) : categories.length > 0 ? (
+                                                categories.map((category) => (
+                                                    <Link
+                                                        key={category.id}
+                                                        to={category.href}
+                                                        className="text-sm text-gray-300 hover:text-blue-600 py-1 hover:bg-blue-50 rounded-lg transition-colors"
+                                                        onClick={closeAll}
+                                                    >
+                                                        <div className="flex justify-between items-center">
+                                                            <span>{category.name}</span>
+                                                            <span className="text-gray-500 text-xs">({category.count})</span>
+                                                        </div>
+                                                    </Link>
+                                                ))
+                                            ) : (
+                                                <p className="text-gray-500 text-sm col-span-2">No categories available</p>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
