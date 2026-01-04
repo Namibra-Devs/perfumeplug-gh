@@ -10,7 +10,7 @@ import { Product } from "../types/product";
 import { OrderList } from "../components/order/OrderList";
 import { updateProfile } from "../services/authService";
 import { useToast } from "../hooks/useToast";
-import LoginRegisterSection from "./LoginRegisterSection";
+import { LoginRegisterSection } from "../components/auth";
 
 type TabType = "profile" | "orders" | "wishlist";
 
