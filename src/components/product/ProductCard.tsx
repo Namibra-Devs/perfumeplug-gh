@@ -69,7 +69,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
         className="rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer bg-white border border-gray-100"
         onClick={handleCardClick}
       >
-        <div className="flex h-48 md:h-48">
+        <div className="flex h-56 md:h-48">
           <div className="w-40 md:w-56 relative flex-shrink-0">
             <motion.img
               whileHover={{ scale: 1.05 }}
@@ -153,7 +153,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
               </h3>
 
               {/* Description */}
-              <p className="text-gray-600 text-sm mb-3 line-clamp-2 leading-relaxed">
+              <p className="text-gray-600 text-xs md:text-sm mb-3 line-clamp-2 leading-tight">
                 {product.ecommerceData?.seoDescription || product.description || 'Premium quality perfume with long-lasting fragrance.'}
               </p>
 
