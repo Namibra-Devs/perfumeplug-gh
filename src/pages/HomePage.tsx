@@ -128,29 +128,9 @@ const HomePage: React.FC = () => {
               </Link>
             </div>
             
+            {/* Featured products list */}
             <ProductGrid/>
-
-            {/* {pagination && (
-              <div className="mt-8 flex justify-center gap-2">
-                <button
-                  onClick={() => fetchProducts(pagination.currentPage - 1)}
-                  disabled={!pagination.hasPrevPage}
-                  className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-                >
-                  Previous
-                </button>
-                <span className="px-4 py-2">
-                  Page {pagination.currentPage} of {pagination.totalPages}
-                </span>
-                <button
-                  onClick={() => fetchProducts(pagination.currentPage + 1)}
-                  disabled={!pagination.hasNextPage}
-                  className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-                >
-                  Next
-                </button>
-              </div>
-            )} */}
+  
           </motion.div>
         </div>
       </section>
@@ -378,7 +358,7 @@ const HomePage: React.FC = () => {
               </motion.div>
 
               {/* Heading */}
-              <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white to-yellow-400 bg-clip-text text-transparent mb-4 h-14">
+              <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white to-yellow-400 bg-clip-text text-transparent mb-4 h-20 md:h-14">
                 Stay in the Loop
               </h2>
 
