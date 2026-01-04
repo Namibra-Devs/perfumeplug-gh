@@ -222,12 +222,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
       key={cardKey}
       whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
       transition={{ duration: 0.3 }}
-      className="h-[220px] sm:h-[320px] group rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer bg-white border border-gray-100"
+      className="h-[200px] sm:h-[300px] group rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer bg-white border border-gray-100"
       onClick={handleCardClick}
     >
       <div className="h-full flex flex-col">
         {/* Image Section - Fixed Height */}
-        <div className="relative h-44 sm:h-48 overflow-hidden">
+        <div className="relative h-52 sm:h-56 overflow-hidden">
           <motion.img
             whileHover={{ scale: 1.08 }}
             transition={{ duration: 0.4 }}
