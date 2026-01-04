@@ -69,7 +69,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
         className="rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer bg-white border border-gray-100"
         onClick={handleCardClick}
       >
-        <div className="flex h-40 md:h-48">
+        <div className="flex h-32 md:h-32">
           <div className="w-40 md:w-56 relative flex-shrink-0">
             <motion.img
               whileHover={{ scale: 1.05 }}
@@ -222,7 +222,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
       key={cardKey}
       whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
       transition={{ duration: 0.3 }}
-      className="h-[400px] sm:h-[420px] group rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer bg-white border border-gray-100"
+      className="h-[430px] sm:h-[420px] group rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer bg-white border border-gray-100"
       onClick={handleCardClick}
     >
       <div className="h-full flex flex-col">
