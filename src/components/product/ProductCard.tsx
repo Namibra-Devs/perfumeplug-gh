@@ -153,7 +153,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
               </h3>
 
               {/* Description */}
-              <p className="text-gray-600 text-xs md:text-sm mb-3 line-clamp-2 leading-tight">
+              <p className="text-gray-600 text-xs md:text-sm mb-1.5 md:mb-3 line-clamp-2 leading-tight">
                 {product.ecommerceData?.seoDescription || product.description || 'Premium quality perfume with long-lasting fragrance.'}
               </p>
 
@@ -176,7 +176,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
               )}
             </div>
             
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-1.5 md:gap-3">
               {/* Price Section */}
               <div className="flex flex-col">
                 <div className="flex items-center space-x-2 mb-1">
@@ -227,7 +227,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
     >
       <div className="h-full flex flex-col">
         {/* Image Section - Fixed Height */}
-        <div className="relative h-52 sm:h-56 overflow-hidden">
+        <div className="relative h-68 sm:h-68 overflow-hidden">
           <motion.img
             whileHover={{ scale: 1.08 }}
             transition={{ duration: 0.4 }}
