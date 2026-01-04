@@ -192,7 +192,7 @@ const CategoriesCarousel: React.FC = () => {
             {/* Navigation Buttons */}
             <button
               onClick={goToPrev}
-              className="absolute left-0 -bottom-3 -translate-y-0 z-10 bg-black/50 backdrop-blur-sm hover:bg-black/70 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+              className="absolute left-0 -bottom-3 -translate-y-0 md:bottom-1/2 md:-translate-y-1/2 z-10 bg-black/50 backdrop-blur-sm hover:bg-black/70 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
               aria-label="Previous categories"
             >
               <ChevronLeft className="h-5 w-5" />
@@ -200,7 +200,7 @@ const CategoriesCarousel: React.FC = () => {
 
             <button
               onClick={goToNext}
-              className="absolute right-0 -bottom-3 -translate-y-0 z-10 bg-black/50 backdrop-blur-sm hover:bg-black/70 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+              className="absolute right-0 -bottom-3 -translate-y-0 md:bottom-1/2 md:-translate-y-1/2 z-10 bg-black/50 backdrop-blur-sm hover:bg-black/70 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
               aria-label="Next categories"
             >
               <ChevronRight className="h-5 w-5" />
