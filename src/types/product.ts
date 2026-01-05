@@ -68,24 +68,10 @@ export interface Pagination {
   hasPrevPage: boolean;
 }
 
-
 export interface UseProductsResult {
   products: Product[];
   loading: boolean;
   error: string | null;
   pagination: Pagination;
   fetchProducts: (page: number) => Promise<void>;
-}
-
-export interface SearchProductsRawResponse {
-  success: boolean;
-  data: {
-    products: Product[];
-    pagination: {
-      currentPage: number;
-      totalPages: number;
-      totalProducts: number;
-      limit: number;
-    };
-  };
 }

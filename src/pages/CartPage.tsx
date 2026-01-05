@@ -1,18 +1,41 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react';
+import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, ArrowLeft } from 'lucide-react';
 import Header from '../components/layout/Header';
 import { useCart } from '../hooks/useCart';
 
 const CartPage: React.FC = () => {
   const { items, updateQuantity, removeFromCart, getTotalPrice, clearCart } = useCart();
+  const navigate = useNavigate();
+
+  const handleGoBack = () => {
+    // Check if there's a previous page in history
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      // Fallback to shop page if no history
+      navigate('/shop');
+    }
+  };
 
   if (items.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95 flex items-center justify-center">
         <div className="max-w-md mx-auto text-center p-4">
           <div className="bg-black/20 backdrop-blur-lg border border-yellow-500/20 rounded-2xl shadow-sm p-8">
+            {/* Back Navigation for Empty Cart */}
+            <div className="flex justify-start mb-4">
+              <button
+                onClick={handleGoBack}
+                className="inline-flex items-center gap-2 text-yellow-400 hover:text-yellow-300 transition-colors"
+                title="Go back"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span className="text-sm">Back</span>
+              </button>
+            </div>
+            
             <ShoppingBag className="h-16 w-16 text-yellow-400 mx-auto mb-4" />
             <h1 className="text-2xl font-bold text-gray-300 mb-2">Your cart is empty</h1>
             <p className="text-gray-300 mb-6">Looks like you haven't added any items to your cart yet.</p>
@@ -34,6 +57,18 @@ const CartPage: React.FC = () => {
     <Header title='Cart Page' descripton="Check listed cart item"/>
     <div className="min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95">
       <div className="mx-auto px-6 sm:px-6 lg:px-32 py-20">
+        {/* Back Navigation */}
+        <div className="mb-6">
+          <button
+            onClick={handleGoBack}
+            className="inline-flex items-center gap-2 text-yellow-400 hover:text-yellow-300 transition-colors group"
+            title="Go back"
+          >
+            <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+            <span>Back</span>
+          </button>
+        </div>
+
         {/* Header */}
         <div className="flex flex-col md:flex-row items-start justify-between gap-3 mb-8">
           <h1 className="text-3xl font-bold text-gray-200">Shopping Cart</h1>

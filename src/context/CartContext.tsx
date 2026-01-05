@@ -3,8 +3,6 @@ import { Product } from "../types/product";
 import { CartItem } from "../types/cart";
 import React, { createContext, useReducer, ReactNode, useEffect, useState } from "react";
 import { OrderItem, ShippingAddress } from "../types/order";
-// import { checkoutService, createOrder } from "../services/checkoutService";
-// import { CartItem, DeliveryMethod, Order, PaymentMethod, Product } from '../types';
 
 interface CartState {
   items: CartItem[];
@@ -219,21 +217,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
   // const placeOrder = async (
   //   items: OrderItem[],
   //   shippingAddress: ShippingAddress,
-  //   customerNotes?: string
-  // ) => {
-  //   const newOrder = await checkoutService.checkout({
-  //     items: items.map((item) => ({
-  //       productId: item.productId,
-  //       quantity: item.quantity,
-  //       price: item.price,
-  //     })),
-  //     shippingAddress,
-  //     customerNotes,
-  //   });
-  //   dispatch({ type: "PLACE_ORDER", order: newOrder as unknown as OrderItem });
-  // };
-
-  // const clearOrders = () => dispatch({ type: "CLEAR_ORDERS" });
+  // LEGACY COMMENTED CODE - Removed to keep project clean
 
   return (
     <CartContext.Provider

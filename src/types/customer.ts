@@ -1,3 +1,4 @@
+// ACTIVELY USED TYPE
 export interface Customer {
   _id: string;
   firstName: string;
@@ -11,46 +12,4 @@ export interface Customer {
   totalSpent: number;
   createdAt: string;        // or Date if you parse it
   updatedAt: string;        // or Date if you parse it
-}
-
-export interface CustomerResponse {
-  success: boolean;
-  data: {
-    customer: Customer;
-  };
-}
-
-export type Phone = `+${number}`;
-
-export interface UpdateCustomerProfileRequest {
-  firstName?: string;
-  lastName?: string;     
-  phone?: string;
-  address?: string;
-}
-
-export interface UpdateCustomerProfileResponse {
-  success: boolean;
-  message: string;
-  data: {
-    customer: {
-      _id: string;
-      firstName: string;
-      lastName: string;
-      email: string;
-      phone?: string;
-      address?: string;
-      isRegistered: boolean;
-      loyaltyPoints: number;
-      updatedAt: string; // ISO timestamp
-    };
-  };
-}
-
-
-export interface UpdateCustomerProfileError {
-  success: false;
-  statusCode: 400 | 401 | 500;
-  message: string;
-  errors?: Record<string, string[]>;
 }

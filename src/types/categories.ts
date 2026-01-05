@@ -1,16 +1,7 @@
+// USED TYPES - Category interface is used in hooks
+// Other types are unused but kept for potential future use
+
 export interface Category {
   name: string;
   productCount: number;
-}
-
-
-export interface GetCategoriesResponse {
-  success: boolean;
-  data: {
-    categories: Category[];
-  };
-}
-
-export interface TenantHeader {
-  "X-Tenant-Domain": string;
 }

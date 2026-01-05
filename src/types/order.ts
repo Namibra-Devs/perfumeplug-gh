@@ -41,22 +41,7 @@ export interface Pagination {
   limit: number;
 }
 
-// RAW API RESPONSE SHAPE
-export interface RawGetCustomerOrdersResponse {
-  success: boolean;
-  data: {
-    orders: CustomerOrderSummary[];
-    pagination: Pagination;
-  };
-}
-
-// CLEAN, NORMALIZED RESPONSE SHAPE (used by services + hooks)
-export interface GetCustomerOrdersResponse {
-  orders: CustomerOrderSummary[];
-  pagination: Pagination;
-}
-
-// CUSTOMER ORDER SUMMARY
+// CUSTOMER ORDER SUMMARY - ACTIVELY USED
 export interface CustomerOrderSummary {
   _id: string;
   orderNumber: string;
@@ -81,26 +66,6 @@ export interface CustomerOrderSummary {
   updatedAt: string;
 }
 
-// QUERY PARAMS FOR ORDERS
-export interface GetCustomerOrdersQuery {
-  page?: number;
-  limit?: number;
-  status?: string;
-}
-
-// CREATE ORDER
-export interface CreateOrderRequest {
-  items: {
-    productId: string;
-    quantity: number;
-    price: number;
-  }[];
-  shippingAddress: ShippingAddress & {
-    email: string;
-  };
-  customerNotes?: string;
-  paymentMethod: "paystack";
-}
 
 // ORDER FULL DETAIL
 export interface Order {
