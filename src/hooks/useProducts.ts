@@ -39,7 +39,24 @@ export function useProducts(options: UseProductsOptions = {}) {
       setPagination(data.pagination ?? null);
 
     } catch (err: any) {
-      setError(err.message || "Failed to load products");
+      console.error('Products loading error:', err);
+      
+      // Provide more specific error messages
+      let errorMessage = "Failed to load products";
+      
+      if (err.message?.includes('network') || err.message?.includes('fetch')) {
+        errorMessage = "Network error. Please check your connection and try again.";
+      } else if (err.message?.includes('404')) {
+        errorMessage = "Products not found. The requested resource may not exist.";
+      } else if (err.message?.includes('500')) {
+        errorMessage = "Server error. Please try again later.";
+      } else if (err.message?.includes('timeout')) {
+        errorMessage = "Request timed out. Please try again.";
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
       setProducts([]);
       setPagination(null);
     } finally {

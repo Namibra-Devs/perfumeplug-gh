@@ -14,6 +14,42 @@ export interface FetchProductsOptions {
   sortOrder?: 'asc' | 'desc';
 }
 
+// Frontend fallback sorting function
+function sortProductsOnFrontend(products: Product[], sortBy: string): Product[] {
+  const sortedProducts = [...products];
+  
+  switch (sortBy) {
+    case 'newest':
+      return sortedProducts.sort((a, b) => {
+        const dateA = new Date(a.createdAt || 0).getTime();
+        const dateB = new Date(b.createdAt || 0).getTime();
+        return dateB - dateA; // Newest first
+      });
+      
+    case 'oldest':
+      return sortedProducts.sort((a, b) => {
+        const dateA = new Date(a.createdAt || 0).getTime();
+        const dateB = new Date(b.createdAt || 0).getTime();
+        return dateA - dateB; // Oldest first
+      });
+      
+    case 'price-low-high':
+      return sortedProducts.sort((a, b) => a.sellingPrice - b.sellingPrice);
+      
+    case 'price-high-low':
+      return sortedProducts.sort((a, b) => b.sellingPrice - a.sellingPrice);
+      
+    case 'name':
+      return sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
+      
+    case 'name-desc':
+      return sortedProducts.sort((a, b) => b.name.localeCompare(a.name));
+      
+    default:
+      return sortedProducts;
+  }
+}
+
 export async function fetchProducts(opts: FetchProductsOptions = {}) {
   try {
     const params = new URLSearchParams();
@@ -23,8 +59,28 @@ export async function fetchProducts(opts: FetchProductsOptions = {}) {
     if (opts.category) params.set('category', opts.category);
     if (opts.minPrice !== undefined) params.set('minPrice', String(opts.minPrice));
     if (opts.maxPrice !== undefined) params.set('maxPrice', String(opts.maxPrice));
-    if (opts.sortBy) params.set('sortBy', opts.sortBy);
-    if (opts.sortOrder) params.set('sortOrder', opts.sortOrder);
+    
+    // Map frontend sort values to backend expected values
+    if (opts.sortBy) {
+      const sortMapping: Record<string, { field: string; order: string }> = {
+        'newest': { field: 'createdAt', order: 'desc' },
+        'oldest': { field: 'createdAt', order: 'asc' },
+        'price-low-high': { field: 'sellingPrice', order: 'asc' },
+        'price-high-low': { field: 'sellingPrice', order: 'desc' },
+        'name': { field: 'name', order: 'asc' },
+        'name-desc': { field: 'name', order: 'desc' }
+      };
+      
+      const mapping = sortMapping[opts.sortBy];
+      if (mapping) {
+        params.set('sortBy', mapping.field);
+        params.set('sortOrder', mapping.order);
+      }
+    }
+    
+    if (opts.sortOrder && !opts.sortBy) {
+      params.set('sortOrder', opts.sortOrder);
+    }
 
     const path = `/api/ecommerce/products${params.toString() ? `?${params.toString()}` : ''}`;
     
@@ -57,7 +113,7 @@ export async function fetchProducts(opts: FetchProductsOptions = {}) {
     }>(path);
 
     // Transform API response to match frontend expectations
-    const transformedProducts: Product[] = apiResponse.products.map(product => ({
+    let transformedProducts: Product[] = apiResponse.products.map(product => ({
       _id: product._id,
       name: product.name,
       description: product.description || '',
@@ -92,6 +148,11 @@ export async function fetchProducts(opts: FetchProductsOptions = {}) {
       createdAt: product.createdAt,
       updatedAt: product.updatedAt
     }));
+
+    // Frontend fallback sorting if backend doesn't handle it properly
+    if (opts.sortBy && transformedProducts.length > 0) {
+      transformedProducts = sortProductsOnFrontend(transformedProducts, opts.sortBy);
+    }
 
     const transformedPagination: Pagination | undefined = apiResponse.pagination ? {
       currentPage: apiResponse.pagination.currentPage,

@@ -30,13 +30,30 @@ const ProductGrid = () => {
   if (error) {
     return (
       <div className="text-center py-10 col-span-full">
-        <p className="text-red-500">Error loading products: {String(error)}</p>
-        <button
-          onClick={() => refetch()}
-          className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white mt-4 px-8 py-2 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-        >
-          Retry
-        </button>
+        <div className="bg-red-900/20 backdrop-blur-lg border border-red-600/20 rounded-xl p-6 max-w-sm mx-auto">
+          <div className="h-12 w-12 mx-auto bg-red-600/20 rounded-full flex items-center justify-center mb-4">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            >
+              ⚠️
+            </motion.div>
+          </div>
+          <p className="text-red-300 mb-4">Error loading featured products</p>
+          <p className="text-red-400 text-sm mb-4">{String(error)}</p>
+          <button
+            onClick={() => refetch()}
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-6 py-2 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+          >
+            <span>Retry</span>
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            >
+              🔄
+            </motion.div>
+          </button>
+        </div>
       </div>
     );
   }

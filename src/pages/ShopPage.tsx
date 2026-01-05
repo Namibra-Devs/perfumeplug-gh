@@ -49,10 +49,12 @@ const ShopPage: React.FC = () => {
   }, [products, selectedBrand]);
 
   const sortList = [
-    { value: "newest", label: "Newest" },
+    { value: "newest", label: "Newest First" },
+    { value: "oldest", label: "Oldest First" },
     { value: "price-low-high", label: "Price: Low to High" },
     { value: "price-high-low", label: "Price: High to Low" },
-    { value: "name", label: "Name A-Z" },
+    { value: "name", label: "Name: A to Z" },
+    { value: "name-desc", label: "Name: Z to A" },
   ];
 
   // Extract unique categories and brands from all products
@@ -401,11 +403,16 @@ const ShopPage: React.FC = () => {
                 {/* View + Sort */}
                 <div className="flex items-center space-x-4">
                   <button
-                    title="Sync"
+                    title="Refresh Products"
                     onClick={() => refetch()}
-                    className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                    disabled={loading}
+                    className={`p-2 rounded-lg transition-colors ${
+                      loading 
+                        ? "bg-gray-500 text-gray-300 cursor-not-allowed" 
+                        : "bg-blue-500 text-white hover:bg-blue-600"
+                    }`}
                   >
-                    <RotateCcw size={18} />
+                    <RotateCcw size={18} className={loading ? "animate-spin" : ""} />
                   </button>
 
                   {/* View Mode Buttons */}
@@ -465,8 +472,45 @@ const ShopPage: React.FC = () => {
               </div>
             )}
 
+            {/* ERROR STATE */}
+            {!loading && error && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center py-16"
+              >
+                <div className="bg-red-900/20 backdrop-blur-lg border border-red-600/20 rounded-2xl p-8 max-w-md mx-auto">
+                  <div className="mb-6">
+                    <div className="h-16 w-16 mx-auto bg-red-600/20 rounded-full flex items-center justify-center mb-4">
+                      <X className="h-8 w-8 text-red-400" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-white mb-2">Error Loading Products</h3>
+                    <p className="text-red-300 mb-4">{error}</p>
+                  </div>
+
+                  <div className="space-y-3">
+                    <button
+                      onClick={() => refetch()}
+                      className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-300"
+                    >
+                      Try Again
+                    </button>
+                    
+                    {hasActiveFilters && (
+                      <button
+                        onClick={clearFilters}
+                        className="w-full bg-gray-600 hover:bg-gray-700 text-white py-2 px-6 rounded-lg font-medium transition-all duration-300"
+                      >
+                        Clear Filters & Retry
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
             {/* SUCCESS */}
-            {filteredProducts.length > 0 && (
+            {!loading && !error && filteredProducts.length > 0 && (
               <motion.div
                 layout
                 className={
