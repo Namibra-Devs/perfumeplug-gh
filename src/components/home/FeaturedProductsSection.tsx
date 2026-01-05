@@ -26,7 +26,7 @@ const FeaturedProductsSection: React.FC = () => {
             <Badge delay={0.1}>
               Featured Products
             </Badge>
-            <p className="text-white/70 mt-2">Curated selection of our most popular fragrances</p>
+            <p className="text-white/70 mt-2 text-center">Curated selection of our most popular fragrances</p>
           </div>
           
           {/* Featured products list */}
