@@ -296,24 +296,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
           {/* Category and Brand Tags */}
           <div className="flex items-center gap-1 sm:gap-2 mb-2 min-h-[20px]">
             {product?.category && (
-              <span className="text-xs font-medium text-purple-700 bg-purple-100 px-2 py-1 rounded-full capitalize">
+              <span className="text-[12px] md:text-xs font-medium text-purple-700 bg-purple-100 px-2 py-1 rounded-full capitalize">
                 {product.category}
               </span>
             )}
             {product?.brand && (
-              <span className="text-xs font-medium text-blue-700 bg-blue-100 px-2 py-1 rounded-full">
+              <span className="text-[12px] md:text-xs font-medium text-blue-700 bg-blue-100 px-2 py-1 rounded-full">
                 {product.brand}
               </span>
             )}
           </div>
           
           {/* Product Name - Fixed Height */}
-          <h3 className="font-bold text-gray-900 text-xs sm:text-sm leading-tight mb-2 line-clamp-2 h-8 sm:h-10 flex items-start">
+          <h3 className="font-bold text-gray-900 text-sm leading-tight mb-2 line-clamp-2 h-8 sm:h-10 flex items-start">
             {product.name}
           </h3>
 
           {/* Product Description - Added for Grid View */}
-          <p className="text-gray-600 text-xs leading-tight mb-2 pb-2 line-clamp-2 h-6 sm:h-8 flex items-start">
+          <p className="text-gray-600 text-xs leading-tight mb-2 line-clamp-2 h-8 sm:h-8 flex items-start">
             {product.ecommerceData?.seoDescription || product.description || 'Premium quality perfume with long-lasting fragrance.'}
           </p>
 
