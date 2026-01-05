@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Filter, Grid, List, RotateCcw, X, Search, Tag } from "lucide-react";
+import { ArrowLeft, ArrowRight, Filter, Grid, List, RotateCcw, X, Search, Tag, AlertTriangle } from "lucide-react";
 
 import ProductCard from "../components/product/ProductCard";
 import Header from "../components/layout/Header";
@@ -500,17 +500,17 @@ const ShopPage: React.FC = () => {
               >
                 <div className="bg-red-900/20 backdrop-blur-lg border border-red-600/20 rounded-2xl p-8 max-w-md mx-auto">
                   <div className="mb-6">
-                    <div className="h-16 w-16 mx-auto bg-red-600/20 rounded-full flex items-center justify-center mb-4">
-                      <X className="h-8 w-8 text-red-400" />
+                    <div className="h-14 w-14 mx-auto bg-red-600/20 rounded-full flex items-center justify-center mb-4">
+                      <AlertTriangle size={24} className="text-red-400" />
                     </div>
-                    <h3 className="text-xl font-semibold text-white mb-2">Error Loading Products</h3>
-                    <p className="text-red-300 mb-4">{error}</p>
+                    <h3 className="text-lg font-semibold text-white mb-2">Error Loading Products</h3>
+                    <p className="text-sm text-red-300 mb-4">{error}</p>
                   </div>
 
                   <div className="space-y-3">
                     <button
                       onClick={() => refetch()}
-                      className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-300"
+                      className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white text-sm py-3 px-6 rounded-lg font-semibold transition-all duration-300"
                     >
                       Try Again
                     </button>

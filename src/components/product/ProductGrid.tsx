@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import ProductCard from "./ProductCard";
 import { useProducts } from "../../hooks/useProducts";
+import { RefreshCcw, TriangleAlert } from "lucide-react";
 
 const ProductGrid = () => {
   const { products, loading, error, refetch} = useProducts();
@@ -32,12 +33,7 @@ const ProductGrid = () => {
       <div className="text-center py-10 col-span-full">
         <div className="bg-red-900/20 backdrop-blur-lg border border-red-600/20 rounded-xl p-6 max-w-sm mx-auto">
           <div className="h-12 w-12 mx-auto bg-red-600/20 rounded-full flex items-center justify-center mb-4">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            >
-              ⚠️
-            </motion.div>
+            <TriangleAlert className="text-red-600"/>
           </div>
           <p className="text-red-300 mb-4">Error loading featured products</p>
           <p className="text-red-400 text-sm mb-4">{String(error)}</p>
@@ -46,12 +42,7 @@ const ProductGrid = () => {
             className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-6 py-2 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
           >
             <span>Retry</span>
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            >
-              🔄
-            </motion.div>
+            <RefreshCcw size={18}/>
           </button>
         </div>
       </div>
