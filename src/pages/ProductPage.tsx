@@ -337,10 +337,10 @@ const ProductPage: React.FC = () => {
 
                 {/* Product ID and timestamps */}
                 <div className="flex items-center gap-4 mt-3 text-xs text-gray-400">
-                  <span>ID: {product._id.slice(-8)}</span>
+                  {/* <span>ID: {product._id.slice(-8)}</span>
                   {product.createdAt && (
                     <span>Added: {new Date(product.createdAt).toLocaleDateString()}</span>
-                  )}
+                  )} */}
                   {product.sku && (
                     <span>SKU: {product.sku}</span>
                   )}
@@ -697,10 +697,10 @@ const ProductPage: React.FC = () => {
 
           {/* Related Products */}
           <div className="mt-16">
-            <h2 className="text-2xl font-bold text-gray-300 mb-8">
+            <h2 className="text-xl font-bold text-gray-300 mb-8">
               Related Products
               {product?.category && (
-                <span className="text-lg text-gray-400 font-normal ml-2">
+                <span className="text-sm text-gray-400 font-normal ml-2">
                   in {product.category.replace('-', ' ')}
                 </span>
               )}
