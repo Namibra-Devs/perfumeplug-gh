@@ -222,12 +222,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
       key={cardKey}
       whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
       transition={{ duration: 0.3 }}
-      className="h-[240px] sm:h-[340px] group rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer bg-white border border-gray-100"
+      className="h-[320px] sm:h-[450px] group rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer bg-white border border-gray-100"
       onClick={handleCardClick}
     >
       <div className="h-full flex flex-col">
         {/* Image Section - Fixed Height */}
-        <div className="relative h-68 sm:h-68 overflow-hidden">
+        <div className="relative h-40 sm:h-56 overflow-hidden">
           <motion.img
             whileHover={{ scale: 1.08 }}
             transition={{ duration: 0.4 }}
@@ -311,6 +311,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
           <h3 className="font-bold text-gray-900 text-xs sm:text-sm leading-tight mb-2 line-clamp-2 h-8 sm:h-10 flex items-start">
             {product.name}
           </h3>
+
+          {/* Product Description - Added for Grid View */}
+          <p className="text-gray-600 text-xs leading-tight mb-2 line-clamp-2 h-6 sm:h-8 flex items-start">
+            {product.ecommerceData?.seoDescription || product.description || 'Premium quality perfume with long-lasting fragrance.'}
+          </p>
 
           {/* Product Tags - Limited and Responsive */}
           {product.ecommerceData?.tags && product.ecommerceData.tags.length > 0 && (
