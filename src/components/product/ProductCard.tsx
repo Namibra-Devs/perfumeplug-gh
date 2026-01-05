@@ -313,7 +313,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
           </h3>
 
           {/* Product Description - Added for Grid View */}
-          <p className="text-gray-600 text-xs leading-tight mb-2 line-clamp-2 h-6 sm:h-8 flex items-start">
+          <p className="text-gray-600 text-xs leading-tight mb-2 pb-2 line-clamp-2 h-6 sm:h-8 flex items-start">
             {product.ecommerceData?.seoDescription || product.description || 'Premium quality perfume with long-lasting fragrance.'}
           </p>
 
