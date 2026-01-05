@@ -308,7 +308,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
           </div>
           
           {/* Product Name - Fixed Height */}
-          <h3 className="font-bold text-gray-900 text-sm leading-tight mb-2 line-clamp-2 min-h-8 sm:min-h-10 flex items-start">
+          <h3 className="font-bold text-gray-900 text-sm leading-tight mb-2 line-clamp-2 max-h-8 sm:max-h-10 flex items-start">
             {product.name}
           </h3>
 
