@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 // import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Heart, ShoppingCart, ZoomIn, ChevronLeft, ChevronRight, User2, HeartOff } from 'lucide-react';
 import ProductCard from '../components/product/ProductCard';
 import Header from '../components/layout/Header';
+import { SEOHead } from '../components/seo';
+import { generateProductSEO } from '../utils/seo';
+import { seoConfig } from '../config/seo';
 import { useCart } from '../hooks/useCart';
 import { useRelatedProducts } from '../hooks/useRelatedProducts';
 import { getProduct } from '../services/productService';
@@ -197,8 +200,15 @@ const ProductPage: React.FC = () => {
     navigate("/checkout");
   };
 
+  // Generate SEO data for the product
+  const seo = useMemo(() => {
+    if (!product) return null;
+    return generateProductSEO(product);
+  }, [product]);
+
   return (
     <>
+      {seo && <SEOHead seo={seo} canonical={`${seoConfig.baseUrl}/product/${id}`} />}
       <Header 
         title={product.ecommerceData?.seoTitle || product.name} 
         descripton={product.ecommerceData?.seoDescription || product.description}

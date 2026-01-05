@@ -6,6 +6,8 @@ import { ArrowLeft, ArrowRight, Filter, Grid, List, RotateCcw, X, Search, Tag } 
 import ProductCard from "../components/product/ProductCard";
 import Header from "../components/layout/Header";
 import CustomSelect from "../components/ui/CustomSelect";
+import { SEOHead } from "../components/seo";
+import { generateCategorySEO, generateSearchSEO, generateSEO } from "../utils/seo";
 
 import { useProducts } from "../hooks/useProducts";
 import { ProductSkeleton } from "../components/product/ProductSkeleton";
@@ -158,8 +160,25 @@ const ShopPage: React.FC = () => {
     }
   };
 
+  // Generate dynamic SEO based on current filters
+  const seo = useMemo(() => {
+    if (searchQuery) {
+      return generateSearchSEO(searchQuery, filteredProducts.length);
+    } else if (category !== "all") {
+      const categoryData = categories.find(cat => cat.name === category);
+      return generateCategorySEO(category, categoryData?.count);
+    } else {
+      return generateSEO({
+        title: 'Shop All Perfumes & Fragrances',
+        description: 'Browse our complete collection of authentic designer perfumes, luxury fragrances, and body sprays. Find the perfect scent with free shipping on orders over ₵200.',
+        keywords: ['shop perfumes', 'all fragrances', 'perfume collection', 'buy perfumes online Ghana']
+      });
+    }
+  }, [searchQuery, category, categories, filteredProducts.length]);
+
   return (
     <>
+      <SEOHead seo={seo} />
       <Header title="Shop Perfumes" descripton="Discover our curated collection" />
 
       <div className="min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95">

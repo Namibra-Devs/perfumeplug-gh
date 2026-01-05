@@ -2,6 +2,9 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import Footer from './Footer';
 import { AlertCartItems } from '../cart/AlertCartItems';
+import { StructuredData, organizationStructuredData, websiteStructuredData, storeStructuredData } from '../seo';
+import GoogleAnalytics from '../analytics/GoogleAnalytics';
+import { seoConfig } from '../../config/seo';
 import { useCart } from '../../hooks/useCart';
 
 interface LayoutProps {
@@ -33,6 +36,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <>
+      {/* Google Analytics */}
+      <GoogleAnalytics trackingId={seoConfig.analytics.googleAnalyticsId} />
+      
+      {/* Global Structured Data */}
+      <StructuredData data={organizationStructuredData} />
+      <StructuredData data={websiteStructuredData} />
+      <StructuredData data={storeStructuredData} />
+      
       <div className="min-h-screen flex flex-col">
         <main className="flex-grow">{children}</main>
         {!shouldHideFooter && <Footer />}

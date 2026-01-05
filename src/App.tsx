@@ -1,5 +1,6 @@
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 import Layout from './components/layout/Layout';
@@ -18,29 +19,31 @@ import { ToastProvider } from './context/ToastContext';
 
 function App() {
   return (
-    <ToastProvider>
-     <AuthProvider>
-      <CartProvider>
-        <Router>
-          <ScrollToTop />
-          <Layout>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/shop" element={<ShopPage />} />
-              <Route path="/product/:id" element={<ProductPage />} />
-              <Route path="/cart" element={<CartPage />} />
-              <Route path="/checkout" element={<CheckoutPage />} />
-              <Route path="/payment/callback" element={<PaymentCallback />} />
-              <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
-              <Route path="/account" element={<AccountPage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/contact" element={<ContactPage />} />
-            </Routes>
-          </Layout>
-        </Router>
-      </CartProvider>
-    </AuthProvider>
-    </ToastProvider>
+    <HelmetProvider>
+      <ToastProvider>
+        <AuthProvider>
+          <CartProvider>
+            <Router>
+              <ScrollToTop />
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/shop" element={<ShopPage />} />
+                  <Route path="/product/:id" element={<ProductPage />} />
+                  <Route path="/cart" element={<CartPage />} />
+                  <Route path="/checkout" element={<CheckoutPage />} />
+                  <Route path="/payment/callback" element={<PaymentCallback />} />
+                  <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
+                  <Route path="/account" element={<AccountPage />} />
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route path="/contact" element={<ContactPage />} />
+                </Routes>
+              </Layout>
+            </Router>
+          </CartProvider>
+        </AuthProvider>
+      </ToastProvider>
+    </HelmetProvider>
   );
 }
 

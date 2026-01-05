@@ -77,6 +77,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
               src={productImage.url || '/placeholder-product.svg'}
               alt={productImage.altText || product.name}
               className="w-full h-full object-cover"
+              loading="lazy"
               onError={(e) => {
                 (e.target as HTMLImageElement).src = '/placeholder-product.svg';
               }}
@@ -234,6 +235,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
             src={productImage.url || '/placeholder-product.svg'}
             alt={productImage.altText || product.name}
             className="w-full h-full object-cover"
+            loading="lazy"
             onError={(e) => {
               (e.target as HTMLImageElement).src = '/placeholder-product.svg';
             }}

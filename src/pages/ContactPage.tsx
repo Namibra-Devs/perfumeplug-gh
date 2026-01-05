@@ -1,5 +1,8 @@
 import React from 'react';
 import Header from '../components/layout/Header';
+import { SEOHead } from '../components/seo';
+import { generateSEO } from '../utils/seo';
+import { seoConfig } from '../config/seo';
 import {
   ContactInfoSection,
   ContactFormSection,
@@ -9,8 +12,15 @@ import {
 } from '../components/contact';
 
 const ContactPage: React.FC = () => {
+  const seo = generateSEO({
+    title: 'Contact PerfumePlug Ghana - Get In Touch',
+    description: 'Contact PerfumePlug Ghana for inquiries about perfumes, orders, or customer support. Call +233 50-666-2618 or visit our store. We\'re here to help with all your fragrance needs.',
+    keywords: ['contact perfumeplug', 'perfume store contact Ghana', 'fragrance customer service', 'perfume shop phone number', 'perfume store location Ghana']
+  });
+
   return (
     <>
+      <SEOHead seo={seo} canonical={`${seoConfig.baseUrl}/contact`} />
       <Header 
         title='Get In Touch' 
         descripton='We are here to help you find your perfect fragrance. Reach out to us through any channel below.'
