@@ -7,7 +7,7 @@ import { ShoppingBag, MessageCircle, ArrowRight } from 'lucide-react';
 const CTASection: React.FC = () => {
   return (
     <section className="py-16 md:py-24">
-      <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <div className="px-4 sm:px-4 lg:px-32 mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}

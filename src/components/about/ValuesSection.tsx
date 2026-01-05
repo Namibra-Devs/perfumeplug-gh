@@ -2,11 +2,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { values, stats } from '../../assets/aboutData';
+import { ShoppingBag } from 'lucide-react';
 
 const ValuesSection: React.FC = () => {
   return (
     <section className="py-16 md:py-24">
-      <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <div className="px-4 sm:px-4 lg:px-32 mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -14,10 +15,17 @@ const ValuesSection: React.FC = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
-            Why Choose PerfumePlug GH?
-          </h2>
-          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">
+          <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-xl font-semibold mb-4 shadow-lg"
+            >
+              <ShoppingBag className="h-4 w-4" />
+              <span className="text-sm uppercase tracking-wide">Why Choose Us?</span>
+            </motion.div>
+          <p className="text-[17px] md:text-[18px] text-gray-300 max-w-3xl mx-auto">
             Discover what sets us apart in the world of fragrances
           </p>
         </motion.div>
@@ -33,10 +41,10 @@ const ValuesSection: React.FC = () => {
               viewport={{ once: true }}
               className="group text-center hover:transform hover:scale-105 transition-all duration-300"
             >
-              <div className="w-20 h-20 bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 backdrop-blur-lg border border-yellow-600/30 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:border-yellow-500/60 transition-all duration-300">
-                <value.icon className="h-10 w-10 text-yellow-400 group-hover:text-yellow-300 transition-colors duration-300" />
+              <div className="w-16 h-16 bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 backdrop-blur-lg border border-yellow-600/30 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:border-yellow-500/60 transition-all duration-300">
+                <value.icon className="h-8 w-8 text-yellow-400 group-hover:text-yellow-300 transition-colors duration-300" />
               </div>
-              <h3 className="text-xl md:text-2xl font-semibold text-white mb-4 group-hover:text-yellow-300 transition-colors duration-300">
+              <h3 className="text-xl md:text-xl font-semibold text-white mb-4 group-hover:text-yellow-300 transition-colors duration-300">
                 {value.title}
               </h3>
               <p className="text-gray-300 leading-relaxed text-sm md:text-base">
@@ -64,7 +72,7 @@ const ValuesSection: React.FC = () => {
                 viewport={{ once: true }}
                 className="text-center group"
               >
-                <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600 mb-2 group-hover:scale-110 transition-transform duration-300">
+                <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-700 mb-2 group-hover:scale-110 transition-transform duration-300">
                   {stat.number}
                 </div>
                 <div className="text-gray-300 text-sm md:text-base lg:text-lg font-medium">

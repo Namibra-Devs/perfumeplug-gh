@@ -291,7 +291,7 @@ const CategoriesCarousel: React.FC = () => {
               to="/shop"
               className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
-              <span>View All Products</span>
+              <span className='text-sm'>View All Products</span>
               <ChevronRight className="h-5 w-5" />
             </Link>
           </motion.div>

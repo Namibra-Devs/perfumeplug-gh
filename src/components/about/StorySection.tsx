@@ -2,11 +2,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { storyContent } from '../../assets/aboutData';
+import { ShoppingBag } from 'lucide-react';
 
 const StorySection: React.FC = () => {
   return (
     <section className="py-16 md:py-24">
-      <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <div className="px-4 sm:px-4 lg:px-32 mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -14,10 +15,18 @@ const StorySection: React.FC = () => {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
-              {storyContent.title}
-            </h2>
-            <div className="space-y-6 text-base md:text-lg text-gray-300 leading-relaxed">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-xl font-semibold mb-4 shadow-lg"
+            >
+              <ShoppingBag className="h-4 w-4" />
+              <span className="text-sm uppercase tracking-wide">{storyContent.title}</span>
+            </motion.div>
+
+            <div className="space-y-6 text-base md:text-[17px] text-gray-300 leading-relaxed">
               {storyContent.paragraphs.map((paragraph, index) => (
                 <motion.p
                   key={index}
@@ -39,7 +48,7 @@ const StorySection: React.FC = () => {
             viewport={{ once: true }}
             className="relative"
           >
-            <div className="relative h-[400px] md:h-[500px] lg:h-[600px] rounded-2xl overflow-hidden shadow-2xl">
+            <div className="relative h-[400px] md:h-[500px] lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl">
               <img
                 src={storyContent.image}
                 alt="Perfume Collection"

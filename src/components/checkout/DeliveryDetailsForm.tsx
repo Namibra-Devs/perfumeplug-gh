@@ -91,7 +91,7 @@ const DeliveryDetailsForm: FC<Props> = ({
             <input
               type="tel"
               className="input w-full px-3 py-2.5 outline-none bg-transparent text-white text-sm border border-yellow-600/20 focus:ring-2 focus:ring-yellow-500 rounded-lg"
-              placeholder="Phone (e.g., 0242826513)"
+              placeholder="Phone (e.g., 0240000000)"
               value={data.phone}
               onChange={(e) => setData({ ...data, phone: e.target.value })}
             />
