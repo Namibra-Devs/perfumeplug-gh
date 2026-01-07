@@ -36,19 +36,19 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose, className = '' }
   // Search cache for performance
   const { getCachedResults, setCachedResults } = useSearchCache();
 
-  // Fetch all products to extract categories and enable frontend search
+  // Fetch ALL products to extract categories and enable frontend search
   const { products: allProducts, loading: allLoading } = useProducts({
     page: 1,
-    limit: 500, // Adjust based on your needs
+    limit: 10000, // High limit to ensure we get all products for category extraction and search
   });
 
-  // Extract unique categories from all products
-  const { categories, filteredProducts } = useMemo(() => {
+  // Extract categories from ALL products and prepare for search
+  const { processedCategories, filteredProducts } = useMemo(() => {
     if (!allProducts || allProducts.length === 0) {
-      return { categories: [], filteredProducts: [] };
+      return { processedCategories: [], filteredProducts: [] };
     }
 
-    // Get unique categories with counts
+    // Extract ALL categories from ALL products
     const categoryMap = new Map<string, number>();
 
     allProducts.forEach(product => {
@@ -58,7 +58,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose, className = '' }
       }
     });
 
-    const categories = Array.from(categoryMap.entries())
+    console.log(`SearchBar: Processed ${allProducts.length} products, found ${categoryMap.size} unique categories:`, Array.from(categoryMap.keys()));
+
+    // Convert categories to the expected format
+    const processedCategories = Array.from(categoryMap.entries())
       .map(([id, count]) => ({
         id,
         name: formatCategoryName(id),
@@ -67,7 +70,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose, className = '' }
       }))
       .sort((a, b) => b.count - a.count); // Sort by count descending
 
-    return { categories, filteredProducts: allProducts };
+    return { 
+      processedCategories, 
+      filteredProducts: allProducts 
+    };
   }, [allProducts]);
 
   // Frontend search function
@@ -194,7 +200,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose, className = '' }
     onClose();
     
     // Check if it matches a known category
-    const matchedCategory = matchCategory(trimmedQuery, categories);
+    const matchedCategory = matchCategory(trimmedQuery, processedCategories);
 
     if (matchedCategory) {
       navigate(`/shop?category=${matchedCategory.id}`);
@@ -262,7 +268,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose, className = '' }
 
           {/* Search Suggestions */}
           <SearchSuggestions
-            categories={categories}
+            categories={processedCategories}
             allLoading={allLoading}
             hasHistory={hasHistory}
             getRecentSearches={getRecentSearches}

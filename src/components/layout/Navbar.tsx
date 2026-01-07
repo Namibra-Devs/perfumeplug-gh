@@ -14,13 +14,13 @@ export const Navbar: React.FC = () => {
 
     const { getTotalItems } = useCart();
 
-    // Fetch all products to extract categories for mobile menu
-    const { products: allProducts, loading: allLoading } = useProducts({
+    // Fetch ALL products to extract categories for mobile menu
+    const { products: allProducts, loading: allProductsLoading } = useProducts({
         page: 1,
-        limit: 500,
+        limit: 10000, // High limit to ensure we get all products for category extraction
     });
 
-    // Extract unique categories from all products for mobile menu
+    // Extract categories from ALL products for mobile menu
     const categories = useMemo(() => {
         if (!allProducts || allProducts.length === 0) {
             return [];
@@ -35,6 +35,8 @@ export const Navbar: React.FC = () => {
             }
         });
 
+        console.log(`Navbar: Processed ${allProducts.length} products, found ${categoryMap.size} unique categories:`, Array.from(categoryMap.keys()));
+
         return Array.from(categoryMap.entries())
             .map(([id, count]) => ({
                 id,
@@ -42,7 +44,7 @@ export const Navbar: React.FC = () => {
                 href: `/shop?category=${id}`,
                 count
             }))
-            .sort((a, b) => b.count - a.count);
+            .sort((a, b) => b.count - a.count); // Sort by count descending
     }, [allProducts]);
 
     // Toggle handlers with mutual exclusion
@@ -166,7 +168,7 @@ export const Navbar: React.FC = () => {
                                         <Link
                                             key={item.name}
                                             to={item.href}
-                                            className="text-gray-300 text-sm hover:text-yellow-800 font-medium py-2 px-4 hover:bg-blue-50 rounded-lg transition-colors"
+                                            className="text-gray-300 text-sm hover:text-yellow-800 font-medium py-2 px-4 mx-2 hover:pl-2 duration-300 hover:text-yellow-600 hover:bg-yellow-600/20 rounded transition-colors"
                                             onClick={closeAll}
                                         >
                                             {item.name}
@@ -176,8 +178,8 @@ export const Navbar: React.FC = () => {
                                     {/* Mobile Categories */}
                                     <div className="p-4 border-t border border-yellow-600/20">
                                         <h4 className="font-semibold text-yellow-400 mb-3">Categories</h4>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            {allLoading ? (
+                                        <div className="grid grid-cols-2 gap-4">
+                                            {allProductsLoading ? (
                                                 Array.from({ length: 4 }).map((_, idx) => (
                                                     <div
                                                         key={idx}
@@ -189,7 +191,7 @@ export const Navbar: React.FC = () => {
                                                     <Link
                                                         key={category.id}
                                                         to={category.href}
-                                                        className="text-sm text-gray-300 hover:text-blue-600 py-1 hover:bg-blue-50 rounded-lg transition-colors"
+                                                        className="text-sm py-1 text-gray-300 hover:pl-2 duration-300 hover:text-yellow-600 hover:bg-yellow-600/20 rounded transition-colors"
                                                         onClick={closeAll}
                                                     >
                                                         <div className="flex justify-between items-center">

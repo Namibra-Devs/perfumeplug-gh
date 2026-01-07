@@ -1,8 +1,45 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Twitter, Instagram, Mail, Phone, MapPin, ArrowRight } from 'lucide-react';
+import { useProducts } from '../../hooks/useProducts';
+import { formatCategoryName } from '../../utils/searchUtils';
 
 const Footer: React.FC = () => {
+  // Fetch ALL products to extract categories for footer
+  const { products: allProducts, loading: allProductsLoading } = useProducts({
+    page: 1,
+    limit: 10000, // High limit to ensure we get all products for category extraction
+  });
+
+  // Extract categories from ALL products
+  const categories = useMemo(() => {
+    if (!allProducts || allProducts.length === 0) {
+      return [];
+    }
+
+    const categoryMap = new Map<string, number>();
+
+    allProducts.forEach(product => {
+      if (product.category) {
+        const cat = product.category.toLowerCase();
+        categoryMap.set(cat, (categoryMap.get(cat) || 0) + 1);
+      }
+    });
+
+    console.log(`Footer: Processed ${allProducts.length} products, found ${categoryMap.size} unique categories:`, Array.from(categoryMap.keys()));
+
+    // Convert to array, sort by count, and limit to top 4 for footer
+    return Array.from(categoryMap.entries())
+      .map(([id, count]) => ({
+        id,
+        name: formatCategoryName(id),
+        href: `/shop?category=${id}`,
+        count
+      }))
+      .sort((a, b) => b.count - a.count) // Sort by count descending
+      .slice(0, 4); // Limit to top 4 categories for footer
+  }, [allProducts]);
+
   return (
     <footer className="bg-black/90 text-white">
       <div className="px-6 sm:px-6 lg:px-32 pt-20 pb-6">
@@ -53,18 +90,38 @@ const Footer: React.FC = () => {
           <div className="lg:col-span-1">
             <h3 className="font-semibold text-lg mb-4">Categories</h3>
             <ul className="space-y-3 text-sm">
-              <li><Link to="/shop?category=men" className="text-gray-400 hover:text-white transition-colors flex items-center">
-                <ArrowRight className="h-3 w-3 mr-2" /> Men's Perfumes
-              </Link></li>
-              <li><Link to="/shop?category=women" className="text-gray-400 hover:text-white transition-colors flex items-center">
-                <ArrowRight className="h-3 w-3 mr-2" /> Women's Perfumes
-              </Link></li>
-              <li><Link to="/shop?category=unisex" className="text-gray-400 hover:text-white transition-colors flex items-center">
-                <ArrowRight className="h-3 w-3 mr-2" /> Unisex
-              </Link></li>
-              <li><Link to="/shop?category=luxury" className="text-gray-400 hover:text-white transition-colors flex items-center">
-                <ArrowRight className="h-3 w-3 mr-2" /> Luxury Collection
-              </Link></li>
+              {allProductsLoading ? (
+                // Loading skeleton
+                Array.from({ length: 4 }).map((_, idx) => (
+                  <li key={idx}>
+                    <div className="h-4 bg-gray-700 animate-pulse rounded w-3/4"></div>
+                  </li>
+                ))
+              ) : categories.length > 0 ? (
+                // Dynamic categories from API
+                categories.map((category) => (
+                  <li key={category.id}>
+                    <Link 
+                      to={category.href} 
+                      className="text-gray-400 hover:text-white transition-colors flex items-center"
+                    >
+                      <ArrowRight className="h-3 w-3 mr-2" /> 
+                      {category.name} ({category.count})
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                // Fallback if no categories found
+                <li>
+                  <Link 
+                    to="/shop" 
+                    className="text-gray-400 hover:text-white transition-colors flex items-center"
+                  >
+                    <ArrowRight className="h-3 w-3 mr-2" /> 
+                    All Products
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
 

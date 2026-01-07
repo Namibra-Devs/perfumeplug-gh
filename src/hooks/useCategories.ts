@@ -1,36 +1,44 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+// src/hooks/useCategories.ts
 import { useEffect, useState } from "react";
-import { apiFetch } from "../lib/api";
-import { Category } from "../types/categories";
+import { fetchCategories } from "../services/productService";
 
+export interface CategoryData {
+  id: string;
+  name: string;
+  count: number;
+}
 
 export function useCategories() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [categories, setCategories] = useState<CategoryData[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function load() {
+    const loadCategories = async () => {
+      setLoading(true);
+      setError(null);
+
       try {
-        setLoading(true);
-
-        // apiFetch returns the 'data' part: { categories: [...] }
-        const data = await apiFetch<{ categories: string[] }>("/api/ecommerce/categories");
-
-        setCategories(data.categories.map(name => ({ name, productCount: 0 })));
+        const categoriesData = await fetchCategories();
+        setCategories(categoriesData);
+        
+        // Debug: Log categories fetched from API
+        console.log(`useCategories: Fetched ${categoriesData.length} categories from API:`, categoriesData.map(c => c.id));
       } catch (err: any) {
-        console.error("Category fetch failed - using fallback categories:", err);
-
-        setError(err.message);
-
+        console.error('Categories loading error:', err);
+        setError(err.message || "Failed to load categories");
+        setCategories([]);
       } finally {
         setLoading(false);
       }
-    }
+    };
 
-    load();
+    loadCategories();
   }, []);
 
-
-  return { categories, loading, error };
+  return {
+    categories,
+    loading,
+    error,
+  };
 }

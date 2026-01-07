@@ -11,7 +11,7 @@ Create a `.env` file in your project root with the following variables:
 ```env
 # API Configuration
 VITE_API_URL=https://pos-api-wwyf.onrender.com
-VITE_TENANT_DOMAIN=perfumeplug-gh.onrender.com
+VITE_TENANT_DOMAIN=perfume-plug.com
 
 # SEO & Analytics Configuration
 VITE_GA_TRACKING_ID=G-XXXXXXXXXX

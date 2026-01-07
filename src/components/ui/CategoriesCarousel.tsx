@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Users, Crown, Sparkles, Gift, Droplets, Heart } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Sparkles} from 'lucide-react';
 import { useProducts } from '../../hooks/useProducts';
 import { formatCategoryName } from '../../utils/searchUtils';
 
@@ -10,19 +10,21 @@ const CategoriesCarousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
-  // Fetch products to extract categories
+  // Fetch ALL products to extract categories (same as ShopPage approach)
   const { products: allProducts, loading } = useProducts({
     page: 1,
-    limit: 500,
+    limit: 10000, // Request high limit to get all products
   });
 
-  // Extract categories with enhanced styling
+  // Extract categories from ALL products and map to images
   const categories = useMemo(() => {
     if (!allProducts || allProducts.length === 0) {
       return [];
     }
 
+    // Extract ALL categories from ALL products
     const categoryMap = new Map<string, number>();
+    
     allProducts.forEach(product => {
       if (product.category) {
         const cat = product.category.toLowerCase();
@@ -30,58 +32,36 @@ const CategoriesCarousel: React.FC = () => {
       }
     });
 
-    // Category styling configuration
-    const categoryStyles: Record<string, { icon: React.ReactNode; color: string; gradient: string; image: string }> = {
-      'men': {
-        icon: <Users className="h-6 w-6" />,
-        color: 'from-blue-500 to-blue-600',
-        gradient: 'from-blue-500/20 to-blue-600/20',
-        image: '/categories/men.jpg'
-      },
-      'women': {
-        icon: <Heart className="h-6 w-6" />,
-        color: 'from-pink-500 to-pink-600',
-        gradient: 'from-pink-500/20 to-pink-600/20',
-        image: '/categories/women.jpg'
-      },
-      'unisex': {
-        icon: <Sparkles className="h-6 w-6" />,
-        color: 'from-purple-500 to-purple-600',
-        gradient: 'from-purple-500/20 to-purple-600/20',
-        image: '/categories/unisex.jpg'
-      },
-      'luxury': {
-        icon: <Crown className="h-6 w-6" />,
-        color: 'from-yellow-500 to-amber-600',
-        gradient: 'from-yellow-500/20 to-amber-600/20',
-        image: '/categories/luxury.jpeg'
-      },
-      'body-sprays': {
-        icon: <Droplets className="h-6 w-6" />,
-        color: 'from-green-500 to-green-600',
-        gradient: 'from-green-500/20 to-green-600/20',
-        image: '/categories/unisex.jpg'
-      },
-      'gift-sets': {
-        icon: <Gift className="h-6 w-6" />,
-        color: 'from-red-500 to-red-600',
-        gradient: 'from-red-500/20 to-red-600/20',
-        image: '/categories/unisex.jpg'
-      }
-    };
+    console.log(`CategoriesCarousel: Processed ${allProducts.length} products, found ${categoryMap.size} unique categories:`, Array.from(categoryMap.keys()));
 
-    return Array.from(categoryMap.entries())
-      .map(([id, count]) => ({
+    // Available images with their names for better mapping
+    const availableImages = [
+      { path: '/categories/unisex.jpg', name: 'unisex' },
+      { path: '/categories/luxury.jpg', name: 'luxury' },
+      { path: '/categories/body-spray.jpg', name: 'body-spray' },
+      { path: '/categories/gift-set.jpg', name: 'gift-set' }
+    ];
+
+    // Convert to array, sort by count, and map to images
+    const sortedCategories = Array.from(categoryMap.entries())
+      .sort((a, b) => b[1] - a[1]); // Sort by count (descending)
+
+    // Map each category to an image by cycling through available options
+    return sortedCategories.map(([id, count], index) => {
+      // Use modulo to cycle through available images
+      const imageIndex = index % availableImages.length;
+      const selectedImage = availableImages[imageIndex];
+
+      console.log(`Category ${index + 1}: "${id}" -> Image: ${selectedImage.path}`);
+
+      return {
         id,
         name: formatCategoryName(id),
         href: `/shop?category=${id}`,
         count,
-        icon: categoryStyles[id]?.icon || <Sparkles className="h-6 w-6" />,
-        color: categoryStyles[id]?.color || 'from-gray-500 to-gray-600',
-        gradient: categoryStyles[id]?.gradient || 'from-gray-500/20 to-gray-600/20',
-        image: categoryStyles[id]?.image || '/categories/unisex.jpg'
-      }))
-      .sort((a, b) => b.count - a.count);
+        image: selectedImage.path
+      };
+    });
   }, [allProducts]);
 
   // Create infinite loop by duplicating categories
@@ -230,17 +210,22 @@ const CategoriesCarousel: React.FC = () => {
                           alt={category.name}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = '/categories/unisex.jpg';
+                            const target = e.target as HTMLImageElement;
+                            console.error(`Failed to load: ${target.src} for category: ${category.id}`);
+                            target.src = '/placeholder-product.svg';
+                          }}
+                          onLoad={() => {
+                            console.log(`Loaded: ${category.image} for "${category.id}"`);
                           }}
                         />
                         
                         {/* Gradient Overlay */}
-                        <div className={`absolute inset-0 bg-gradient-to-t ${category.gradient} to-black/60 group-hover:to-black/40 transition-all duration-300`} />
+                        <div className={`absolute inset-0 bg-gradient-to-t from-gray-500/30 to-gray-600/30 to-black/60 group-hover:to-black/40 transition-all duration-300`} />
                         
                         {/* Icon */}
                         <div className="absolute top-4 right-4">
-                          <div className={`w-10 md:w-12 h-10 md:h-12 bg-gradient-to-r ${category.color} rounded-xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                            {category.icon}
+                          <div className={`w-10 md:w-12 h-10 md:h-12 bg-gradient-to-r from-gray-500 to-gray-600 rounded-xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                            <Sparkles className="h-6 w-6" />
                           </div>
                         </div>
 

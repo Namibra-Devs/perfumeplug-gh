@@ -69,8 +69,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
         className="rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer bg-white border border-gray-100"
         onClick={handleCardClick}
       >
-        <div className="flex h-56 md:h-48">
-          <div className="w-40 md:w-56 relative flex-shrink-0">
+        <div className="flex h-44 md:h-40">
+          <div className="w-32 md:w-44 relative flex-shrink-0">
             <motion.img
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3 }}
@@ -132,10 +132,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
             </div>
           </div>
           
-          <div className="flex-1 p-4 md:p-6 flex flex-col justify-between">
+          <div className="flex-1 p-3 md:p-4 flex flex-col justify-between">
             <div>
               {/* Category and Brand Tags */}
-              <div className='flex items-center gap-2 mb-3'>
+              <div className='flex items-center gap-2 mb-2'>
                 {product?.category && (
                   <span className="text-xs font-medium text-purple-700 bg-purple-100 px-2 py-1 rounded-full capitalize">
                     {product.category}
@@ -149,19 +149,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
               </div>
 
               {/* Product Name */}
-              <h3 className="font-bold text-gray-900 text-base md:text-lg mb-2 line-clamp-2 leading-tight">
+              <h3 className="font-bold text-gray-900 text-sm md:text-base mb-2 line-clamp-2 leading-tight">
                 {product.name}
               </h3>
 
-              {/* Description */}
-              <p className="text-gray-600 text-xs md:text-sm mb-1.5 md:mb-3 line-clamp-2 leading-tight">
-                {product.ecommerceData?.seoDescription || product.description || 'Premium quality perfume with long-lasting fragrance.'}
-              </p>
-
               {/* Product Tags */}
               {product.ecommerceData?.tags && product.ecommerceData.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1 mb-3">
-                  {product.ecommerceData.tags.slice(0, 3).map((tag, index) => (
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {product.ecommerceData.tags.slice(0, 2).map((tag, index) => (
                     <span
                       key={index}
                       className="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 text-gray-600 rounded-full text-xs border"
@@ -170,18 +165,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
                       {tag}
                     </span>
                   ))}
-                  {product.ecommerceData.tags.length > 3 && (
-                    <span className="text-xs text-gray-500 px-2 py-1">+{product.ecommerceData.tags.length - 3} more</span>
+                  {product.ecommerceData.tags.length > 2 && (
+                    <span className="text-xs text-gray-500 px-2 py-1">+{product.ecommerceData.tags.length - 2} more</span>
                   )}
                 </div>
               )}
             </div>
             
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-1.5 md:gap-3">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
               {/* Price Section */}
               <div className="flex flex-col">
                 <div className="flex items-center space-x-2 mb-1">
-                  <span className="text-xl md:text-2xl font-bold text-gray-900">₵{product.sellingPrice.toFixed(2)}</span>
+                  <span className="text-lg md:text-xl font-bold text-gray-900">₵{product.sellingPrice.toFixed(2)}</span>
                   {product.originalPrice && product.sellingPrice < product.originalPrice && (
                     <span className="text-sm text-gray-500 line-through">₵{product.originalPrice.toFixed(2)}</span>
                   )}
@@ -199,17 +194,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
               </div>
 
               {/* Add to Cart Button */}
-              <div className="flex flex-col items-end gap-2">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleAddToCart}
-                  className="bg-gradient-to-r from-black to-yellow-700 hover:from-gray-800 hover:to-yellow-600 text-white py-2 px-6 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl"
-                >
-                  <ShoppingCart className="h-4 w-4" />
-                  Add to Cart
-                </motion.button>
-              </div>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleAddToCart}
+                className="bg-gradient-to-r from-black to-yellow-700 hover:from-gray-800 hover:to-yellow-600 text-white py-2 px-4 md:px-6 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl"
+              >
+                <ShoppingCart className="h-4 w-4" />
+                Add to Cart
+              </motion.button>
             </div>
           </div>
         </div>
@@ -217,13 +210,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
     );
   }
 
-  // Grid View - Fixed Height Design
+  // Grid View - Optimized Height Design
   return (
     <motion.div
       key={cardKey}
       whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
       transition={{ duration: 0.3 }}
-      className="h-[320px] sm:h-[450px] group rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer bg-white border border-gray-100"
+      className="h-[280px] sm:h-[380px] group rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer bg-white border border-gray-100"
       onClick={handleCardClick}
     >
       <div className="h-full flex flex-col">
@@ -293,10 +286,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         </div>
         
-        {/* Content Section - Optimized for Mobile */}
+        {/* Content Section - Optimized Layout */}
         <div className="flex-1 p-3 sm:p-4 flex flex-col">
           {/* Category and Brand Tags */}
-          <div className="flex items-center gap-1 sm:gap-2 mb-2 min-h-[20px]">
+          <div className="flex items-center gap-1 sm:gap-2 mb-2">
             {product?.category && (
               <span className="text-[10px] md:text-xs font-medium text-purple-700 bg-purple-100 px-2 py-1 rounded-full capitalize">
                 {product.category}
@@ -309,19 +302,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
             )}
           </div>
           
-          {/* Product Name - Fixed Height */}
-          <h3 className="font-bold text-gray-900 text-sm leading-tight mb-2 line-clamp-2 max-h-8 sm:max-h-10 flex items-start">
+          {/* Product Name */}
+          <h3 className="font-bold text-gray-900 text-sm leading-tight mb-3 line-clamp-2 flex-grow">
             {product.name}
           </h3>
 
-          {/* Product Description - Added for Grid View */}
-          <p className="text-gray-600 text-xs leading-tight mb-2 line-clamp-2 max-h-8 sm:max-h-8 flex items-start">
-            {product.ecommerceData?.seoDescription || product.description || 'Premium quality perfume with long-lasting fragrance.'}
-          </p>
-
-          {/* Product Tags - Limited and Responsive */}
+          {/* Product Tags - Limited */}
           {product.ecommerceData?.tags && product.ecommerceData.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1 mb-2 min-h-[16px]">
+            <div className="flex flex-wrap gap-1 mb-3">
               {product.ecommerceData.tags.slice(0, 2).map((tag, index) => (
                 <span
                   key={index}
@@ -336,15 +324,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
               )}
             </div>
           )}
-
-          {/* SKU - Mobile Optimized */}
-          {product.sku && (
-            <div className="mb-2">
-              <span className="text-xs text-gray-400">#{product.sku.slice(-4)}</span>
-            </div>
-          )}
           
-          {/* Price Section - Fixed at Bottom with Mobile Optimization */}
+          {/* Price Section - Fixed at Bottom */}
           <div className="mt-auto">
             <div className="flex items-center justify-between mb-2">
               <div className="flex flex-col">
@@ -362,7 +343,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
               </div>
             </div>
 
-            {/* Wholesale Price - Mobile Optimized */}
+            {/* Wholesale Price */}
             {product.wholesalePrice && (
               <div className="mb-2">
                 <span className="text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded-full">
@@ -371,7 +352,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
               </div>
             )}
             
-            {/* Add to Cart Button - Mobile Optimized */}
+            {/* Add to Cart Button */}
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}

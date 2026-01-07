@@ -56,7 +56,7 @@ const PaymentCallback = () => {
           try {
             const orderResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/ecommerce/orders/${orderId}`, {
               headers: {
-                'X-Frontend-Domain': import.meta.env.VITE_TENANT_DOMAIN || 'perfumeplug-gh.onrender.com',
+                'X-Frontend-Domain': import.meta.env.VITE_TENANT_DOMAIN || 'www.perfume-plug.com',
                 'Authorization': localStorage.getItem('customerToken') ? `Bearer ${localStorage.getItem('customerToken')}` : '',
                 'Content-Type': 'application/json'
               }

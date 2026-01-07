@@ -28,13 +28,13 @@ const ShopPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [currentPage, setCurrentPage] = useState(1);
 
-  // API hooks - First fetch all products to get categories and brands
-  const { products: allProducts, loading: allLoading } = useProducts({
+  // API hooks - Fetch all products to extract categories (for sidebar consistency)
+  const { products: allProducts, loading: allProductsLoading } = useProducts({
     page: 1,
-    limit: 1000, // Get all products to extract categories and brands
+    limit: 10000, // Get all products to extract complete category list
   });
 
-  // Then fetch filtered products
+  // Fetch filtered products for display
   const { products, loading, error, refetch, pagination } = useProducts({
     page: currentPage,
     category: category === "all" ? "" : category,
@@ -59,39 +59,40 @@ const ShopPage: React.FC = () => {
     { value: "name-desc", label: "Name: Z to A" },
   ];
 
-  // Extract unique categories and brands from all products
+  // Extract categories, brands and price stats from all products
   const { categories, brands, priceStats } = useMemo(() => {
     if (!allProducts || allProducts.length === 0) {
       return { categories: [], brands: [], priceStats: { min: 0, max: 1000 } };
     }
 
-    // Get unique categories with counts
     const categoryMap = new Map<string, number>();
     const brandMap = new Map<string, number>();
     let minPrice = Infinity;
     let maxPrice = 0;
 
     allProducts.forEach(product => {
-      // Categories
+      // Categories (extract from ALL products for complete category list)
       if (product.category) {
         const cat = product.category.toLowerCase();
         categoryMap.set(cat, (categoryMap.get(cat) || 0) + 1);
       }
 
-      // Brands
+      // Brands (extract from ALL products for complete brand list)
       if (product.brand) {
         brandMap.set(product.brand, (brandMap.get(product.brand) || 0) + 1);
       }
 
-      // Price range
+      // Price range (from ALL products for complete price range)
       if (product.sellingPrice) {
         minPrice = Math.min(minPrice, product.sellingPrice);
         maxPrice = Math.max(maxPrice, product.sellingPrice);
       }
     });
 
+    console.log(`ShopPage: Processed ${allProducts.length} total products, found ${categoryMap.size} unique categories:`, Array.from(categoryMap.keys()));
+
     const categories = Array.from(categoryMap.entries())
-      .map(([name, count]) => ({ name, count }))
+      .map(([id, count]) => ({ id, name: id.charAt(0).toUpperCase() + id.slice(1), count }))
       .sort((a, b) => b.count - a.count); // Sort by count descending
 
     const brands = Array.from(brandMap.entries())
@@ -165,7 +166,7 @@ const ShopPage: React.FC = () => {
     if (searchQuery) {
       return generateSearchSEO(searchQuery, filteredProducts.length);
     } else if (category !== "all") {
-      const categoryData = categories.find(cat => cat.name === category);
+      const categoryData = categories.find(cat => cat.id === category);
       return generateCategorySEO(category, categoryData?.count);
     } else {
       return generateSEO({
@@ -260,12 +261,12 @@ const ShopPage: React.FC = () => {
                     <div className="flex justify-between items-center text-sm">
                       <span>All Products</span>
                       <span className="text-gray-400 text-xs">
-                        ({allProducts?.length || 0})
+                        ({categories.reduce((sum, cat) => sum + cat.count, 0)})
                       </span>
                     </div>
                   </button>
 
-                  {allLoading ? (
+                  {allProductsLoading ? (
                     Array.from({ length: 4 }).map((_, idx) => (
                       <div
                         key={idx}
@@ -275,10 +276,10 @@ const ShopPage: React.FC = () => {
                   ) : (
                     categories.map((cat) => (
                       <button
-                        key={cat.name}
-                        onClick={() => setCategory(cat.name)}
+                        key={cat.id}
+                        onClick={() => setCategory(cat.id)}
                         className={`block w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                          category === cat.name
+                          category === cat.id
                             ? "bg-yellow-800/30 text-yellow-400 border border-yellow-600/30"
                             : "text-gray-300 hover:bg-yellow-700/20"
                         }`}
@@ -336,7 +337,7 @@ const ShopPage: React.FC = () => {
               <div className="mb-6">
                 <h3 className="font-medium text-yellow-500 mb-3">Price Range</h3>
 
-                {allLoading ? (
+                {allProductsLoading ? (
                   <div className="space-y-2">
                     <div className="h-3 w-full bg-yellow-900/20 animate-pulse rounded-md" />
                     <div className="h-6 w-full bg-yellow-900/20 animate-pulse rounded-md" />
@@ -401,23 +402,39 @@ const ShopPage: React.FC = () => {
               <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                 
                 {/* Number of results */}
-                <span className="text-sm text-gray-200">
-                  <span className="bg-yellow-600/20 text-yellow-400 px-3 py-1 rounded-lg">
-                    {loading ? "…" : filteredProducts.length}
-                  </span>{" "}
-                  products found
-                  {pagination && !loading && (
-                    <span className="text-gray-400 ml-2">
-                      (Page {pagination.currentPage} of {pagination.totalPages}, {pagination.totalProducts} total)
-                    </span>
-                  )}
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-gray-200">
+                    <span className="bg-yellow-600/20 text-yellow-400 px-3 py-1 rounded-lg">
+                      {loading ? "…" : filteredProducts.length}
+                    </span>{" "}
+                    products found
+                    {pagination && !loading && (
+                      <span className="text-gray-400 ml-2">
+                        (Page {pagination.currentPage} of {pagination.totalPages}, {pagination.totalProducts} total)
+                      </span>
+                    )}
+                    {searchQuery && (
+                      <>
+                        {" "}
+                        for <span className="text-yellow-300">{searchQuery}</span>
+                      </>
+                    )}
+                  </span>
+
+                  {/* Clear Search Button */}
                   {searchQuery && (
-                    <>
-                      {" "}
-                      for <span className="text-yellow-300">{searchQuery}</span>
-                    </>
+                    <button
+                      onClick={() => {
+                        window.location.href = '/shop';
+                      }}
+                      className="flex items-center gap-1 px-3 py-1 bg-red-600/20 text-red-400 hover:bg-red-600/30 hover:text-red-300 rounded-lg text-sm transition-colors"
+                      title="Clear search and show all products"
+                    >
+                      <X className="h-3 w-3" />
+                      Clear Search
+                    </button>
                   )}
-                </span>
+                </div>
 
                 {/* View + Sort */}
                 <div className="flex items-center space-x-4">
@@ -580,6 +597,19 @@ const ShopPage: React.FC = () => {
                   </div>
 
                   <div className="space-y-3">
+                    {searchQuery && (
+                      <button
+                        onClick={() => {
+                          // Clear search by navigating to shop page without search query
+                          window.location.href = '/shop';
+                        }}
+                        className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2"
+                      >
+                        <X className="h-4 w-4" />
+                        Clear Search
+                      </button>
+                    )}
+
                     {hasActiveFilters && (
                       <button
                         onClick={clearFilters}
@@ -607,8 +637,8 @@ const ShopPage: React.FC = () => {
                         <div className="flex flex-wrap gap-2 justify-center">
                           {categories.slice(0, 4).map((cat) => (
                             <button
-                              key={cat.name}
-                              onClick={() => setCategory(cat.name)}
+                              key={cat.id}
+                              onClick={() => setCategory(cat.id)}
                               className="px-3 py-1 bg-yellow-600/20 text-yellow-400 rounded-full text-xs hover:bg-yellow-600/30 transition-colors"
                             >
                               {cat.name.replace('-', ' ')} ({cat.count})

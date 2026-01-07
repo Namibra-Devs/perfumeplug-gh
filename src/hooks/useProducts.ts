@@ -35,6 +35,21 @@ export function useProducts(options: UseProductsOptions = {}) {
         sortBy: opts.sortBy,
       });
 
+      // Debug: Log API response details
+      if (opts.limit && opts.limit > 100) {
+        console.log(`useProducts: Requested ${opts.limit} products, received ${data.products.length} products`);
+        console.log(`useProducts: Products with categories: ${data.products.filter(p => p.category).length}`);
+        console.log(`useProducts: Products without categories: ${data.products.filter(p => !p.category).length}`);
+        console.log(`useProducts: Unique categories found:`, [...new Set(data.products.map(p => p.category).filter(Boolean))]);
+        
+        // Sample products for debugging
+        console.log(`useProducts: Sample products:`, data.products.slice(0, 3).map(p => ({
+          id: p._id,
+          name: p.name,
+          category: p.category
+        })));
+      }
+
       setProducts(data.products);
       setPagination(data.pagination ?? null);
 

@@ -37,7 +37,7 @@ const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
 }) => {
   return (
     <div className="mt-12 md:mt-4">
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
         {/* Categories */}
         <div>
           <h4 className="font-semibold text-yellow-400 mb-2">Categories</h4>

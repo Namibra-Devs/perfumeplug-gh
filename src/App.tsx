@@ -5,6 +5,7 @@ import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 import Layout from './components/layout/Layout';
 import ScrollToTop from './components/common/ScrollToTop';
+import ErrorBoundary from './components/common/ErrorBoundary';
 import HomePage from './pages/HomePage';
 import ShopPage from './pages/ShopPage';
 import ProductPage from './pages/ProductPage';
@@ -15,6 +16,7 @@ import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import PaymentCallback from './pages/PaymentCallback';
+import NotFoundPage from './pages/NotFoundPage';
 import { ToastProvider } from './context/ToastContext';
 
 function App() {
@@ -25,20 +27,24 @@ function App() {
           <CartProvider>
             <Router>
               <ScrollToTop />
-              <Layout>
-                <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/shop" element={<ShopPage />} />
-                  <Route path="/product/:id" element={<ProductPage />} />
-                  <Route path="/cart" element={<CartPage />} />
-                  <Route path="/checkout" element={<CheckoutPage />} />
-                  <Route path="/payment/callback" element={<PaymentCallback />} />
-                  <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
-                  <Route path="/account" element={<AccountPage />} />
-                  <Route path="/about" element={<AboutPage />} />
-                  <Route path="/contact" element={<ContactPage />} />
-                </Routes>
-              </Layout>
+              <ErrorBoundary>
+                <Layout>
+                  <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/shop" element={<ShopPage />} />
+                    <Route path="/product/:id" element={<ProductPage />} />
+                    <Route path="/cart" element={<CartPage />} />
+                    <Route path="/checkout" element={<CheckoutPage />} />
+                    <Route path="/payment/callback" element={<PaymentCallback />} />
+                    <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
+                    <Route path="/account" element={<AccountPage />} />
+                    <Route path="/about" element={<AboutPage />} />
+                    <Route path="/contact" element={<ContactPage />} />
+                    {/* 404 Catch-all route - must be last */}
+                    <Route path="*" element={<NotFoundPage />} />
+                  </Routes>
+                </Layout>
+              </ErrorBoundary>
             </Router>
           </CartProvider>
         </AuthProvider>

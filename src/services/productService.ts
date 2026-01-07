@@ -14,6 +14,60 @@ export interface FetchProductsOptions {
   sortOrder?: 'asc' | 'desc';
 }
 
+export interface CategoryData {
+  id: string;
+  name: string;
+  count: number;
+}
+
+// Dedicated function to fetch all categories from the API
+export async function fetchCategories(): Promise<CategoryData[]> {
+  try {
+    // Fetch all products to extract categories
+    const allProductsResponse = await apiFetch<{
+      products: Array<{
+        _id: string;
+        category?: string;
+      }>;
+    }>('/api/ecommerce/products?limit=10000&page=1');
+
+    // Extract ALL categories from ALL products (not just unique ones)
+    const categoryMap = new Map<string, number>();
+    
+    allProductsResponse.products.forEach(product => {
+      if (product.category) {
+        const cat = product.category.toLowerCase();
+        categoryMap.set(cat, (categoryMap.get(cat) || 0) + 1);
+      }
+    });
+
+    console.log(`fetchCategories: Processed ${allProductsResponse.products.length} products, found ${categoryMap.size} unique categories:`, Array.from(categoryMap.keys()));
+
+    // Convert to array and sort by count
+    return Array.from(categoryMap.entries())
+      .map(([id, count]) => ({
+        id,
+        name: id.charAt(0).toUpperCase() + id.slice(1), // Capitalize first letter
+        count
+      }))
+      .sort((a, b) => b.count - a.count); // Sort by count descending
+  } catch (err) {
+    console.error('Failed to fetch categories:', err);
+    throw parseApiError(err);
+  }
+}
+
+export interface FetchProductsOptions {
+  page?: number;
+  limit?: number;
+  search?: string;
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}
+
 // Frontend fallback sorting function
 function sortProductsOnFrontend(products: Product[], sortBy: string): Product[] {
   const sortedProducts = [...products];
@@ -47,6 +101,77 @@ function sortProductsOnFrontend(products: Product[], sortBy: string): Product[] 
       
     default:
       return sortedProducts;
+  }
+}
+
+export async function fetchAllProductsForCategories() {
+  try {
+    // Fetch without pagination to get all products for category extraction
+    const params = new URLSearchParams();
+    params.set('limit', '10000'); // Very high limit to get all products
+    params.set('page', '1');
+
+    const path = `/api/ecommerce/products?${params.toString()}`;
+    
+    const apiResponse = await apiFetch<{
+      products: Array<{
+        _id: string;
+        name: string;
+        description?: string;
+        category?: string;
+        sellingPrice: number;
+        createdAt?: string;
+        updatedAt?: string;
+        ecommerceData?: {
+          images?: Array<{ url: string; altText?: string; isPrimary?: boolean }>;
+          seoTitle?: string;
+          seoDescription?: string;
+          tags?: string[];
+          displayOrder?: number;
+        };
+      }>;
+    }>(path);
+
+    // Transform API response to match frontend expectations (simplified for category extraction)
+    const transformedProducts: Product[] = apiResponse.products.map(product => ({
+      _id: product._id,
+      name: product.name,
+      description: product.description || '',
+      category: product.category || '',
+      sellingPrice: product.sellingPrice,
+      images: product.ecommerceData?.images?.map(img => ({
+        url: img.url,
+        altText: img.altText,
+        isPrimary: img.isPrimary
+      })) || [],
+      ecommerceData: product.ecommerceData ? {
+        enabled: true,
+        images: product.ecommerceData.images?.map(img => ({
+          url: img.url,
+          altText: img.altText,
+          isPrimary: img.isPrimary ?? false
+        })) || [],
+        seoTitle: product.ecommerceData.seoTitle,
+        seoDescription: product.ecommerceData.seoDescription,
+        tags: product.ecommerceData.tags || [],
+        displayOrder: product.ecommerceData.displayOrder
+      } : undefined,
+      seo: {
+        title: product.ecommerceData?.seoTitle || '',
+        description: product.ecommerceData?.seoDescription || '',
+        tags: product.ecommerceData?.tags || []
+      },
+      ecommerce: {
+        visible: true,
+        displayOrder: product.ecommerceData?.displayOrder || 0
+      },
+      createdAt: product.createdAt,
+      updatedAt: product.updatedAt
+    }));
+
+    return transformedProducts;
+  } catch (err) {
+    throw parseApiError(err);
   }
 }
 

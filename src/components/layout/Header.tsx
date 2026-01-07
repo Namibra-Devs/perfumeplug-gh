@@ -34,7 +34,7 @@ const Header: React.FC<HeaderProps> = ({title="", descripton=""}) => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-3xl lg:text-4xl font-bold text-white"
+            className="text-3xl lg:text-4xl font-bold text-capitalize text-white"
           >
             {title}
           </motion.h1>
