@@ -1,7 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useState } from "react";
-import { isEmpty } from "../../utils/validation";
+import { z } from "zod";
 import { sanitizeGhanaPhoneNumber, isValidGhanaPhoneNumber } from "../../utils/phoneUtils";
+
+// Zod schema for delivery details validation
+const deliveryDetailsSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  phone: z.string().refine((phone) => {
+    if (!phone || phone.trim() === "") return true; // Optional field
+    return isValidGhanaPhoneNumber(phone);
+  }, "Enter a valid Ghana phone number (e.g., 0201113330)"),
+  addressLine1: z.string().min(1, "Address is required"),
+  email: z.string().optional(),
+  addressLine2: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  country: z.string().optional(),
+  zipCode: z.string().optional(),
+});
 
 interface Props {
   data: any;
@@ -21,23 +38,27 @@ const DeliveryDetailsForm: FC<Props> = ({
   const [errors, setErrors] = useState<any>({});
 
   const validate = () => {
-    const err: any = {};
-
-    if (isEmpty(data.firstName)) err.firstName = "Required";
-    if (isEmpty(data.lastName)) err.lastName = "Required";
-    if (!isEmpty(data.phone) && !isValidGhanaPhoneNumber(data.phone)) {
-      err.phone = "Enter a valid Ghana phone number (e.g., 0201113330)";
+    try {
+      // For pickup, we don't require address
+      const schemaToUse = value === "pickup" 
+        ? deliveryDetailsSchema.omit({ addressLine1: true })
+        : deliveryDetailsSchema;
+      
+      schemaToUse.parse(data);
+      setErrors({});
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const formattedErrors: any = {};
+        error.issues.forEach((issue) => {
+          if (issue.path.length > 0) {
+            formattedErrors[issue.path[0]] = issue.message;
+          }
+        });
+        setErrors(formattedErrors);
+      }
+      return false;
     }
-    // if (!isEmail(data.email)) err.email = "Invalid Email";
-
-    if (isEmpty(data.addressLine1)) err.addressLine1 = "Required";
-    // if (isEmpty(data.city)) err.city = "Required";
-
-    // if (isEmpty(data.state)) err.state = "Select region";
-    // if (isEmpty(data.country)) err.country = "Select country";
-
-    setErrors(err);
-    return Object.keys(err).length === 0;
   };
 
   const handleSubmit = (e: any) => {

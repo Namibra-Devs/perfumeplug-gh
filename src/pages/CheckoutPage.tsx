@@ -104,14 +104,8 @@ const CheckoutPage: React.FC = () => {
     setError("");
 
     if(!isAuthenticated){
-      // Add a delay before redirecting to login for better UX
-      setTimeout(() => {
-        toast.error("Please login to place an order.");
-        navigate('/login', { 
-          state: { from: '/checkout' } // Pass current location for redirect after login
-        });
-      }, 1500); // 1.5 second delay
-      return;
+      setError("Please login to place an order.");
+      toast.error("Please login to place an order.");
     }
 
     try {
