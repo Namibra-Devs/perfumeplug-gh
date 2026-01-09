@@ -190,7 +190,7 @@ const CartPage: React.FC = () => {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Shipping</span>
-                    <span className="text-green-600">Free</span>
+                    <span className="text-green-600">Available</span>
                   </div>
                   <div className="border-t border-yellow-600/20 pt-3">
                     <div className="flex justify-between font-semibold">

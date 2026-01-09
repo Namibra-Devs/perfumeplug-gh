@@ -19,7 +19,7 @@ const Header: React.FC<HeaderProps> = ({title="", descripton=""}) => {
               <Phone className="h-3 w-3" />
               <span className="text-xs">+233 50-666-2618</span>
             </div>
-            <span className="text-xs">Free shipping on orders over ₵200</span>
+            <span className="text-xs">Navionwide delivery available!</span>
           </div>
           <div className="hidden md:block">
             <span className="text-xs">Shop hours: Mon-Fri: 8:00 AM - 8:00 PM</span>

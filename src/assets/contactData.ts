@@ -64,7 +64,7 @@ export const subjectOptions: SubjectOption[] = [
 export const faqQuestions: FAQ[] = [
   {
     question: "What are your shipping options?",
-    answer: "We offer free standard shipping (3-5 days) nationwide and express shipping (1-2 days) for ₵20."
+    answer: "We offer standard shipping (3-5 days) nationwide and express shipping (1-2 days) for ₵20."
   },
   {
     question: "How can I verify product authenticity?",
