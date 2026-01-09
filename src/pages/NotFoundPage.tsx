@@ -19,7 +19,7 @@ const NotFoundPage: React.FC = () => {
       <SEOHead seo={seo} />
       
       <div className="min-h-screen bg-gradient-to-r from-black/95 to-yellow-700/95 flex items-center justify-center px-4">
-        <div className="max-w-2xl mx-auto text-center">
+        <div className="max-w-2xl mx-auto text-center py-6">
           
           {/* Animated 404 */}
           <motion.div
