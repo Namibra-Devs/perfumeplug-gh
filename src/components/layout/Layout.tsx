@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import Footer from './Footer';
+import ScrollToTop from '../ui/ScrollToTop';
 import { AlertCartItems } from '../cart/AlertCartItems';
 import { StructuredData, organizationStructuredData, websiteStructuredData, storeStructuredData } from '../seo';
 import GoogleAnalytics from '../analytics/GoogleAnalytics';
@@ -51,6 +52,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       {/* Only show alert when state is true */}
       {showAlertCart && <AlertCartItems onClose={handleCloseAlert} />}
+      
+      {/* Scroll to Top Button - Available on all routes */}
+      <ScrollToTop />
     </>
   );
 };
