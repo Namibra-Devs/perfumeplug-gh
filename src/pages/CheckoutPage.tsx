@@ -106,6 +106,10 @@ const CheckoutPage: React.FC = () => {
     if(!isAuthenticated){
       setError("Please login to place an order.");
       toast.error("Please login to place an order.");
+      navigate('/account', { 
+        state: { from: '/checkout' } // Pass current location for redirect after login
+      });
+      return;
     }
 
     try {
