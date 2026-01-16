@@ -32,6 +32,8 @@ interface CartContextType {
   clearCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
+  canAddToCart: (product: Product) => { canAdd: boolean; reason?: string };
+  getAvailableQuantity: (product: Product) => number;
 
   addToWishlist: (product: Product) => void;
   removeFromWishlist: (productId: string) => void;
@@ -175,6 +177,23 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
 
   //Cart methods
   const addToCart = (product: Product) => {
+    // Check if product has inventory tracking and is out of stock
+    if (product.inventory && !product.inventory.inStock) {
+      // Don't add to cart if out of stock
+      console.warn(`Cannot add ${product.name} to cart - out of stock`);
+      return; // Silently fail - caller should check before calling
+    }
+
+    // Check if adding one more would exceed available stock
+    const existingItem = state.items.find(item => item.product._id === product._id);
+    if (product.inventory && existingItem) {
+      const newQuantity = existingItem.quantity + 1;
+      if (newQuantity > product.inventory.available) {
+        console.warn(`Cannot add more ${product.name} - only ${product.inventory.available} available`);
+        return; // Silently fail - caller should check before calling
+      }
+    }
+
     dispatch({ type: "ADD_TO_CART", product });
     // Add to cart logic...
     setShowAlertCart(true);
@@ -205,6 +224,45 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
     );
   };
 
+  // Check if product can be added to cart
+  const canAddToCart = (product: Product): { canAdd: boolean; reason?: string } => {
+    // If product doesn't track inventory, it can always be added
+    if (!product.inventory) {
+      return { canAdd: true };
+    }
+
+    // Check if product is in stock
+    if (!product.inventory.inStock) {
+      return { canAdd: false, reason: 'Out of stock' };
+    }
+
+    // Check if adding one more would exceed available stock
+    const existingItem = state.items.find(item => item.product._id === product._id);
+    const currentQuantity = existingItem ? existingItem.quantity : 0;
+    const newQuantity = currentQuantity + 1;
+
+    if (newQuantity > product.inventory.available) {
+      return { 
+        canAdd: false, 
+        reason: `Only ${product.inventory.available} available${currentQuantity > 0 ? ` (${currentQuantity} in cart)` : ''}` 
+      };
+    }
+
+    return { canAdd: true };
+  };
+
+  // Get available quantity for a product (considering what's already in cart)
+  const getAvailableQuantity = (product: Product): number => {
+    if (!product.inventory) {
+      return 999; // Unlimited if not tracking inventory
+    }
+
+    const existingItem = state.items.find(item => item.product._id === product._id);
+    const currentQuantity = existingItem ? existingItem.quantity : 0;
+    
+    return Math.max(0, product.inventory.available - currentQuantity);
+  };
+
   // Wishlist methods
   const addToWishlist = (product: Product) =>
     dispatch({ type: "ADD_TO_WISHLIST", product });
@@ -231,6 +289,8 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
         clearCart,
         getTotalItems,
         getTotalPrice,
+        canAddToCart,
+        getAvailableQuantity,
         addToWishlist,
         removeFromWishlist,
         clearWishlist,
