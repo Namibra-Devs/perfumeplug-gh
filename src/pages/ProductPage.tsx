@@ -7,6 +7,7 @@ import { SEOHead } from '../components/seo';
 import { generateProductSEO } from '../utils/seo';
 import { seoConfig } from '../config/seo';
 import { useCart } from '../hooks/useCart';
+import { useToast } from '../hooks/useToast';
 import { getProduct, fetchProducts } from '../services/productService';
 import type { Product } from '../types/product';
 import { Badge } from '../components/ui/Badge';
@@ -21,7 +22,8 @@ interface InventoryData {
 
 const ProductPage: React.FC = () => {
   const { id } = useParams();
-  const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useCart();
+  const { addToCart, addToWishlist, removeFromWishlist, isInWishlist, canAddToCart, getAvailableQuantity } = useCart();
+  const toast = useToast();
   const [selectedImage, setSelectedImage] = useState<number>(0);
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState<Product | null>(null);
@@ -163,8 +165,22 @@ const ProductPage: React.FC = () => {
 
   // Simple handlers
   const handleAddToCart = () => {
+    if (!product) return;
+
+    // Check stock availability
+    const stockCheck = canAddToCart(product);
+    
     for (let i = 0; i < quantity; i++) {
+      const checkBeforeAdd = canAddToCart(product);
+      if (!checkBeforeAdd.canAdd) {
+        toast.error(checkBeforeAdd.reason || 'Cannot add more items');
+        break;
+      }
       addToCart(product);
+    }
+    
+    if (stockCheck.canAdd) {
+      toast.success(`Added ${quantity} item(s) to cart`);
     }
   };
 

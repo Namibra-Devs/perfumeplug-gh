@@ -24,7 +24,7 @@ const AccountPage: React.FC = () => {
   const { customer, isAuthenticated, logout, token, isLoading } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>("profile");
   const [isEditing, setIsEditing] = useState(false);
-  const { wishlist, removeFromWishlist, addToCart } = useCart();
+  const { wishlist, removeFromWishlist, addToCart, canAddToCart } = useCart();
   const toast = useToast();
   const location = useLocation();
 
@@ -93,7 +93,13 @@ const AccountPage: React.FC = () => {
    * ADD TO CART HANDLER
    ----------------------------- */
   const handleAddToCart = (product: Product) => {
+    const stockCheck = canAddToCart(product);
+    if (!stockCheck.canAdd) {
+      toast.error(stockCheck.reason || 'Cannot add to cart');
+      return;
+    }
     addToCart(product);
+    toast.success(`${product.name} added to cart`);
   };
 
   /** ----------------------------
