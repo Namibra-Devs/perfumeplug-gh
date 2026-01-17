@@ -18,6 +18,7 @@ const deliveryDetailsSchema = z.object({
   state: z.string().optional(),
   country: z.string().optional(),
   zipCode: z.string().optional(),
+  notes: z.string().optional(),
 });
 
 interface Props {
@@ -140,6 +141,21 @@ const DeliveryDetailsForm: FC<Props> = ({
             </>
           )}
           
+        </div>
+
+        {/* DELIVERY NOTES - Full width */}
+        <div className="col-span-full mt-4">
+          <textarea
+            className="input w-full px-3 py-2.5 outline-none bg-transparent text-white text-sm border border-yellow-600/20 focus:ring-2 focus:ring-yellow-500 rounded-lg resize-none"
+            placeholder="Additional notes for delivery (optional)"
+            rows={3}
+            value={data.notes || ""}
+            onChange={(e) => setData({ ...data, notes: e.target.value })}
+          />
+          <p className="text-gray-400 text-xs mt-1">
+            Add any special instructions for delivery (e.g., gate code, landmarks, preferred time)
+          </p>
+          {errors.notes && <p className="text-red-400 text-xs">{errors.notes}</p>}
         </div>
       </div>
 

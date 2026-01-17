@@ -63,7 +63,6 @@ export const Navbar: React.FC = () => {
         setIsMenuOpen(false);
     };
 
-
     return (
         <header className={`${isMenuOpen ? "bg-gradient-to-r from-black/100 to-yellow-700/95" : 'bg-gradient-to-r from-black to-yellow-700 bg-cover bg-no-repeat top-0'} sticky top-0 z-50`}>
             <div className="mx-auto px-6 sm:px-6 lg:px-32 relative z-50">
@@ -168,7 +167,7 @@ export const Navbar: React.FC = () => {
                                         <Link
                                             key={item.name}
                                             to={item.href}
-                                            className="text-gray-300 text-sm hover:text-yellow-800 font-medium py-2 px-4 mx-2 hover:pl-2 duration-300 hover:text-yellow-600 hover:bg-yellow-600/20 rounded transition-colors"
+                                            className="text-gray-300 text-sm hover:text-yellow-800 font-medium py-2 px-4 mx-2 hover:pl-2 duration-300 hover:bg-yellow-600/20 rounded transition-colors"
                                             onClick={closeAll}
                                         >
                                             {item.name}

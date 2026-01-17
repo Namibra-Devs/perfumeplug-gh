@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Star, Heart, ShoppingCart, HeartOff, Tag, Zap } from 'lucide-react';
+import { Heart, ShoppingCart, HeartOff, Tag, Zap } from 'lucide-react';
 
 import { Product } from '../../types/product';
 import { useCart } from '../../hooks/useCart';
@@ -76,7 +76,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
               transition={{ duration: 0.3 }}
               src={productImage.url || '/placeholder-product.svg'}
               alt={productImage.altText || product.name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain sm:object-cover bg-gray-50 sm:bg-transparent"
               loading="lazy"
               onError={(e) => {
                 (e.target as HTMLImageElement).src = '/placeholder-product.svg';
@@ -118,18 +118,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
                 <HeartOff size={16} className='text-gray-400 hover:text-red-400' />
               }
             </motion.button>
-
-            {/* Rating Overlay - Bottom of Image */}
-            <div className="absolute bottom-3 left-3 bg-black/70 backdrop-blur-sm rounded-lg px-2 py-1">
-              <div className="flex items-center space-x-1">
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-3 w-3 text-yellow-400 fill-current" />
-                  ))}
-                </div>
-                <span className="text-xs text-white ml-1">(4.5)</span>
-              </div>
-            </div>
           </div>
           
           <div className="flex-1 p-3 md:p-4 flex flex-col justify-between">
@@ -216,18 +204,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
       key={cardKey}
       whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
       transition={{ duration: 0.3 }}
-      className="h-[280px] sm:h-[380px] group rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer bg-white border border-gray-100"
+      className="h-[320px] sm:h-[380px] group rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer bg-white border border-gray-100"
       onClick={handleCardClick}
     >
       <div className="h-full flex flex-col">
         {/* Image Section - Fixed Height */}
-        <div className="relative h-40 sm:h-56 overflow-hidden">
+        <div className="relative h-48 sm:h-56 overflow-hidden">
           <motion.img
             whileHover={{ scale: 1.08 }}
             transition={{ duration: 0.4 }}
             src={productImage.url || '/placeholder-product.svg'}
             alt={productImage.altText || product.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain sm:object-cover bg-gray-50 sm:bg-transparent"
             loading="lazy"
             onError={(e) => {
               (e.target as HTMLImageElement).src = '/placeholder-product.svg';
@@ -269,18 +257,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid', k
               <HeartOff size={16} className='text-gray-400 hover:text-red-400' />
             }
           </motion.button>
-
-          {/* Rating Overlay - Bottom of Image */}
-          <div className="absolute bottom-3 left-3 bg-black/70 backdrop-blur-sm rounded-lg px-2 py-1 z-10">
-            <div className="flex items-center space-x-1">
-              <div className="flex">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-3 w-3 text-yellow-400 fill-current" />
-                ))}
-              </div>
-              <span className="text-xs text-white ml-1">(4.5)</span>
-            </div>
-          </div>
 
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

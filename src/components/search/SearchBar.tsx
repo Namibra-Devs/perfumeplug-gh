@@ -37,14 +37,25 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose, className = '' }
   const { getCachedResults, setCachedResults } = useSearchCache();
 
   // Fetch ALL products to extract categories and enable frontend search
-  const { products: allProducts, loading: allLoading } = useProducts({
+  const { products: allProducts, loading: allLoading, error: productsError } = useProducts({
     page: 1,
     limit: 10000, // High limit to ensure we get all products for category extraction and search
   });
 
+  // Debug logging for product loading
+  useEffect(() => {
+    if (productsError) {
+      console.error('SearchBar: Error loading products:', productsError);
+    }
+    if (allProducts) {
+      console.log(`SearchBar: Loaded ${allProducts.length} products for search`);
+    }
+  }, [allProducts, productsError]);
+
   // Extract categories from ALL products and prepare for search
   const { processedCategories, filteredProducts } = useMemo(() => {
     if (!allProducts || allProducts.length === 0) {
+      console.warn('SearchBar: No products available for search');
       return { processedCategories: [], filteredProducts: [] };
     }
 
@@ -58,7 +69,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose, className = '' }
       }
     });
 
-    console.log(`SearchBar: Processed ${allProducts.length} products, found ${categoryMap.size} unique categories:`, Array.from(categoryMap.keys()));
+    console.log(`SearchBar: Processed ${allProducts.length} products, found ${categoryMap.size} unique categories`);
 
     // Convert categories to the expected format
     const processedCategories = Array.from(categoryMap.entries())
@@ -76,38 +87,66 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose, className = '' }
     };
   }, [allProducts]);
 
-  // Frontend search function
+  // Frontend search function - More comprehensive and robust
   const performFrontendSearch = useMemo(() => {
     return (query: string): Product[] => {
       if (!query.trim() || !filteredProducts.length) return [];
 
       const searchTerm = query.toLowerCase().trim();
+      const searchWords = searchTerm.split(/\s+/); // Split into individual words
       
       return filteredProducts.filter(product => {
-        // Search in product name
-        if (product.name.toLowerCase().includes(searchTerm)) return true;
+        const searchableText = [
+          product.name || '',
+          product.description || '',
+          product.category || '',
+          product.brand || '',
+          product.sku || '',
+          product.ecommerceData?.seoTitle || '',
+          product.ecommerceData?.seoDescription || '',
+          ...(product.ecommerceData?.tags || [])
+        ].join(' ').toLowerCase();
+
+        // Check if all search words are found in the searchable text
+        const allWordsMatch = searchWords.every(word => 
+          searchableText.includes(word)
+        );
+
+        // Also check for exact phrase match
+        const exactPhraseMatch = searchableText.includes(searchTerm);
+
+        // Check individual fields for better relevance
+        const nameMatch = product.name?.toLowerCase().includes(searchTerm);
+        const categoryMatch = product.category?.toLowerCase().includes(searchTerm);
+        const brandMatch = product.brand?.toLowerCase().includes(searchTerm);
+        const descriptionMatch = product.description?.toLowerCase().includes(searchTerm);
         
-        // Search in description
-        if (product.description?.toLowerCase().includes(searchTerm)) return true;
+        // Check tags
+        const tagMatch = product.ecommerceData?.tags?.some(tag => 
+          tag.toLowerCase().includes(searchTerm) || 
+          searchWords.some(word => tag.toLowerCase().includes(word))
+        );
+
+        return allWordsMatch || exactPhraseMatch || nameMatch || categoryMatch || brandMatch || descriptionMatch || tagMatch;
+      })
+      .sort((a, b) => {
+        // Sort by relevance - exact name matches first
+        const aNameMatch = a.name?.toLowerCase().includes(searchTerm) ? 1 : 0;
+        const bNameMatch = b.name?.toLowerCase().includes(searchTerm) ? 1 : 0;
         
-        // Search in category
-        if (product.category?.toLowerCase().includes(searchTerm)) return true;
+        if (aNameMatch !== bNameMatch) return bNameMatch - aNameMatch;
         
-        // Search in SEO title and description
-        if (product.ecommerceData?.seoTitle?.toLowerCase().includes(searchTerm)) return true;
-        if (product.ecommerceData?.seoDescription?.toLowerCase().includes(searchTerm)) return true;
+        // Then by category matches
+        const aCategoryMatch = a.category?.toLowerCase().includes(searchTerm) ? 1 : 0;
+        const bCategoryMatch = b.category?.toLowerCase().includes(searchTerm) ? 1 : 0;
         
-        // Search in tags
-        if (product.ecommerceData?.tags?.some(tag => 
-          tag.toLowerCase().includes(searchTerm)
-        )) return true;
-        
-        return false;
-      }).slice(0, 20); // Limit results for performance
+        return bCategoryMatch - aCategoryMatch;
+      })
+      .slice(0, 50); // Increase limit for better results
     };
   }, [filteredProducts]);
 
-  // Debounced search function with caching
+  // Debounced search function with caching and better error handling
   const debouncedSearch = useMemo(
     () => debounce(async (query: string) => {
       if (!query.trim()) {
@@ -118,6 +157,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose, className = '' }
 
       const validation = validateSearchQuery(query);
       if (!validation.isValid) {
+        console.warn('Invalid search query:', validation.message);
         setResults([]);
         setIsSearching(false);
         return;
@@ -126,13 +166,17 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose, className = '' }
       // Check cache first
       const cachedResults = getCachedResults(query);
       if (cachedResults) {
+        console.log(`SearchBar: Using cached results for "${query}"`);
         setResults(cachedResults);
         setIsSearching(false);
         return;
       }
 
       try {
+        console.log(`SearchBar: Performing search for "${query}" across ${filteredProducts.length} products`);
         const searchResults = performFrontendSearch(query.trim());
+        console.log(`SearchBar: Found ${searchResults.length} results for "${query}"`);
+        
         setResults(searchResults);
         
         // Cache the results
@@ -143,8 +187,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose, className = '' }
       } finally {
         setIsSearching(false);
       }
-    }, 300),
-    [performFrontendSearch, getCachedResults, setCachedResults]
+    }, 200), // Reduced debounce time for faster response
+    [performFrontendSearch, getCachedResults, setCachedResults, filteredProducts.length]
   );
 
   // Focus search input when opened
@@ -168,7 +212,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose, className = '' }
     }
   }, [isOpen, onClose]);
 
-  // Handle search input change
+  // Handle search input change with immediate feedback
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
 
@@ -178,7 +222,18 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose, className = '' }
       return;
     }
 
+    // Show loading state immediately
     setIsSearching(true);
+    
+    // For very short queries, search immediately without debounce
+    if (value.trim().length <= 2) {
+      const quickResults = performFrontendSearch(value.trim());
+      setResults(quickResults.slice(0, 10)); // Limit quick results
+      setIsSearching(false);
+      return;
+    }
+
+    // Use debounced search for longer queries
     debouncedSearch(value);
   };
 
@@ -255,6 +310,34 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose, className = '' }
             </div>
           </form>
 
+          {/* Loading indicator for products */}
+          {allLoading && !searchQuery && (
+            <div className="mt-4 text-center">
+              <div className="inline-flex items-center gap-2 text-gray-300">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-400"></div>
+                <span className="text-sm">Loading products...</span>
+              </div>
+            </div>
+          )}
+
+          {/* Error state */}
+          {productsError && !searchQuery && (
+            <div className="mt-4 text-center">
+              <p className="text-red-400 text-sm">
+                Unable to load products. Please refresh the page.
+              </p>
+            </div>
+          )}
+
+          {/* No products available */}
+          {!allLoading && !productsError && filteredProducts.length === 0 && !searchQuery && (
+            <div className="mt-4 text-center">
+              <p className="text-gray-400 text-sm">
+                No products available for search.
+              </p>
+            </div>
+          )}
+
           {/* Search Results */}
           {searchQuery && (
             <SearchResults
@@ -266,21 +349,24 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose, className = '' }
             />
           )}
 
-          {/* Search Suggestions */}
-          <SearchSuggestions
-            categories={processedCategories}
-            allLoading={allLoading}
-            hasHistory={hasHistory}
-            getRecentSearches={getRecentSearches}
-            getPopularSearches={getPopularSearches}
-            removeSearchTerm={removeSearchTerm}
-            clearSearchHistory={clearSearchHistory}
-            filteredProducts={filteredProducts}
-            onSearchSelect={(query: string) => {
-              setSearchQuery(query);
-              searchInputRef.current?.focus();
-            }}
-          />
+          {/* Search Suggestions - only show when not searching and products are loaded */}
+          {!searchQuery && !allLoading && filteredProducts.length > 0 && (
+            <SearchSuggestions
+              categories={processedCategories}
+              allLoading={allLoading}
+              hasHistory={hasHistory}
+              getRecentSearches={getRecentSearches}
+              getPopularSearches={getPopularSearches}
+              removeSearchTerm={removeSearchTerm}
+              clearSearchHistory={clearSearchHistory}
+              filteredProducts={filteredProducts}
+              onSearchSelect={(query: string) => {
+                setSearchQuery(query);
+                handleSearchChange(query); // Trigger search immediately
+                searchInputRef.current?.focus();
+              }}
+            />
+          )}
         </div>
       </motion.div>
     </AnimatePresence>
