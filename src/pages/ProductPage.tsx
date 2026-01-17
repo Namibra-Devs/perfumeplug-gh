@@ -22,7 +22,7 @@ interface InventoryData {
 
 const ProductPage: React.FC = () => {
   const { id } = useParams();
-  const { addToCart, addToWishlist, removeFromWishlist, isInWishlist, canAddToCart, getAvailableQuantity } = useCart();
+  const { addToCart, addToWishlist, removeFromWishlist, isInWishlist, canAddToCart } = useCart();
   const toast = useToast();
   const [selectedImage, setSelectedImage] = useState<number>(0);
   const [quantity, setQuantity] = useState(1);
