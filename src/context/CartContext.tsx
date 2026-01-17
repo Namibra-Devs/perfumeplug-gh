@@ -51,9 +51,8 @@ interface CartContextType {
   setShowAlertCart: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const CartContext = createContext<CartContextType | undefined>(
-  undefined
-);
+// Create the context
+const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
@@ -148,9 +147,8 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
   }
 };
 
-export const CartProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
+// Cart Provider Component
+const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, {
     items: [],
     wishlist: [],
@@ -303,3 +301,6 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
     </CartContext.Provider>
   );
 };
+
+// Export both the context and provider
+export { CartContext, CartProvider };
