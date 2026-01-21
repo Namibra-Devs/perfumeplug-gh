@@ -65,9 +65,9 @@ const ProductPage: React.FC = () => {
         // But our service only returns { product }
         // We need to make a direct API call to get inventory data
         try {
-          const fullResponse = await fetch(`${import.meta.env.VITE_TENANT_DOMAIN}/api/ecommerce/products/${id}`, {
+          const fullResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/ecommerce/products/${id}`, {
             headers: {
-              'X-Frontend-Domain': 'www.perfume-plug.com'
+              'X-Frontend-Domain': import.meta.env.VITE_TENANT_DOMAIN || 'www.perfume-plug.com'
             }
           });
           const fullData = await fullResponse.json();
